@@ -3,8 +3,11 @@ package principal;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import Ciudad1.ui.VentanaCiudad1;
 import Ciudad2.PanelCiudad2;
 import Ciudad3.PanelCiudad3;
+import Ciudad8.vista.VentanaCiudad8;
+import Ciudad4.vista.VentanaOrdenamientos;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -15,10 +18,7 @@ import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import ciudadordenamientos.vista
-        .VentanaOrdenamientos;
-
-import ciudadbusquedas.vista
+import Ciudad5.vista
         .VentanaBusquedas;
 
 /**
@@ -110,6 +110,15 @@ public class PanelMapa extends JPanel {
      */
     private void verificarCiudad(int x, int y) {
 
+    	
+    	//CIUDAD 1
+    	if(x>=54 && x<= 252 && y>=393 && y<=597) {
+    		
+    		VentanaCiudad1 v= new VentanaCiudad1();
+    		v.setVisible(true);
+    		
+    	}
+    	
         // CIUDAD 4
         if(x >= 461 && x <= 645
                 && y >= 445 && y <= 580) {
@@ -156,6 +165,17 @@ public class PanelMapa extends JPanel {
 
             frame.revalidate();
             frame.repaint();
+        }
+        
+        // CIUDAD 8
+        
+        if(x>= 694 && x<= 909 && y>=106 && y<=253) {
+        	
+        	 VentanaCiudad8 v =
+                     new VentanaCiudad8();
+
+             v.setVisible(true);
+        	
         }
     }
 }
