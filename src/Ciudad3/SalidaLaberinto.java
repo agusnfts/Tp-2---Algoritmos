@@ -99,7 +99,7 @@ public class SalidaLaberinto {
     /**
      * Dibuja la pantalla de bienvenida con estética cibernética
      */
-    private static void dibujarMenuPrincipal(Bitmap bmp) {
+    public static void dibujarMenuPrincipal(Bitmap bmp) {
         bmp.rellenar(Color.BLACK);
         Font fTitulo = new Font("Courier New", Font.BOLD, 50);
         Font fSub = new Font("Courier New", Font.BOLD, 25);
@@ -117,7 +117,7 @@ public class SalidaLaberinto {
     /**
      * Limpia la pantalla y dibuja la estructura estática del laberinto (paredes y suelo)
      */
-    private static void prepararTablero(Bitmap bmp, int[][] laberinto) {
+    public static void prepararTablero(Bitmap bmp, int[][] laberinto) {
         bmp.rellenar(new Color(30, 30, 30));
         
         for (int fila = 0; fila < FILAS; fila++) {
@@ -138,7 +138,7 @@ public class SalidaLaberinto {
     /**
      * Muestra un cartel central al concluir el algoritmo indicando victoria o derrota.
      */
-    private static void dibujarCartelFinal(Bitmap bmp, boolean exito) {
+    public static void dibujarCartelFinal(Bitmap bmp, boolean exito) {
         int centroX = bmp.getWidth() / 2;
         int centroY = bmp.getHeight() / 2;
         int anchoCartel = 700;
@@ -231,7 +231,7 @@ public class SalidaLaberinto {
      * Redibuja la escena completa (caminos y estelas) en base al estado actual de la matriz solucion.
      * Esto evita fallos visuales y asegura que las conexiones entre celdas se vean perfectas.
      */
-    private static void repintarLaberinto(Bitmap bmp, int[][] laberinto, int[][] solucion, int pelotaX, int pelotaY) {
+    public static void repintarLaberinto(Bitmap bmp, int[][] laberinto, int[][] solucion, int pelotaX, int pelotaY) {
         
         //1.Se limpian todos los pasillos transitables
         for (int fila = 0; fila < FILAS; fila++) {
@@ -283,7 +283,7 @@ public class SalidaLaberinto {
     /**
      * Dibuja los zócalos de hardware con luces LED para indicar el punto de entrada o salida.
      */
-    private static void dibujarCasillaEspecial(Bitmap bmp, int fila, int col, boolean esInicio, boolean exitoFinal) {
+    public static void dibujarCasillaEspecial(Bitmap bmp, int fila, int col, boolean esInicio, boolean exitoFinal) {
         int x = (col * TAMANO_CELDA) + MARGEN_X;
         int y = (fila * TAMANO_CELDA) + MARGEN_Y;
         int grosor = 15;
@@ -315,7 +315,7 @@ public class SalidaLaberinto {
     /**
      * Dibuja un obstáculo simulando una memoria RAM de computadora
      */
-    private static void dibujarParedHacker(Bitmap bmp, int fila, int col) {
+    public static void dibujarParedHacker(Bitmap bmp, int fila, int col) {
         int x = (col * TAMANO_CELDA) + MARGEN_X;
         int y = (fila * TAMANO_CELDA) + MARGEN_Y;
         
@@ -338,14 +338,14 @@ public class SalidaLaberinto {
     /**
      * Dibuja un cuadrado sólido trazando líneas paralelas horizontales
      */
-    private static void llenarCuadrado(Bitmap bmp, int x, int y, int ancho, int alto, Color color) {
+    public static void llenarCuadrado(Bitmap bmp, int x, int y, int ancho, int alto, Color color) {
         for (int i = 0; i < alto; i++) bmp.drawLine(x, y + i, x + ancho, y + i, color);
     }
     
     /**
      * Dibuja un círculo sólido trazando circunferencias concéntricas hacia el centro
      */
-    private static void llenarCirculo(Bitmap bmp, int centerX, int centerY, int radius, Color color) {
+   public static void llenarCirculo(Bitmap bmp, int centerX, int centerY, int radius, Color color) {
         for (int r = radius; r > 0; r--) bmp.drawCircle(centerX, centerY, r, color);
     }
 }
