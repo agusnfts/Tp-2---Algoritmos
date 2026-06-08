@@ -5,6 +5,7 @@ import javax.swing.SwingUtilities;
 
 import Ciudad2.PanelCiudad2;
 import Ciudad3.PanelCiudad3;
+import Ciudad7.PanelCiudad7;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -152,6 +153,21 @@ public class PanelMapa extends JPanel {
 
             frame.setContentPane(
                 new PanelCiudad3()
+            );
+
+            frame.revalidate();
+            frame.repaint();
+        }
+
+        // CIUDAD 7
+        if(x >= 661 && x <= 845
+                && y >= 255 && y <= 400) {
+
+            JFrame frame =
+                (JFrame) SwingUtilities.getWindowAncestor(this);
+
+            frame.setContentPane(
+                new PanelCiudad7()
             );
 
             frame.revalidate();

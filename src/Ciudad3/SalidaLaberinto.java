@@ -5,7 +5,9 @@ import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
 
-import Ciudad3.BitmapViewerConMenu.MenuAction;
+import Ciudad3.bitmap.BitmapViewerConMenu.MenuAction;
+import Ciudad3.bitmap.BitmapViewerConMenu;
+import Ciudad3.bitmap.Bitmap;
 
 /**
  * Clase principal que resuelve un laberinto utilizando el algoritmo de Backtracking.
@@ -31,28 +33,25 @@ public class SalidaLaberinto {
     static final int GROSOR_ESTELA = 30;
     static final int RADIO_PELOTA = 35;
     
-    //Márgenes para mantener el laberinto centrado en la pantalla
-    static final int MARGEN_X = 200;
-    static final int MARGEN_Y = 100;
+    //Márgenes para mantener el laberinto centrado en la pantalla (dejaron de ser final)
+    static int MARGEN_X = 200;
+    static int MARGEN_Y = 100;
 
     //Indica si se está ejecutando el laberinto
     static boolean hackeoEnProgreso = false;
+    
+    //Variable para controlar la interrupción manual del usuario
+    static boolean abortarHackeo = false;
 
     public static void main(String[] args) {
-        //Matriz base Hardcodeada: 1 representa un camino transitable, 0 representa una pared
-        int[][] laberinto = {
-            {1, 0, 0, 0, 1, 0},
-            {1, 1, 0, 1, 1, 1},
-            {1, 0, 1, 1, 0, 1},
-            {1, 1, 1, 0, 0, 1}
-        };
-
-        //Calcula la dimension de la matriz
-        FILAS = laberinto.length;
-        COLUMNAS = laberinto[0].length;
         
-        //Inicializamos el lienzo (Bitmap) con un tamaño que envuelva todo el laberinto más los márgenes
-        Bitmap bmp = new Bitmap((COLUMNAS * TAMANO_CELDA) + (MARGEN_X * 2), (FILAS * TAMANO_CELDA) + (MARGEN_Y * 2));
+        //Calcula la dimension maxima de la matriz (8x8) para que la ventana no salte de tamaño
+        int[] limitesMaximos = MatricesEjemplo.getDimensionesMaximas();
+        int maxFilas = limitesMaximos[0];
+        int maxColumnas = limitesMaximos[1];
+        
+        //Inicializamos el lienzo (Bitmap) con un tamaño que envuelva todo el laberinto más los márgenes base
+        Bitmap bmp = new Bitmap((maxColumnas * TAMANO_CELDA) + (200 * 2), (maxFilas * TAMANO_CELDA) + (100 * 2));
         
         dibujarMenuPrincipal(bmp);
 
@@ -66,26 +65,50 @@ public class SalidaLaberinto {
                 return;
             }
             hackeoEnProgreso = true;
+            abortarHackeo = false; // Reiniciamos la bandera de abortar al empezar
 
             //Delegamos la resolución a un hilo (Thread) secundario para no congelar la interfaz gráfica
             new Thread(() -> {
+                
+                //Obtenemos un laberinto aleatorio de nuestra lista de ejemplos predefinidos
+                int[][] laberintoRandom = MatricesEjemplo.obtenerLaberintoAleatorio();
+                FILAS = laberintoRandom.length;
+                COLUMNAS = laberintoRandom[0].length;
+                
+                //Recalculamos los márgenes de forma dinámica para que el laberinto se dibuje siempre en el centro
+                MARGEN_X = (bmp.getWidth() - (COLUMNAS * TAMANO_CELDA)) / 2;
+                MARGEN_Y = (bmp.getHeight() - (FILAS * TAMANO_CELDA)) / 2;
+
                 //Se crea una matriz limpia en cada intento para rastrear los pasos dados
                 int[][] solucion = new int[FILAS][COLUMNAS];
                 
-                prepararTablero(bmp, laberinto);
+                prepararTablero(bmp, laberintoRandom);
                 
                 //Inicia la recursión desde el punto de origen, y depende si encuentra salida o no
                 //brinda el cartel final de Victoria o Derrota
-                if (resolverLaberinto(laberinto, 0, 0, 0, 0, solucion, bmp)) {
-                    dibujarCartelFinal(bmp, true);
+                if (resolverLaberinto(laberintoRandom, 0, 0, 0, 0, solucion, bmp)) {
+                    if (!abortarHackeo) dibujarCartelFinal(bmp, true);
                 } else {
-                    dibujarCartelFinal(bmp, false);
+                    // Verificamos si terminó por no haber salida o si el usuario apretó abortar
+                    if (abortarHackeo) {
+                        dibujarCartelAbortado(bmp);
+                    } else {
+                        dibujarCartelFinal(bmp, false);
+                    }
                 }
                 
                 //Liberamos el botón para permitir futuros intentos sin necesidad de reiniciar la app
                 hackeoEnProgreso = false;
                 
             }).start();
+        }));
+
+        //Nuevo botón para abortar la ejecución actual
+        acciones.add(new MenuAction("Abortar", () -> {
+            // Solo funciona si el hackeo está en pleno progreso y aún no terminó
+            if (hackeoEnProgreso) {
+                abortarHackeo = true;
+            }
         }));
 
         //Cierra la Máquina Virtual de Java
@@ -115,7 +138,7 @@ public class SalidaLaberinto {
     }
 
     /**
-     * Limpia la pantalla y dibuja la estructura estática del laberinto (paredes y suelo)
+     * Limpia la pantalla y dibuja la structure estática del laberinto (paredes y suelo)
      */
     public static void prepararTablero(Bitmap bmp, int[][] laberinto) {
         bmp.rellenar(new Color(30, 30, 30));
@@ -187,10 +210,34 @@ public class SalidaLaberinto {
     }
 
     /**
+     * Muestra el cartel cuando la operación fue interrumpida por el usuario.
+     */
+    public static void dibujarCartelAbortado(Bitmap bmp) {
+        int centroX = bmp.getWidth() / 2;
+        int centroY = bmp.getHeight() / 2;
+        int anchoCartel = 700;
+        int altoCartel = 400;
+
+        // Fondo semi-transparente y borde amarillo
+        llenarCuadrado(bmp, centroX - (anchoCartel/2), centroY - (altoCartel/2), anchoCartel, altoCartel, new Color(0,0,0, 200));
+        bmp.drawRectangle(centroX - (anchoCartel/2), centroY - (altoCartel/2), anchoCartel, altoCartel, Color.YELLOW);
+
+        // Icono de advertencia simple
+        llenarCirculo(bmp, centroX, centroY - 40, 40, Color.YELLOW);
+        llenarCuadrado(bmp, centroX - 8, centroY - 60, 16, 25, Color.BLACK); // Exclamación cuerpo
+        llenarCuadrado(bmp, centroX - 8, centroY - 25, 16, 10, Color.BLACK); // Exclamación punto
+
+        bmp.drawText("ABORTANDO SISTEMAS", centroX - 220, centroY + 80, new Font("Courier New", Font.BOLD, 35), Color.YELLOW, Color.BLACK);
+    }
+
+    /**
      * Algoritmo de Backtracking principal. Busca el camino explorando recursivamente las 4 direcciones.
      */
     public static boolean resolverLaberinto(int[][] laberinto, int x, int y, int prevX, int prevY, int[][] solucion, Bitmap bmp) {
         
+        // Si el usuario presiona el botón, cortamos la ejecución instantáneamente
+        if (abortarHackeo) return false;
+
         //CASO BASE: Si llegamos a la esquina inferior derecha, terminamos la búsqueda.
         if (x == FILAS - 1 && y == COLUMNAS - 1 && laberinto[x][y] == 1) {
             solucion[x][y] = 1;
@@ -205,15 +252,17 @@ public class SalidaLaberinto {
             solucion[x][y] = 1;
             repintarLaberinto(bmp, laberinto, solucion, x, y);
 
-            // Búsqueda en profundidad (DFS) en las 4 direcciones cardinales
-            if (resolverLaberinto(laberinto, x + 1, y, x, y, solucion, bmp)) return true; // Abajo
-            if (resolverLaberinto(laberinto, x, y + 1, x, y, solucion, bmp)) return true; // Derecha
-            if (resolverLaberinto(laberinto, x - 1, y, x, y, solucion, bmp)) return true; // Arriba
-            if (resolverLaberinto(laberinto, x, y - 1, x, y, solucion, bmp)) return true; // Izquierda
+            // Búsqueda en profundidad (DFS) evaluando la bandera abortarHackeo antes de entrar
+            if (!abortarHackeo && resolverLaberinto(laberinto, x + 1, y, x, y, solucion, bmp)) return true; // Abajo
+            if (!abortarHackeo && resolverLaberinto(laberinto, x, y + 1, x, y, solucion, bmp)) return true; // Derecha
+            if (!abortarHackeo && resolverLaberinto(laberinto, x - 1, y, x, y, solucion, bmp)) return true; // Arriba
+            if (!abortarHackeo && resolverLaberinto(laberinto, x, y - 1, x, y, solucion, bmp)) return true; // Izquierda
 
-            // Si ningún camino sirvió, hacemos BACKTRACKING: desmarcamos el paso y retrocedemos
-            solucion[x][y] = 0;
-            repintarLaberinto(bmp, laberinto, solucion, prevX, prevY);
+            // Si ningún camino sirvió y NO fue abortado manualemente, hacemos BACKTRACKING
+            if (!abortarHackeo) {
+                solucion[x][y] = 0;
+                repintarLaberinto(bmp, laberinto, solucion, prevX, prevY);
+            }
             return false;
         }
         
