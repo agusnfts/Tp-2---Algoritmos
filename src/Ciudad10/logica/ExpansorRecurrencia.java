@@ -20,9 +20,12 @@ public class ExpansorRecurrencia {
 
         while (nivel < niveles) {
             int cantidad = (int) Math.pow(recurrencia.getA(), nivel);
-            String tamanio = (nivel == 0) 
-                    ? "n" 
-                    : "n/" + (int) Math.pow(recurrencia.getB(), nivel);
+            String tamanio;
+            if (nivel == 0) {
+                tamanio = "n";                 
+            } else {
+                tamanio = "n/" + (int) Math.pow(recurrencia.getB(), nivel);
+            }
 
             lista.add(new NodoExpansion(nivel, cantidad, tamanio));
             nivel++;
