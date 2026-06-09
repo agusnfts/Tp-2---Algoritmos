@@ -1,4 +1,4 @@
-package modelo;
+package Ciudad9.modelo;
 
 public class Personaje {
 
@@ -11,11 +11,11 @@ public class Personaje {
     }
 
     public void recibirDanio(int danio) {
-        vida -= danio;
+        vida = Math.max(0, vida - danio);
+    }
 
-        if(vida < 0) {
-            vida = 0;
-        }
+    public void curar(int cantidad) {
+        vida += cantidad;
     }
 
     public boolean estaVivo() {
@@ -29,10 +29,4 @@ public class Personaje {
     public int getVida() {
         return vida;
     }
-
-    //agrego metodo
-
-    public void curar(int cantidad) {
-    vida += cantidad;
-}
 }

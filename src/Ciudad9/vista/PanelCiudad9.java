@@ -1,4 +1,4 @@
-package vista;
+package Ciudad9.vista;
 
 import java.awt.BorderLayout;
 import java.util.List;
@@ -8,8 +8,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import Ciudad9.bitmap.BitmapCiudad9;
-import modelo.Enemigo;
-import modelo.JugadorCombate;
+import Ciudad9.modelo.Enemigo;
+import Ciudad9.modelo.JugadorCombate;
 
 public class PanelCiudad9 extends JPanel {
 
