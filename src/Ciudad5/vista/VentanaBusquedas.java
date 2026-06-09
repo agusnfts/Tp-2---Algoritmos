@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import Ciudad5.util.LectorArchivo;
+import principal.ProgresoJuego;
 import Ciudad5.modelo.ArbolBusqueda;
 import Ciudad5.modelo.BusquedaLineal;
 import Ciudad5.modelo.ResultadoBusqueda;
@@ -32,8 +33,16 @@ public class VentanaBusquedas extends JFrame {
     private ArbolBusqueda arbol;
 
     private BusquedaLineal lista;
+    
+    private ProgresoJuego progreso;
 
-    public VentanaBusquedas() {
+
+    private boolean archivoCargado = false;
+    private int cantidadBusquedas = 0;
+
+    public VentanaBusquedas(ProgresoJuego progreso) {
+
+        this.progreso = progreso;
 
         arbol = new ArbolBusqueda();
 
@@ -51,6 +60,8 @@ public class VentanaBusquedas extends JFrame {
 
         inicializar();
     }
+    
+  
 
     private void inicializar() {
 
@@ -127,7 +138,7 @@ public class VentanaBusquedas extends JFrame {
         );
 
         panel =
-                new PanelCiudad5();
+                new PanelCiudad5(progreso);
 
         add(
                 panel,
@@ -179,7 +190,7 @@ public class VentanaBusquedas extends JFrame {
                     arbol,
                     lista
             );
-
+            archivoCargado = true;
             JOptionPane.showMessageDialog(
                     this,
                     "Archivo cargado correctamente"
@@ -201,7 +212,8 @@ public class VentanaBusquedas extends JFrame {
                     this,
                     "Ingrese una palabra"
             );
-
+           
+            
             return;
         }
 
@@ -220,6 +232,8 @@ public class VentanaBusquedas extends JFrame {
                 resultadoLineal,
                 resultadoArbol
         );
+        cantidadBusquedas++;
+        verificarVictoria();
     }
 
     private void mostrarResultados(
@@ -332,4 +346,36 @@ public class VentanaBusquedas extends JFrame {
                 texto
         );
     }
+    
+    /**
+     * Desbloquea la Ciudad 6 cuando el jugador:
+     * - carga un archivo
+     * - realiza al menos 3 búsquedas
+     */
+    private void verificarVictoria() {
+
+        if(archivoCargado
+                && cantidadBusquedas >= 3) {
+
+            if(progreso != null
+                    && !progreso.estaDesbloqueada(6)) {
+
+                System.out.println(
+                        "[CIUDAD 5] COMPLETADA"
+                );
+
+                progreso.desbloquear(6);
+
+                progreso.guardar();
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "¡Felicitaciones!\n"
+                        + "Completaste la Ciudad 5.\n"
+                        + "La Ciudad 6 ha sido desbloqueada."
+                );
+            }
+        }
+    }
+    
 }

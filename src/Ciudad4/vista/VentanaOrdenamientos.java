@@ -5,12 +5,14 @@ import java.util.Queue;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.Timer;
 
 import Ciudad4.modelo.BubbleSort;
 import Ciudad4.modelo.QuickSort;
+import principal.ProgresoJuego;
 
 public class VentanaOrdenamientos extends JFrame {
 
@@ -23,7 +25,14 @@ public class VentanaOrdenamientos extends JFrame {
 
     private PanelCiudad4 panel;
 
-    public VentanaOrdenamientos() {
+    private ProgresoJuego progreso;
+
+    private boolean usoBubbleSort = false;
+    private boolean usoQuickSort = false;
+
+    public VentanaOrdenamientos(ProgresoJuego progreso) {
+
+        this.progreso = progreso;
 
         setTitle("Ciudad 4 - Ordenamientos");
 
@@ -37,6 +46,8 @@ public class VentanaOrdenamientos extends JFrame {
 
         inicializar();
     }
+
+
 
     private void inicializar() {
 
@@ -69,7 +80,7 @@ public class VentanaOrdenamientos extends JFrame {
         );
 
         panel =
-                new PanelCiudad4();
+                new PanelCiudad4(progreso);
 
         add(
                 panel,
@@ -79,6 +90,7 @@ public class VentanaOrdenamientos extends JFrame {
         btnOrdenar.addActionListener(
                 e -> ordenar()
         );
+
         btnSalir.addActionListener(
                 e -> dispose()
         );
@@ -117,6 +129,8 @@ public class VentanaOrdenamientos extends JFrame {
             if(algoritmo.equals(
                     "BubbleSort")) {
 
+                usoBubbleSort = true;
+
                 pasos =
                         BubbleSort.ordenar(
                                 datos
@@ -124,17 +138,56 @@ public class VentanaOrdenamientos extends JFrame {
 
             } else {
 
+                usoQuickSort = true;
+
                 pasos =
                         QuickSort.ordenar(
                                 datos
                         );
             }
 
+            verificarVictoria();
+
             animar(pasos);
 
         } catch(Exception ex) {
 
             ex.printStackTrace();
+        }
+    }
+
+    /**
+     * Verifica si el jugador ya utilizó ambos algoritmos.
+     * Si lo hizo, se desbloquea la Ciudad 5.
+     */
+    private void verificarVictoria() {
+
+        System.out.println("Bubble: " + usoBubbleSort);
+        System.out.println("Quick: " + usoQuickSort);
+
+        if(progreso != null) {
+            System.out.println("Ciudad 5 desbloqueada: "
+                    + progreso.estaDesbloqueada(5));
+        }
+
+        if(usoBubbleSort && usoQuickSort) {
+
+            if(progreso != null
+                    && !progreso.estaDesbloqueada(5)) {
+
+                System.out.println("[CIUDAD 4] COMPLETADA");
+
+                progreso.desbloquear(5);
+
+                progreso.guardar();
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "¡Felicitaciones!\n"
+                        + "Utilizaste BubbleSort y QuickSort.\n"
+                        + "La Ciudad 5 ha sido desbloqueada."
+                );
+            }
         }
     }
 

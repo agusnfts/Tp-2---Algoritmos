@@ -18,13 +18,16 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import Ciudad8.bitmap.Bitmap;
 import Ciudad8.modelo.Hanoi;
 import Ciudad8.modelo.Movimiento;
+import principal.ProgresoJuego;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -42,10 +45,14 @@ public class PanelCiudad8 extends JPanel {
 
     private Bitmap bmp;
 
+    private ProgresoJuego progreso;
+    
     private JLabel lblImagen;
 
-    public PanelCiudad8() {
+    public PanelCiudad8(ProgresoJuego progreso) {
 
+    	this.progreso = progreso;
+    	
         setLayout(new BorderLayout());
 
         bmp = new Bitmap(
@@ -190,6 +197,7 @@ public class PanelCiudad8 extends JPanel {
 
                     Thread.sleep(700);
                 }
+                SwingUtilities.invokeLater(() -> finalizarCiudad());
 
             } catch(Exception ex) {
 
@@ -228,6 +236,28 @@ public class PanelCiudad8 extends JPanel {
         return torres;
     }
 
+    /**
+     * pre: el algoritmo de Hanoi terminó.
+     * post: marca la ciudad como completada y desbloquea la siguiente.
+     * DE FORMA DE PRUEBA SE DESBLOQUEA LA 10 Y NO LA 9 AUN.
+     */
+    private void finalizarCiudad() {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "¡Felicitaciones!\n"
+                + "Completaste la Ciudad 8.\n"
+                + "La Ciudad 10 ha sido desbloqueada."
+        );
+
+        if(progreso != null) {
+
+            progreso.desbloquear(10);
+
+            progreso.guardar();
+        }
+    }
+    
     private void dibujarEstado(
             List<List<Integer>> torres
     ) {

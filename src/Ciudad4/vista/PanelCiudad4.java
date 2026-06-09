@@ -1,5 +1,4 @@
 package Ciudad4.vista;
-
 import java.awt.BorderLayout;
 
 import javax.swing.ImageIcon;
@@ -7,6 +6,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import Ciudad4.bitmap.Bitmap;
+import principal.ProgresoJuego;
 
 public class PanelCiudad4 extends JPanel {
 
@@ -14,39 +14,39 @@ public class PanelCiudad4 extends JPanel {
 
     private JLabel lblImagen;
 
-    public PanelCiudad4() {
+    private ProgresoJuego progreso;
 
-        setLayout(
-                new BorderLayout()
-        );
+    public PanelCiudad4(ProgresoJuego progreso) {
 
-        bmp =
-                new Bitmap(
-                        800,
-                        500
-                );
+        this.progreso = progreso;
 
-        lblImagen =
-                new JLabel(
-                        new ImageIcon(
-                                bmp.getImage()
-                        )
-                );
+        setLayout(new BorderLayout());
 
-        add(
-                lblImagen,
-                BorderLayout.CENTER
-        );
+        bmp = new Bitmap(800, 500);
+
+        lblImagen = new JLabel(new ImageIcon(bmp.getImage()));
+
+        add(lblImagen, BorderLayout.CENTER);
     }
 
-    public void mostrarDatos(
-            int[] datos
-    ) {
+    //  Constructor por compatibilidad
+    public PanelCiudad4() {
+        this(new ProgresoJuego());
+    }
 
-        bmp.dibujarBarras(
-                datos
-        );
+    /**
+     *  Se llama cuando el algoritmo genera datos
+     */
+    public void mostrarDatos(int[] datos) {
+
+        bmp.dibujarBarras(datos);
 
         lblImagen.repaint();
+
+        // DESBLOQUEO CIUDAD 5 (cuando ya se usa el algoritmo)
+        if (progreso != null) {
+            progreso.desbloquear(5);
+            progreso.guardar();
+        }
     }
 }

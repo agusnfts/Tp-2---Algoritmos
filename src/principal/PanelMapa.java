@@ -2,180 +2,221 @@ package principal;
 
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-
-import Ciudad1.ui.VentanaCiudad1;
-import Ciudad2.PanelCiudad2;
-import Ciudad3.PanelCiudad3;
-import Ciudad8.vista.VentanaCiudad8;
-import Ciudad4.vista.VentanaOrdenamientos;
-
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
+import Ciudad1.ui.VentanaCiudad1;
+import Ciudad10.ui.VentanaCiudad10;
+import Ciudad2.PanelCiudad2;
+import Ciudad3.PanelCiudad3;
+import Ciudad8.vista.PanelCiudad8;
+import Ciudad4.vista.PanelCiudad4;
+import Ciudad4.vista.VentanaOrdenamientos;
+import Ciudad5.vista.VentanaBusquedas;
+import Ciudad6.PanelCiudad6;
+import Ciudad7.PanelCiudad7;
+
 import java.awt.Graphics;
 import java.awt.Image;
-
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 
-import Ciudad5.vista
-        .VentanaBusquedas;
-
-/**
- * Panel que muestra el mapa principal del juego.
- * Permite acceder a las distintas ciudades mediante clics sobre regiones del mapa.
- */
 public class PanelMapa extends JPanel {
 
-    private static final long serialVersionUID = 1L;
-
-    /**
-     * Imagen utilizada como mapa de fondo.
-     */
     private Image mapa;
+    private JFrame frame;
+    private ProgresoJuego progreso;
 
-    /**
-     * pre: existe el archivo "imagenes/mapa.png".
-     * post: se crea el panel y se carga la imagen del mapa.
-     *       Se registran los eventos de mouse necesarios para detectar clics.
-     */
-    public PanelMapa() {
+    public PanelMapa(ProgresoJuego progreso) {
 
-        mapa = new ImageIcon(
-                "imagenes/mapa.png"
-        ).getImage();
+        this.progreso = progreso;
+
+        mapa = new ImageIcon("imagenes/mapa.png").getImage();
 
         eventos();
     }
 
-    /**
-     * pre: g != null.
-     * post: se dibuja el mapa ocupando todo el tamaño actual del panel.
-     */
     @Override
     protected void paintComponent(Graphics g) {
-
         super.paintComponent(g);
-
-        g.drawImage(
-                mapa,
-                0,
-                0,
-                getWidth(),
-                getHeight(),
-                this
-        );
+        g.drawImage(mapa, 0, 0, getWidth(), getHeight(), this);
     }
 
-    /**
-     * pre: ninguna.
-     * post: se registra un MouseListener que detecta los clics
-     *       realizados sobre el mapa.
-     */
     private void eventos() {
 
-        addMouseListener(
-            new MouseAdapter() {
+        addMouseListener(new MouseAdapter() {
 
-                /**
-                 * pre: e != null.
-                 * post: se obtienen las coordenadas del clic y se verifica
-                 *       si corresponden a alguna ciudad del mapa.
-                 */
-                @Override
-                public void mouseClicked(MouseEvent e) {
+            @Override
+            public void mouseClicked(MouseEvent e) {
 
-                    int x = e.getX();
-                    int y = e.getY();
+                int x = e.getX();
+                int y = e.getY();
 
-                    System.out.println(
-                            "X: " + x +
-                            " Y: " + y
-                    );
+                System.out.println("X: " + x + " Y: " + y);
 
-                    verificarCiudad(x, y);
-                }
+                verificarCiudad(x, y);
             }
-        );
+        });
     }
 
-    /**
-     * pre: x e y representan una posición válida dentro del panel.
-     * post:
-     * - si las coordenadas pertenecen a la Ciudad 2, se muestra PanelCiudad2.
-     * - si las coordenadas pertenecen a la Ciudad 3, se muestra PanelCiudad3.
-     * - si las coordenadas pertenecen a la Ciudad 4, se abre la ventana de ordenamientos.
-     * - si las coordenadas pertenecen a la Ciudad 5, se abre la ventana de búsquedas.
-     * - en cualquier otro caso no se realiza ninguna acción.
-     */
+    public void cambiarPanel(JPanel panel) {
+        if (frame == null) {
+            System.out.println("ERROR: frame no inicializado en PanelMapa");
+            return;
+        }
+
+        frame.setContentPane(panel);
+        frame.revalidate();
+        frame.repaint();
+    }
+
+    public void setFrame(JFrame frame) {
+        this.frame = frame;
+    }
+ 
+    
     private void verificarCiudad(int x, int y) {
 
-    	
-    	//CIUDAD 1
-    	if(x>=54 && x<= 252 && y>=393 && y<=597) {
-    		
-    		VentanaCiudad1 v= new VentanaCiudad1();
-    		v.setVisible(true);
-    		
-    	}
-    	
+        // CIUDAD 1
+        if (x >= 54 && x <= 252 && y >= 393 && y <= 597) {
+            System.out.println("[MAPA] Ciudad 1");
+            return;
+        }
+
+        // CIUDAD 2
+        if (x >= 270 && x <= 455 && y >= 415 && y <= 550) {
+
+            System.out.println("[MAPA] Ciudad 2");
+
+            if (!progreso.estaDesbloqueada(2)) return;
+
+            PanelCiudad2 ciudad2 = new PanelCiudad2(progreso);
+
+            ciudad2.setAccionSalir(() -> cambiarPanel(PanelMapa.this));
+            // o cambiarPanel(panelMapa) si tenés referencia
+
+            cambiarPanel(ciudad2);
+        }
+
+        // CIUDAD 3
+        if (x >= 160 && x <= 329
+                && y >= 255 && y <= 400) {
+
+            System.out.println("[MAPA] Ciudad 3");
+            System.out.println("[MAPA] Desbloqueada: "
+                    + progreso.estaDesbloqueada(3));
+
+            if (!progreso.estaDesbloqueada(3)) {
+                return;
+            }
+
+            cambiarPanel(new PanelCiudad3(progreso));
+        }
+        
         // CIUDAD 4
         if(x >= 461 && x <= 645
                 && y >= 445 && y <= 580) {
 
+            System.out.println("[MAPA] Ciudad 4");
+
+            if (!progreso.estaDesbloqueada(4)) {
+                return;
+            }
+
             VentanaOrdenamientos v =
-                    new VentanaOrdenamientos();
+            		new VentanaOrdenamientos(progreso);
 
             v.setVisible(true);
         }
-
+        
         // CIUDAD 5
+  
         if(x >= 375 && x <=621
                 && y >= 123 && y <= 301) {
 
+        	System.out.println("[MAPA] Ciudad 5");
+
+            if (!progreso.estaDesbloqueada(5)) {
+                return;
+            }
+        	
             VentanaBusquedas v =
-                    new VentanaBusquedas();
+                    new VentanaBusquedas(progreso);
 
             v.setVisible(true);
         }
+        
+        // CIUDAD 6
+        
+        if(x>= 523 && x<=700 && y>=298 && y<=415) {
+        	
+            System.out.println("[MAPA] Ciudad 6");
+            System.out.println("[MAPA] Desbloqueada: "
+                    + progreso.estaDesbloqueada(6));
 
-        // CIUDAD 2
-        if(x >= 270 && x <= 455
-                && y >= 415 && y <= 550) {
+            if (!progreso.estaDesbloqueada(6)) {
+                return;
+            }
 
-            JFrame frame =
-                (JFrame) SwingUtilities.getWindowAncestor(this);
-
-            frame.setContentPane(new PanelCiudad2());
-
-            frame.revalidate();
-            frame.repaint();
+            cambiarPanel(new PanelCiudad6(progreso));
+        	
+        	
         }
+        
+        // CIUDAD 7
+        
+        if(x>= 719 && x<= 872 && y>=262 && y<= 408) {
+        	
+        	System.out.println("[MAPA] Ciudad 7");
+            System.out.println("[MAPA] Desbloqueada: "
+                    + progreso.estaDesbloqueada(7));
 
-        // CIUDAD 3
-        if(x >= 160 && x <= 329
-                && y >= 255 && y <= 400) {
+            if (!progreso.estaDesbloqueada(7)) {
+                return;
+            }
 
-            JFrame frame =
-                (JFrame) SwingUtilities.getWindowAncestor(this);
-
-            frame.setContentPane(
-                new PanelCiudad3()
-            );
-
-            frame.revalidate();
-            frame.repaint();
+            cambiarPanel(new PanelCiudad7(progreso));
+        	
+        	
         }
         
         // CIUDAD 8
         
-        if(x>= 694 && x<= 909 && y>=106 && y<=253) {
+        if(x>= 698 && x<=911 && y>= 109 && y<= 244) {
         	
-        	 VentanaCiudad8 v =
-                     new VentanaCiudad8();
+        	System.out.println("[MAPA] Ciudad 8");
+            System.out.println("[MAPA] Desbloqueada: "
+                    + progreso.estaDesbloqueada(8));
 
-             v.setVisible(true);
+            if (!progreso.estaDesbloqueada(8)) {
+                return;
+            }
+
+            cambiarPanel(new PanelCiudad8(progreso));
+        	
         	
         }
+        
+        // CIUDAD 10
+        
+        if(x>= 849 && x<= 966 && y<=94 && y>=16) {
+     	   
+        	System.out.println("[MAPA] Ciudad 10");
+        	System.out.println("[MAPA] Desbloqueada: "
+        	            + progreso.estaDesbloqueada(10));
+
+        	if (!progreso.estaDesbloqueada(10)) {
+        	     return;
+        	}
+
+        	VentanaCiudad10 ventana = new VentanaCiudad10(progreso);
+
+        	ventana.setVisible(true);
+     	   
+        }
+        
     }
 }

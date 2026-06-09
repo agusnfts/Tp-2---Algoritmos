@@ -1,24 +1,22 @@
 package principal;
 
-
 import javax.swing.JFrame;
 
 public class VentanaPrincipal extends JFrame {
 
-    private static final long serialVersionUID = 1L;
+    public VentanaPrincipal(ProgresoJuego progreso) {
 
-    public VentanaPrincipal() {
-
-        setTitle("Mapa");
-
+        setTitle("Al-Quest");
         setSize(1000, 700);
-
-        setDefaultCloseOperation(
-                JFrame.EXIT_ON_CLOSE
-        );
-
         setLocationRelativeTo(null);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        add(new PanelMapa());
+        PanelMapa mapa = new PanelMapa(progreso);
+
+        mapa.setFrame(this);
+
+        setContentPane(mapa);
+
+        setVisible(true);
     }
 }

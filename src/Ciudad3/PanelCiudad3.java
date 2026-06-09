@@ -1,103 +1,93 @@
 package Ciudad3;
-
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.Insets;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.Timer;
+import javax.swing.SwingUtilities;
 
+import principal.PanelMapa;
+import principal.ProgresoJuego;
+
+/**
+ * Panel de transición para la Ciudad 3.
+ * Sirve como menú intermedio para lanzar el minijuego del laberinto hacker
+ * y permite al usuario regresar al mapa principal.
+ */
 public class PanelCiudad3 extends JPanel {
 
-    private List<Bitmap> bitmaps;
-    private JPanel menuPanel;
-    private JLabel lblImagen;
+    private static final long serialVersionUID = 1L;
 
-    public PanelCiudad3() {
+    private ProgresoJuego progreso;
 
-        setLayout(new BorderLayout());
+    public PanelCiudad3(ProgresoJuego progreso) {
 
-        Bitmap bmp = new Bitmap(1300, 900);
+        this.progreso = progreso;
 
-        SalidaLaberinto.dibujarMenuPrincipal(bmp);
+        setBackground(new Color(15, 30, 20));
+        setLayout(new GridBagLayout());
 
-        bitmaps = new ArrayList<>();
-        bitmaps.add(bmp);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(20, 20, 20, 20);
+        gbc.gridx = 0;
 
-        JPanel panelImagenes =
-                new JPanel(new GridBagLayout());
+        // Título del Panel
+        gbc.gridy = 0;
+        JLabel lblTitulo = new JLabel("--- CIUDAD 3: TERMINAL SECRETA ---");
+        lblTitulo.setFont(new Font("Courier New", Font.BOLD, 30));
+        lblTitulo.setForeground(Color.GREEN);
+        add(lblTitulo, gbc);
 
-        lblImagen =new JLabel(new ImageIcon(bmp.getImage()));
+        // Botón para arrancar el laberinto
+        gbc.gridy = 1;
+        JButton btnArrancar = new JButton("INICIAR PROTOCOLO: LABERINTO HACKER");
+        btnArrancar.setFont(new Font("Courier New", Font.BOLD, 22));
+        btnArrancar.setBackground(Color.BLACK);
+        btnArrancar.setForeground(Color.CYAN);
+        btnArrancar.setFocusPainted(false);
 
-        panelImagenes.add(lblImagen);
+        btnArrancar.addActionListener(e -> {
 
-        JScrollPane scroll = new JScrollPane(panelImagenes);
+            // Pasamos la partida actual al minijuego
+            SalidaLaberinto.setProgreso(progreso);
 
-        add(scroll, BorderLayout.CENTER);
-
-        menuPanel = new JPanel(new FlowLayout());
-
-        JButton btnHackeo = new JButton("Empezar Hackeo");
-
-        btnHackeo.addActionListener(e -> {
-
-            new Thread(() -> {
-
-                try {
-
-                    int[][] laberinto = {
-                        {1, 0, 0, 0, 1, 0},
-                        {1, 1, 0, 1, 1, 1},
-                        {1, 0, 1, 1, 0, 1},
-                        {1, 1, 1, 0, 0, 1}
-                    };
-
-                    SalidaLaberinto.FILAS = laberinto.length;
-
-                    SalidaLaberinto.COLUMNAS = laberinto[0].length;
-
-                    int[][] solucion =new int[SalidaLaberinto.FILAS][SalidaLaberinto.COLUMNAS];
-
-                    System.out.println("Preparando tablero...");
-
-                    SalidaLaberinto.prepararTablero( bmp,laberinto);
-
-                    System.out.println("Resolviendo...");
-
-                    boolean exito =SalidaLaberinto.resolverLaberinto(laberinto, 0, 0,0,0,solucion,bmp);
-
-                    SalidaLaberinto.dibujarCartelFinal( bmp,exito);
-
-                    System.out.println("Finalizado");
-
-                } catch (Exception ex) {
-
-                    ex.printStackTrace();
-
-                }
-
-            }).start();
-
+            // Arrancamos el laberinto
+            SalidaLaberinto.main(new String[0]);
         });
 
-        JButton btnSalir =
-                new JButton("Salir");
+        add(btnArrancar, gbc);
 
-        btnSalir.addActionListener(e -> System.exit(0));
+        // Botón para volver al mapa
+        gbc.gridy = 2;
+        JButton btnVolver = new JButton("DESCONECTAR Y VOLVER AL MAPA");
+        btnVolver.setFont(new Font("Courier New", Font.BOLD, 22));
+        btnVolver.setBackground(Color.BLACK);
+        btnVolver.setForeground(Color.RED);
+        btnVolver.setFocusPainted(false);
 
-        menuPanel.add(btnHackeo);
-        menuPanel.add(btnSalir);
+        btnVolver.addActionListener(e -> {
 
-        add(menuPanel, BorderLayout.SOUTH);
+      
 
-        Timer timer = new Timer( 100,  e -> lblImagen.setIcon(new ImageIcon( bmp.getImage()) ) );
+            JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
 
-        timer.start();
+            if (frame != null) {
+                frame.setContentPane(new PanelMapa(progreso));
+                frame.revalidate();
+                frame.repaint();
+            }
+        });
+
+        add(btnVolver, gbc);
+    }
+
+    // Constructor viejo por compatibilidad
+    public PanelCiudad3() {
+        this(new ProgresoJuego());
     }
 }
