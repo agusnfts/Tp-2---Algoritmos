@@ -3,115 +3,123 @@ package Ciudad2;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
- * Resuelve el problema de las N reinas usando backtracking recursivo.
- * El tablero es N x N donde N es la cantidad de reinas elegida.
- * La primera reina tiene posicion fija. El algoritmo coloca las restantes
- * en cualquier fila libre del tablero, tanto arriba como abajo de la inicial.
- *
- * Atributos:
- * - tablero: el tablero N x N sobre el que trabajamos
- * - pasos: lista de snapshots del tablero en cada momento, para mostrar el paso a paso en BMP
- * - solucionEncontrada: indica si se encontro una solucion
- */
+import utiles.ValidacionesUtiles;
 public class BacktrackingReinas {
 
-    private TableroReinas tablero;
-    private List<int[]> pasos;
-    private boolean solucionEncontrada;
+	private TableroReinas tablero;
+	private List<int[]> pasos;
+	private boolean solucionEncontrada;
 
-    // Inicializamos el solver con el tablero recibido
-    public BacktrackingReinas(TableroReinas tablero) {
-        this.tablero = tablero;
-        this.pasos = new ArrayList<>();
-        this.solucionEncontrada = false;
-    }
+	/**
+	 * pre: tablero != null.
+	 * post: inicializa el solver con el tablero recibido y sin pasos registrados.
+	 */
+	public BacktrackingReinas(TableroReinas tablero) {
+		ValidacionesUtiles.esDistintoDeNull(tablero, "tablero");
+		this.tablero = tablero;
+		this.pasos = new ArrayList<>();
+		this.solucionEncontrada = false;
+	}
 
-    // Arrancamos la resolucion. La posicion inicial ya esta colocada en el tablero.
-    // Construimos la lista de filas libres y colocamos las reinas restantes en ellas.
-    public boolean resolver(int filaInicial) {
-        solucionEncontrada = false;
-        pasos.clear();
+	/**
+	 * pre: 0 <= filaInicial < cantidad de reinas. La reina inicial ya está colocada
+	 *      en el tablero.
+	 * post: coloca las reinas restantes en las filas libres usando backtracking,
+	 *       guardando un paso por cada colocación y cada retroceso. Devuelve true si
+	 *       encontró una solución.
+	 */
+	public boolean resolver(int filaInicial) {
+		ValidacionesUtiles.validarRangoNumerico(filaInicial, 0, tablero.getCantidadReinas() - 1, "fila inicial");
+		solucionEncontrada = false;
+		pasos.clear();
 
-        // Guardamos el estado inicial como primer paso
-        guardarPaso();
+		guardarPaso();
 
-        int n = tablero.getCantidadReinas();
+		int n = tablero.getCantidadReinas();
 
-        // Construimos la lista de filas libres (todas menos la inicial)
-        List<Integer> filasLibres = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            if (i != filaInicial) {
-                filasLibres.add(i);
-            }
-        }
+		List<Integer> filasLibres = new ArrayList<>();
+		for (int i = 0; i < n; i++) {
+			if (i != filaInicial) {
+				filasLibres.add(i);
+			}
+		}
 
-        // Necesitamos colocar N - 1 reinas mas (la inicial ya esta)
-        solucionEncontrada = resolverDesde(filasLibres, 0, 1, n);
+		solucionEncontrada = resolverDesde(filasLibres, 0, 1, n);
 
-        return solucionEncontrada;
-    }
+		return solucionEncontrada;
+	}
 
-    // Aqui realizamos la recursion del backtracking
-    // indiceFilas indica en que posicion de filasLibres estamos
-    // reinasColocadas lleva la cuenta de cuantas reinas llevamos puestas
-    private boolean resolverDesde(List<Integer> filasLibres, int indiceFilas, int reinasColocadas, int totalReinas) {
-        // Caso base: ya colocamos todas las reinas
-        if (reinasColocadas == totalReinas) {
-            return true;
-        }
+	/**
+	 * pre: filasLibres != null.
+	 * post: intenta colocar las reinas restantes a partir de la fila libre indicada.
+	 *       Por cada columna segura coloca la reina y sigue en forma recursiva; si no
+	 *       llega a una solución, retrocede. Devuelve true si logra colocarlas todas.
+	 */
+	private boolean resolverDesde(List<Integer> filasLibres, int indiceFilas, int reinasColocadas, int totalReinas) {
+		if (reinasColocadas == totalReinas) {
+			return true;
+		}
 
-        // Si nos quedamos sin filas libres sin completar, no hay solucion
-        if (indiceFilas >= filasLibres.size()) {
-            return false;
-        }
+		if (indiceFilas >= filasLibres.size()) {
+			return false;
+		}
 
-        int fila = filasLibres.get(indiceFilas);
+		int fila = filasLibres.get(indiceFilas);
 
-        // Aqui iteramos las columnas de esta fila buscando una posicion segura
-        for (int columna = 0; columna < totalReinas; columna++) {
-            if (tablero.esPosicionSegura(fila, columna)) {
-                // Colocamos la reina y guardamos el paso
-                tablero.colocarReina(fila, columna);
-                guardarPaso();
+		for (int columna = 0; columna < totalReinas; columna++) {
+			if (tablero.esPosicionSegura(fila, columna)) {
+				tablero.colocarReina(fila, columna);
+				guardarPaso();
 
-                // Intentamos colocar la siguiente reina en la siguiente fila libre
-                if (resolverDesde(filasLibres, indiceFilas + 1, reinasColocadas + 1, totalReinas)) {
-                    return true;
-                }
+				if (resolverDesde(filasLibres, indiceFilas + 1, reinasColocadas + 1, totalReinas)) {
+					return true;
+				}
 
-                // Si no funciono, quitamos la reina y probamos la siguiente columna
-                tablero.quitarReina(fila);
-                guardarPaso();
-            }
-        }
+				tablero.quitarReina(fila);
+				guardarPaso();
+			}
+		}
 
-        // Ninguna columna funciono en esta fila, saltamos a la siguiente
-        return resolverDesde(filasLibres, indiceFilas + 1, reinasColocadas, totalReinas);
-    }
+		return resolverDesde(filasLibres, indiceFilas + 1, reinasColocadas, totalReinas);
+	}
 
-    // Guardamos una copia del estado actual del tablero en la lista de pasos
-    private void guardarPaso() {
-        pasos.add(tablero.getPosiciones());
-    }
+	/**
+	 * pre: -
+	 * post: agrega a la lista de pasos una copia del estado actual del tablero.
+	 */
+	private void guardarPaso() {
+		pasos.add(tablero.getPosiciones());
+	}
 
-    // Devuelve la lista de pasos para mostrar el paso a paso en BMP
-    public List<int[]> getPasos() {
-        return pasos;
-    }
+	/**
+	 * pre: -
+	 * post: devuelve la lista de pasos registrados durante la resolución.
+	 */
+	public List<int[]> getPasos() {
+		return pasos;
+	}
 
-    // Devuelve true si la ultima llamada a resolver() encontro solucion
-    public boolean isSolucionEncontrada() {
-        return solucionEncontrada;
-    }
+	/**
+	 * pre: -
+	 * post: devuelve true si la última llamada a resolver encontró solución.
+	 */
+	public boolean isSolucionEncontrada() {
+		return solucionEncontrada;
+	}
 
-    // Devuelve el tablero con la solucion final
-    public TableroReinas getTablero() {
-        return tablero;
-    }
+	/**
+	 * pre: -
+	 * post: devuelve el tablero con la solución final.
+	 */
+	public TableroReinas getTablero() {
+		return tablero;
+	}
 
-    // Devuelve cuantos pasos se registraron durante la resolucion
-    public int getCantidadPasos() {
-        return pasos.size();
-    }
+	/**
+	 * pre: -
+	 * post: devuelve cuántos pasos se registraron durante la resolución.
+	 */
+	public int getCantidadPasos() {
+		return pasos.size();
+	}
 }
