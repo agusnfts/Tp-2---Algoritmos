@@ -2,90 +2,47 @@ package tablero;
 
 import elementos.Elemento;
 
-/**
- * Representa un cofre del tablero.
- */
+
+//Representa un cofre del tablero.
 public class Cofre {
 
     // ATRIBUTOS
-
     private Elemento contenido;
-
     private boolean abierto;
 
-    /**
-     * PRE:
-     * contenido != null
-     *
-     * POST:
-     * crea un cofre con contenido.
-     */
-    public Cofre(
-            Elemento contenido
-    ) {
-
+    //PRE:  contenido puede ser null
+    //POST: crea un cofre con el contenido indicado
+    public Cofre(Elemento contenido) {
         this.contenido = contenido;
-
         this.abierto = false;
     }
 
-    // ==================
-    // GETTERS
-    // ==================
-
     public Elemento getContenido() {
-
-        return this.contenido;
+        return contenido;
     }
 
-    // ==================
-    // CONSULTAS
-    // ==================
-
     public boolean estaAbierto() {
-
-        return this.abierto;
+        return abierto;
     }
 
     public boolean tieneContenido() {
-
-        return this.contenido != null;
+        return contenido != null;
     }
 
-    // ==================
-    // COMPORTAMIENTO
-    // ==================
-
     public void abrir() {
-
         this.abierto = true;
     }
 
     public void vaciar() {
-
         this.contenido = null;
     }
 
-    // ==================
-    // TO STRING
-    // ==================
-
     @Override
     public String toString() {
-
-        String texto;
-
-        if (this.contenido != null) {
-
-            texto =
-                    "Cofre con "
-                    + this.contenido.getNombre();
-
+        if (contenido != null) {
+            return "Cofre con " + contenido.getNombre();
         } else {
-
-            texto = "Cofre vacio";
+            return "Cofre vacio";
         }
-
-        return texto;
     }
 }

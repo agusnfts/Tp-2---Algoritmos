@@ -3,115 +3,67 @@ package tablero;
 import Personaje.Jugador;
 import partida.Partida;
 
-/**
- * Representa una posición del mapa.
- */
+//Representa una posición del mapa
+
 public class Casillero {
 
-    // ATRIBUTOS
-
     private TipoCasillero tipo;
-
     private Cofre cofre;
 
-    /**
-     * POST:
-     * crea un casillero vacío.
-     */
+    //POST: crea un casillero vacio
+
     public Casillero() {
-
         this.tipo = TipoCasillero.VACIO;
-
         this.cofre = null;
     }
 
-    // ==================
-    // GETTERS
-    // ==================
-
     public TipoCasillero getTipo() {
-
-        return this.tipo;
+        return tipo;
     }
 
     public Cofre getCofre() {
-
-        return this.cofre;
+        return cofre;
     }
 
-    // ==================
-    // SETTERS
-    // ==================
-
-    public void setTipo(
-            TipoCasillero tipo
-    ) {
-
+    public void setTipo(TipoCasillero tipo) {
         this.tipo = tipo;
     }
 
-    public void setCofre(
-            Cofre cofre
-    ) {
-
+    public void setCofre(Cofre cofre) {
         this.cofre = cofre;
     }
 
 
-    // ==================
-    // ESTADO
-    // ==================
-
     public boolean tieneCofre() {
-        return this.cofre != null;
+        return cofre != null;
     }
 
-    // ==================
-    //INTERACCIÓN
-    // ==================
-
-    /**
-     * POST:
-     * ejecuta la acción del casillero sobre el jugador.
-     */
-    public void interactuar(Jugador jugador, Partida partida) {
-
-        if (tipo == TipoCasillero.COFRE && cofre != null) {
-            partida.abrirCofre();
-        }
-
-        else if (tipo == TipoCasillero.ESCALERA_SUBE) {
-            partida.subirPiso();
-        }
-
-        else if (tipo == TipoCasillero.ESCALERA_BAJA) {
-            partida.bajarPiso();
-        }
-     
-        // VACIO o PARED -> no hace nada
-    }   
-    
-    // ==================
-    // CONSULTAS
-    // ==================
-
     public boolean esPared() {
-
-        return this.tipo == TipoCasillero.PARED;
+        return tipo == TipoCasillero.PARED;
     }
 
     public boolean esEscaleraSube() {
-
-        return this.tipo == TipoCasillero.ESCALERA_SUBE;
+        return tipo == TipoCasillero.ESCALERA_SUBE;
     }
 
     public boolean esEscaleraBaja() {
-
-        return this.tipo == TipoCasillero.ESCALERA_BAJA;
+        return tipo == TipoCasillero.ESCALERA_BAJA;
     }
 
     public boolean estaVacio() {
+        return tipo == TipoCasillero.VACIO;
+    }
 
-        return this.tipo == TipoCasillero.VACIO;
+
+    //POST: ejecuta la accion correspondiente del casillero
+
+    public void interactuar(Jugador jugador, Partida partida) {
+        if (tipo == TipoCasillero.COFRE && cofre != null) {
+            partida.abrirCofre();
+        } else if (tipo == TipoCasillero.ESCALERA_SUBE) {
+            partida.subirPiso();
+        } else if (tipo == TipoCasillero.ESCALERA_BAJA) {
+            partida.bajarPiso();
+        }
     }
 }
