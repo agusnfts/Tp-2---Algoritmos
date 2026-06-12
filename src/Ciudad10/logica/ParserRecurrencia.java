@@ -15,7 +15,7 @@ public class ParserRecurrencia {
         Recurrencia recurrencia = null;
         texto = texto.replace(" ", "");
         
-        // Patrón regex que captura a, b y k (k es opcional)
+        // Patrón regex que captura a, b y k (k siendo opcional)
         Pattern patron = Pattern.compile("T\\(n\\)=(\\d+)T\\(n/(\\d+)\\)\\+n(?:\\^(\\d+))?");
         Matcher matcher = patron.matcher(texto);
 

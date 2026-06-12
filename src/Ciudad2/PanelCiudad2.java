@@ -1,5 +1,4 @@
 package Ciudad2;
-
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -10,25 +9,34 @@ import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.JSpinner;
-import javax.swing.JTextArea;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import principal.ProgresoJuego;
 
+/*
+ * Panel principal de la Ciudad 2 - Problema de las N Reinas.
+ * El tablero es siempre 8x8. El jugador elige cuantas reinas colocar (1-8)
+ * y la posicion inicial de la primera reina.
+ *
+ * Atributos:
+ * - CARPETA_PASOS: carpeta donde se guardan las imagenes BMP generadas
+ * - TAM_TABLERO: tamaño fijo en pixeles del tablero en pantalla (siempre 8x8)
+ * - labelImagen: label donde se muestra la imagen BMP del paso actual
+ * - labelInfo: label con texto informativo del estado actual
+ * - sliderPasos: slider para navegar entre los pasos del backtracking
+ * - btnAnterior: boton para ir al paso anterior
+ * - btnSiguiente: boton para ir al paso siguiente
+ * - btnResolver: boton para lanzar la resolucion
+ * - spinnerReinas: selector de cantidad de reinas a colocar (1-8)
+ * - spinnerFila: selector de fila de la posicion inicial (1-8)
+ * - spinnerColumna: selector de columna de la posicion inicial (1-8)
+ * - pasoActual: indice del paso que se esta mostrando
+ * - totalPasos: cantidad total de pasos generados
+ */
 public class PanelCiudad2 extends JPanel {
 
 	private static final String CARPETA_PASOS = "resources/ciudad2/pasos";
@@ -50,31 +58,23 @@ public class PanelCiudad2 extends JPanel {
 	private int totalPasos;
 	private boolean ganada;
 	private Runnable accionSalir;
+	
 	private ProgresoJuego progreso;
 
 	/**
-	 * pre: progreso != null.
-	 * post: inicializa el panel con dos pantallas (presentación y juego), muestra
-	 *       primero la de presentación y conserva la referencia al progreso para
-	 *       desbloquear la siguiente ciudad al ganar.
+	 * pre: -
+	 * post: inicializa el panel con dos pantallas (presentación y juego) y muestra
+	 *       primero la de presentación.
 	 */
 	public PanelCiudad2(ProgresoJuego progreso) {
-		this.progreso = progreso;
+		
+		this.progreso=progreso;
 		this.pasoActual = 0;
 		this.totalPasos = 0;
 		this.ganada = false;
 		setLayout(new CardLayout());
 		add(construirPanelPresentacion(), "presentacion");
 		add(construirPanelJuego(), "juego");
-	}
-
-	/**
-	 * pre: -
-	 * post: crea la Ciudad 2 con un progreso nuevo, para probarla de forma
-	 *       independiente del juego.
-	 */
-	public PanelCiudad2() {
-		this(new ProgresoJuego());
 	}
 
 	/**
@@ -383,20 +383,25 @@ public class PanelCiudad2 extends JPanel {
 	 */
 	private void verificarVictoria(boolean encontro) {
 		if (!ganada && encontro && totalPasos < MAX_MOVIMIENTOS) {
-			ganada = true;
 
-			if (progreso != null && !progreso.estaDesbloqueada(3)) {
+			ganada = true;
+			btnSalirCiudades.setVisible(true);
+
+			
+			if (progreso != null) {
 				progreso.desbloquear(3);
 				progreso.guardar();
 			}
 
-			btnSalirCiudades.setVisible(true);
 			revalidate();
 			repaint();
+
 			JOptionPane.showMessageDialog(this,
 					"¡Ciudad 2 superada! Resolviste el tablero en " + totalPasos
-							+ " pasos (menos de " + MAX_MOVIMIENTOS + ").",
-					"Victoria", JOptionPane.INFORMATION_MESSAGE);
+							+ " pasos (menos de " + MAX_MOVIMIENTOS + ").\n"
+							+ "Ciudad 3 desbloqueada.",
+					"Victoria",
+					JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 
@@ -452,23 +457,5 @@ public class PanelCiudad2 extends JPanel {
 		mostrarPaso(pasoActual);
 	}
 
-	/**
-	 * pre: -
-	 * post: abre la Ciudad 2 en una ventana propia para probarla de forma standalone.
-	 *       El botón de salir, por ahora, cierra el programa.
-	 */
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(() -> {
-			JFrame frame = new JFrame("Al-Quest - Ciudad 2");
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			frame.setSize(650, 800);
-			frame.setMinimumSize(new Dimension(650, 800));
-			frame.setResizable(false);
-			frame.setLocationRelativeTo(null);
-			PanelCiudad2 panel = new PanelCiudad2();
-			panel.setAccionSalir(() -> System.exit(0));
-			frame.add(panel);
-			frame.setVisible(true);
-		});
-	}
+
 }

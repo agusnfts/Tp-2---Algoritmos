@@ -41,6 +41,7 @@ public class SalidaLaberinto {
     
     static boolean hackeoEnProgreso = false;
     static boolean abortarHackeo = false;
+    static boolean ciudad3Completada = false;
     
     private static ProgresoJuego progreso;
 
@@ -48,8 +49,13 @@ public class SalidaLaberinto {
      * Recibe el progreso actual del juego para poder
      * desbloquear la siguiente ciudad al completar el laberinto.
      */
-    public static void setProgreso(ProgresoJuego progresoActual) {
-        progreso = progresoActual;
+    public static void setProgreso(ProgresoJuego p) {
+        progreso = p;
+
+        // silencia la victoria para que no le vuelva a salir el cartel
+        if (progreso != null && progreso.estaDesbloqueada(8)) {
+            ciudad3Completada = true;
+        }
     }
     
     public static void main(String[] args) {
@@ -106,9 +112,13 @@ public class SalidaLaberinto {
 
                         dibujarCartelFinal(bmp, true);
 
-                        if (progreso != null) {
+
+
+                        if (progreso != null && !ciudad3Completada) {
                             progreso.desbloquear(4);
                             progreso.guardar();
+
+                            ciudad3Completada=true;
 
                             System.out.println("[SAVE] Ciudad 4 desbloqueada");
 

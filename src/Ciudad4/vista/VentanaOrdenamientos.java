@@ -100,6 +100,9 @@ public class VentanaOrdenamientos extends JFrame {
                 panel,
                 BorderLayout.CENTER
         );
+        
+        panel.mostrarInstrucciones();
+        
 
         btnOrdenar.addActionListener(
                 e -> ordenar()
@@ -120,77 +123,80 @@ public class VentanaOrdenamientos extends JFrame {
     
     private void ordenar() {
 
-        ValidacionesUtiles.validarLongitudDeTexto(
-                txtNumeros.getText(),
-                1,
-                null,
-                "numeros"
-        );
-
-        String[] partes =
-                txtNumeros
-                        .getText()
-                        .split(",");
-
-        ValidacionesUtiles.validarMayorACero(
-                partes.length,
-                "cantidad de numeros"
-        );
-
-        int[] datos =
-                new int[partes.length];
-
-        for (int i = 0;
-             i < partes.length;
-             i++) {
+        try {
 
             ValidacionesUtiles.validarLongitudDeTexto(
-                    partes[i].trim(),
+                    txtNumeros.getText(),
                     1,
                     null,
-                    "numero"
+                    "numeros"
             );
 
-            datos[i] =
-                    Integer.parseInt(
-                            partes[i]
-                                    .trim()
-                    );
+            String[] partes =
+                    txtNumeros
+                            .getText()
+                            .split(",");
+
+            ValidacionesUtiles.validarMayorACero(
+                    partes.length,
+                    "cantidad de numeros"
+            );
+
+            int[] datos =
+                    new int[partes.length];
+
+            for (int i = 0; i < partes.length; i++) {
+
+                ValidacionesUtiles.validarLongitudDeTexto(
+                        partes[i].trim(),
+                        1,
+                        null,
+                        "numero"
+                );
+
+                datos[i] =
+                        Integer.parseInt(
+                                partes[i].trim()
+                        );
+            }
+
+            Queue<int[]> pasos;
+
+            String algoritmo =
+                    (String) combo.getSelectedItem();
+
+            ValidacionesUtiles.esDistintoDeNull(
+                    algoritmo,
+                    "algoritmo"
+            );
+
+            if (algoritmo.equals("BubbleSort")) {
+
+                usoBubbleSort = true;
+
+                pasos =
+                        BubbleSort.ordenar(datos);
+
+            } else {
+
+                usoQuickSort = true;
+
+                pasos =
+                        QuickSort.ordenar(datos);
+            }
+
+            animar(pasos);
+
+        } catch (NumberFormatException e) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Debes ingresar únicamente números enteros separados por comas.\n"
+                    + "Ejemplo: 1,5,8,7",
+                    "Vector inválido",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
-
-        Queue<int[]> pasos;
-
-        String algoritmo =
-                (String) combo.getSelectedItem();
-
-        ValidacionesUtiles.esDistintoDeNull(
-                algoritmo,
-                "algoritmo"
-        );
-
-        if (algoritmo.equals(
-                "BubbleSort")) {
-
-            usoBubbleSort = true;
-
-            pasos =
-                    BubbleSort.ordenar(
-                            datos
-                    );
-
-        } else {
-
-            usoQuickSort = true;
-
-            pasos =
-                    QuickSort.ordenar(
-                            datos
-                    );
-        }
-
-        verificarVictoria();
-
-        animar(pasos);
     }
 
     /**
@@ -210,26 +216,11 @@ public class VentanaOrdenamientos extends JFrame {
             );
         }
 
-        if (usoBubbleSort && usoQuickSort) {
+        if (usoBubbleSort && usoQuickSort
+                && !progreso.estaDesbloqueada(5)) {
+        	
+        	hacerPreguntas();
 
-            if (progreso != null
-                    && !progreso.estaDesbloqueada(5)) {
-
-                System.out.println(
-                        "[CIUDAD 4] COMPLETADA"
-                );
-
-                progreso.desbloquear(5);
-
-                progreso.guardar();
-
-                JOptionPane.showMessageDialog(
-                        this,
-                        "¡Felicitaciones!\n"
-                                + "Utilizaste BubbleSort y QuickSort.\n"
-                                + "La Ciudad 5 ha sido desbloqueada."
-                );
-            }
         }
     }
     
@@ -242,11 +233,6 @@ public class VentanaOrdenamientos extends JFrame {
     private void animar(
             Queue<int[]> pasos
     ) {
-
-        ValidacionesUtiles.esDistintoDeNull(
-                pasos,
-                "pasos"
-        );
 
         Timer timer =
                 new Timer(
@@ -268,10 +254,96 @@ public class VentanaOrdenamientos extends JFrame {
             } else {
 
                 timer.stop();
+
+                verificarVictoria();
             }
         });
 
         timer.start();
     }
+    
+    /**
+     * PRE:
+     * - progreso != null.
+     * - El usuario utilizó BubbleSort y QuickSort.
+     * - La Ciudad 5 aún no se encuentra desbloqueada.
+     *
+     * POST:
+     * - Se muestran dos preguntas de opción múltiple sobre
+     *   BubbleSort y QuickSort.
+     * - Si ambas respuestas son correctas:
+     *      * se desbloquea la Ciudad 5,
+     *      * se guarda el progreso,
+     *      * se muestra un mensaje de felicitación.
+     * - Si alguna respuesta es incorrecta:
+     *      * la Ciudad 5 permanece bloqueada,
+     *      * se informa al usuario que debe volver a intentarlo.
+     */
+    
+    private void hacerPreguntas() {
+
+        String[] opciones1 = {
+                "O(n)",
+                "O(n²)",
+                "O(log n)"
+        };
+
+        int respuesta1 =
+                JOptionPane.showOptionDialog(
+                        this,
+                        "¿Cuál es la complejidad promedio de BubbleSort?",
+                        "Pregunta 1",
+                        JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        opciones1,
+                        opciones1[0]
+                );
+
+        String[] opciones2 = {
+                "Siempre usa el primer elemento",
+                "Divide el arreglo usando un pivote",
+                "Compara elementos adyacentes"
+        };
+
+        int respuesta2 =
+                JOptionPane.showOptionDialog(
+                        this,
+                        "¿Cómo funciona QuickSort?",
+                        "Pregunta 2",
+                        JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        opciones2,
+                        opciones2[0]
+                );
+
+        boolean correcta1 = (respuesta1 == 1);
+        boolean correcta2 = (respuesta2 == 1);
+
+        if (correcta1 && correcta2) {
+
+            progreso.desbloquear(5);
+            progreso.guardar();
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "¡Felicitaciones!\n"
+                    + "Respondiste correctamente.\n"
+                    + "La Ciudad 5 ha sido desbloqueada."
+            );
+
+        } else {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Alguna respuesta fue incorrecta.\n"
+                    + "Vuelve a intentarlo.",
+                    "Error",
+                    JOptionPane.WARNING_MESSAGE
+            );
+        }
+    }
+    
 }
 

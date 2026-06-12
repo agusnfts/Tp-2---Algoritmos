@@ -1,5 +1,16 @@
 package Ciudad2;
 
+/*
+ * Representa el tablero del problema N reinas.
+ * El tablero es N x N donde N es la cantidad de reinas.
+ * Usamos un vector donde el indice es la fila y el valor es la columna de la reina.
+ * Si el valor es -1, no hay reina en esa fila.
+ *
+ * Atributos:
+ * - VACIO: constante que indica que no hay reina en una celda
+ * - cantidadReinas: cuantas reinas hay que colocar (y tamaño del tablero N x N)
+ * - posiciones: vector donde posiciones[fila] = columna de la reina
+ */
 import utiles.ValidacionesUtiles;
 
 public class TableroReinas {

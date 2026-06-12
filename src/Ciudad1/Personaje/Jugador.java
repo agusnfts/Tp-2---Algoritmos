@@ -21,7 +21,8 @@ public class Jugador {
     private Partida partida;
 
 
-    //POST: crea un jugador en la posicion inicial con vision inicial y mochila vacia
+     //POST: crea un jugador en la posicion inicial con vision inicial y mochila vacia
+
     public Jugador() {
         this.posX = POSICION_INICIAL;
         this.posY = POSICION_INICIAL;
@@ -39,26 +40,20 @@ public class Jugador {
         this.posZ += dz;
     }
 
-    //POST: aumenta permanentemente el rango de visión del jugador
     public void mejorarVision() {
         this.visionMaxima = 3;
         this.visionActual = 3;
     }
-    
-    //PRE: turnos > 0
-    //POST: reduce temporalmente la visión del jugador
+
     public void aplicarInterferencia(int turnos) {
         this.visionActual = 1;
         this.turnosInterferencia = turnos;
     }
 
-    //PRE: elemento != null
-    //POST: agrega el elemento a la mochila
     public void agregarElemento(Elemento elemento) {
         this.mochila.agregarElemento(elemento);
     }
 
-  //POST: actualiza los efectos temporales activos del jugador
     public void actualizarEfectos() {
         if (turnosInterferencia > 0) {
             turnosInterferencia--;
@@ -76,14 +71,13 @@ public class Jugador {
     public Mochila getMochila() { return mochila; }
     public Partida getPartida() { return partida; }
 
-    //POST: establece la posición actual del jugador
+
     public void setPosicion(int x, int y, int z) {
         this.posX = x;
         this.posY = y;
         this.posZ = z;
     }
 
-    //POST: asocia el jugador a una partida
     public void setPartida(Partida partida) {
         this.partida = partida;
     }

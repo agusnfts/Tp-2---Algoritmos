@@ -71,6 +71,8 @@ public class ProgramaPrincipalGrafos {
                 } else {
                     JOptionPane.showMessageDialog(null, "Ese nodo ya existe.");
                 }
+            } else {
+                JOptionPane.showMessageDialog(null, "El nodo debe tener un nombre.");
             }
         }));
 
@@ -298,7 +300,14 @@ public class ProgramaPrincipalGrafos {
                 // Inicia matriz para llenarlo con los recorridos reales que usa al algoritmo y poder marcarlo visualmente
                 int[][] mtzCapacidades = generarMatrizBase(0);
                 int flujoCalculado = AlgoritmoFordFulkerson.fordFulkerson(mtzCapacidades, indiceFuente, indiceSumidero);
+
+                if (flujoCalculado==0) {
+                    JOptionPane.showMessageDialog(null, "No existe alguna ruta posible entre estos dos nodos.\nEl Flujo Maximo es 0.");
+                    return;
+                }
+
                 int[][] caudalesUsados = AlgoritmoFordFulkerson.obtenerCaudalesUsados(mtzCapacidades, indiceFuente, indiceSumidero);
+                
                 int[][] mtzLienzo = generarMatrizBase(0);
                 GrafoToBitmap dibujadorGrafico = new GrafoToBitmap(mtzLienzo, mapeoNodos, ANCHO, ALTO);
                 

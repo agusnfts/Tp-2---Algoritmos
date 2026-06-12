@@ -48,8 +48,7 @@ public class PanelCiudad4 extends JPanel {
 
     /**
      * PRE: datos != null.
-     * POST: dibuja los datos como un gráfico de barras, actualiza la vista
-     *       y desbloquea la Ciudad 5 si existe un progreso asociado.
+     * POST: dibuja los datos como un gráfico de barras, actualiza la vista.
      */
     public void mostrarDatos(int[] datos) {
 
@@ -62,10 +61,34 @@ public class PanelCiudad4 extends JPanel {
 
         lblImagen.repaint();
 
-        // DESBLOQUEO CIUDAD 5 (cuando ya se usa el algoritmo)
-        if (progreso != null) {
-            progreso.desbloquear(5);
-            progreso.guardar();
-        }
+      
     }
+    
+    
+    /**
+     * PRE:
+     * - El Bitmap y el JLabel fueron inicializados correctamente.
+     *
+     * POST:
+     * - Se muestra en pantalla el objetivo de la Ciudad 4.
+     * - Se indican las acciones necesarias para completar la ciudad:
+     *      * visualizar BubbleSort y QuickSort
+     *      * responder correctamente las preguntas finales.
+     * - Se actualiza la imagen mostrada en el panel.
+     */
+    
+    public void mostrarInstrucciones() {
+
+        String texto =
+                "CIUDAD 4\n\n"
+                + "OBJETIVO:\n"
+                + "- Ver los dos algoritmos\n"
+                + "- Responder correctamente\n"
+                + "las preguntas finales";
+
+        bmp.mostrarTexto(texto);
+
+        lblImagen.repaint();
+    }
+    
 }

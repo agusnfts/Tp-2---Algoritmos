@@ -18,22 +18,19 @@ public class Sprites {
     public final BufferedImage mapaRasgado;
     public final BufferedImage amuletoMistico;
 
-    //POST: carga todas las imagenes utilizadas por la interfaz gráfica
     public Sprites() {
-        suelo = cargarImagen("imagenes/suelo.png");
-        pared = cargarImagen("imagenes/pared.png");
-        cofre = cargarImagen("imagenes/cofre.png");
-        escaleraSubir = cargarImagen("imagenes/escalera_subir.png");
-        escaleraBajar = cargarImagen("imagenes/escalera_bajar.png");
-        jugador = cargarImagen("imagenes/jugador.png");
-        slotVacio = cargarImagen("imagenes/slot_vacio.png");
-        antorcha = cargarImagen("imagenes/antorcha.png");
-        mapaRasgado = cargarImagen("imagenes/mapa_rasgado.png");
-        amuletoMistico = cargarImagen("imagenes/amuleto_mistico.png");
+        suelo = cargarImagen("src/Ciudad1/sprites/suelo.png");
+        pared = cargarImagen("src/Ciudad1/sprites/pared.png");
+        cofre = cargarImagen("src/Ciudad1/sprites/cofre.png");
+        escaleraSubir = cargarImagen("src/Ciudad1/sprites/escalera_subir.png");
+        escaleraBajar = cargarImagen("src/Ciudad1/sprites/escalera_bajar.png");
+        jugador = cargarImagen("src/Ciudad1/sprites/jugador.png");
+        slotVacio = cargarImagen("src/Ciudad1/sprites/slot_vacio.png");
+        antorcha = cargarImagen("src/Ciudad1/sprites/antorcha.png");
+        mapaRasgado = cargarImagen("src/Ciudad1/sprites/mapa_rasgado.png");
+        amuletoMistico = cargarImagen("src/Ciudad1/sprites/amuleto_mistico.png");
     }
 
-    //PRE: ruta corresponde a una imagen valida
-    //POST: devuelve la imagen cargada o null si ocurrio un error
     private BufferedImage cargarImagen(String ruta) {
         try {
             File archivo = new File(ruta);

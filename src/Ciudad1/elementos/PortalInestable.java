@@ -12,7 +12,6 @@ public class PortalInestable extends Trampa {
         this.descripcion = "TP al piso z=0, coordenadas (1,1,0)";
     }
 
-    //POST: teletransporta al jugador a la posición inicial del mapa
     @Override
     public void usar(Jugador jugador) {
         jugador.setPosicion(1, 1, 0);

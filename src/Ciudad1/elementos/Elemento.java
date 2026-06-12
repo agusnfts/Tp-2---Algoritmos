@@ -21,7 +21,6 @@ public abstract class Elemento {
         return descripcion;
     }
 
-    //POST: aplica el efecto propio del elemento sobre el jugador
     public abstract void usar(Jugador jugador);
 
     @Override

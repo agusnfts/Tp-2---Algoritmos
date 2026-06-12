@@ -55,7 +55,6 @@ public class PanelCiudad5 extends JPanel {
      * POST:
      * - Se muestra el texto en el Bitmap
      * - Se actualiza el componente gráfico (repaint del JLabel)
-     * - Se desbloquea la ciudad 6 en el progreso del juego
      * - Se guarda el estado del progreso
      */
     public void mostrarResultado(String texto) {
@@ -69,10 +68,22 @@ public class PanelCiudad5 extends JPanel {
 
         lblImagen.repaint();
 
-        if (progreso != null) {
-            progreso.desbloquear(6);
-            progreso.guardar();
-        }
     }
+    
+    public void mostrarInstrucciones() {
+
+        String texto =
+                "CIUDAD 5\n\n"
+                + "OBJETIVO:\n"
+                + "- Cargar un archivo TXT\n"
+                + "- Buscar 3 palabras distintas\n"
+                + "- Responder correctamente\n"
+                + "las preguntas finales";
+
+        bmp.mostrarTexto(texto);
+
+        lblImagen.repaint();
+    }
+    
 }
 

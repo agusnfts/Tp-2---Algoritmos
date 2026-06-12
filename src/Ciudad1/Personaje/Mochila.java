@@ -26,7 +26,7 @@ public class Mochila {
             this.elementos.add(elemento);
         }
     }
-    
+
     public boolean posicionValida(int posicion) {
         return posicion >= 0 && posicion < elementos.size();
     }
@@ -34,31 +34,26 @@ public class Mochila {
     public int cantidadElementos() {
         return elementos.size();
     }
-    
-    //PRE: posición válida
-    //POST: devuelve el elemento ubicado en esa posición o null
+
     public Elemento getElemento(int posicion) {
         if (posicionValida(posicion)) {
             return elementos.get(posicion);
         }
         return null;
     }
-    
-    //POST: devuelve el nombre del elemento o "---" si no existe
+
     public String getNombreElemento(int posicion) {
-        Elemento elemento = getElemento(posicion);
-        return (elemento == null) ? "---" : elemento.getNombre();
+        Elemento e = getElemento(posicion);
+        return (e == null) ? "---" : e.getNombre();
     }
 
-    //POST: devuelve una copia de la lista de elementos
     public ArrayList<Elemento> getElementos() {
         return new ArrayList<>(elementos);
     }
 
-    //POST: devuelve true si existe un elemento del tipo indicado
     public boolean contieneElemento(Class<?> tipo) {
-        for (Elemento elemento : elementos) {
-            if (tipo.isInstance(elemento)) {
+        for (Elemento e : elementos) {
+            if (tipo.isInstance(e)) {
                 return true;
             }
         }

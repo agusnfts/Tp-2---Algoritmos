@@ -47,10 +47,7 @@ public class Tablero {
                z >= 0 && z < PISOS;
     }
 
-    //POST: devuelve el ancho del tablero
     public int getAncho() { return ANCHO; }
-    //POST: devuelve el ancho del tablero
     public int getAlto() { return ALTO; }
-    //POST: devuelve la cantidad de pisos
     public int getPisos() { return PISOS; }
 }
