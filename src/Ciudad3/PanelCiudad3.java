@@ -1,5 +1,4 @@
 package Ciudad3;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -13,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import principal.PanelMapa;
+import principal.ProgresoJuego;
 
 /**
  * Panel de transición para la Ciudad 3.
@@ -23,49 +23,68 @@ public class PanelCiudad3 extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    public PanelCiudad3() {
+    private ProgresoJuego progreso;
+
+    public PanelCiudad3(ProgresoJuego progreso) {
+
+        this.progreso = progreso;
+
         setBackground(new Color(15, 30, 20));
         setLayout(new GridBagLayout());
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(20, 20, 20, 20);
         gbc.gridx = 0;
-        
-        // Título del Panel
+
+        // Título Panel
         gbc.gridy = 0;
         JLabel lblTitulo = new JLabel("--- CIUDAD 3: TERMINAL SECRETA ---");
         lblTitulo.setFont(new Font("Courier New", Font.BOLD, 30));
         lblTitulo.setForeground(Color.GREEN);
         add(lblTitulo, gbc);
 
-        // Botón para arrancar el laberinto
+        // Botón arranca laberinto
         gbc.gridy = 1;
         JButton btnArrancar = new JButton("INICIAR PROTOCOLO: LABERINTO HACKER");
         btnArrancar.setFont(new Font("Courier New", Font.BOLD, 22));
         btnArrancar.setBackground(Color.BLACK);
         btnArrancar.setForeground(Color.CYAN);
         btnArrancar.setFocusPainted(false);
-        
+
+        //Pasa la partida actual y arranca laberinto
         btnArrancar.addActionListener(e -> {
+            SalidaLaberinto.setProgreso(progreso);
             SalidaLaberinto.main(new String[0]);
         });
+
         add(btnArrancar, gbc);
 
-        // Botón para volver al mapa
+        // Botón volver al mapa
         gbc.gridy = 2;
         JButton btnVolver = new JButton("DESCONECTAR Y VOLVER AL MAPA");
         btnVolver.setFont(new Font("Courier New", Font.BOLD, 22));
         btnVolver.setBackground(Color.BLACK);
         btnVolver.setForeground(Color.RED);
         btnVolver.setFocusPainted(false);
-        
+
+        //Vuelve al mapa con el mismo progreso
         btnVolver.addActionListener(e -> {
             JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
             if (frame != null) {
-                frame.setContentPane(new PanelMapa());
+                PanelMapa nuevoMapa = new PanelMapa(progreso);
+                nuevoMapa.setFrame(frame);
+                
+                frame.setContentPane(nuevoMapa);
                 frame.revalidate();
                 frame.repaint();
             }
         });
+
         add(btnVolver, gbc);
+    }
+
+    // Constructor viejo por compatibilidad
+    public PanelCiudad3() {
+        this(new ProgresoJuego());
     }
 }

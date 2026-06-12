@@ -1,5 +1,4 @@
 package Ciudad7.bitmap;
-
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
@@ -28,6 +27,8 @@ import utiles.ValidacionesUtiles;
 public class BitmapViewerConMenu {
 
     private JFrame frame;
+    private static JFrame frameInstance;
+
     private JPanel panel;
     private JPanel menuPanel;
     private List<Bitmap> bitmaps;
@@ -67,12 +68,15 @@ public class BitmapViewerConMenu {
      */
     private void createAndShowGUI() {
         frame = new JFrame("Gestor Visual - Ciudad 7");
+
+        frameInstance = frame;
+
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
         // Panel centrado y fondo negro
-        panel = new JPanel(new GridBagLayout()); 
-        panel.setBackground(Color.BLACK); 
+        panel = new JPanel(new GridBagLayout());
+        panel.setBackground(Color.BLACK);
 
         for (Bitmap bmp : bitmaps) {
             JLabel label = new JLabel(new ImageIcon(bmp.getImage()));
@@ -93,8 +97,6 @@ public class BitmapViewerConMenu {
         }
 
         frame.add(menuPanel, BorderLayout.SOUTH);
-
-        // Fuerza a la ventana a abrirse maximizada ocupando toda la pantalla
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setVisible(true);
 
@@ -110,6 +112,13 @@ public class BitmapViewerConMenu {
             if (comps[i] instanceof JLabel lbl) {
                 lbl.setIcon(new ImageIcon(bitmaps.get(i).getImage()));
             }
+        }
+    }
+
+    public static void closeViewer() {
+        if (frameInstance != null) {
+            frameInstance.dispose();
+            frameInstance = null;
         }
     }
 

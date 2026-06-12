@@ -6,42 +6,55 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
+import Ciudad7.grafos.Grafo;
+import Ciudad7.grafos.Vertice;
+import principal.ProgresoJuego;
+import Ciudad7.grafos.Arista;
+import Ciudad7.grafos.GrafoToBitmap;
 import Ciudad7.bitmap.Bitmap;
 import Ciudad7.bitmap.BitmapViewerConMenu;
 import Ciudad7.bitmap.BitmapViewerConMenu.MenuAction;
-import Ciudad7.grafos.Grafo;
-import Ciudad7.grafos.Vertice;
-import Ciudad7.grafos.Arista;
-import Ciudad7.grafos.GrafoToBitmap;
 import Ciudad7.grafos.AlgoritmoFordFulkerson;
 
 public class ProgramaPrincipalGrafos {
 
-    // Instancia global del TDA Grafo
     private static Grafo<String, Integer> ciudad7 = new Grafo<>();
     
-    // Vincula el valor del nodo (String) con un índice numérico secuencial (0, 1, ..., n-1)
+    // Vincula el valor del nodo con un índice numérico secuencial
     private static List<String> mapeoNodos = new ArrayList<>();
     
-    // Dimensiones absolutas del viewport. Fijan la resolución para garantizar consistencia 
-    // en la proyección trigonométrica de coordenadas en GrafoToBitmap.
+    //Dimensiones y buffer del grafico
     private static final int ANCHO = 1200;
     private static final int ALTO = 600;
-
-    // Buffer gráfico principal que almacena el frame actual a renderizar.
     private static Bitmap lienzoPrincipal = new Bitmap(ANCHO, ALTO);
 
+    // Booleanos que registrar el uso de cada herramienta
+    private static boolean usoAgregarNodo = false;
+    private static boolean usoConectarNodos = false;
+    private static boolean usoEliminarArista = false;
+    private static boolean usoEliminarNodo = false;
+    private static boolean usoFlujoMaximo = false;
+    private static boolean usoCaminosMinimos = false;
+    private static boolean ciudad7Completada = false;
+    
+    private static ProgresoJuego progreso;
+
+    
     public static void main(String[] args) {
-        
-        // Limpieza inicial del buffer de video
+        //Fondo
         lienzoPrincipal.rellenar(Color.BLACK);
 
-        // Acciones que inyectan el comportamiento en los botones de Swing
+        /**
+         * BOTONES
+         */
+        
         List<MenuAction> acciones = new ArrayList<>();
 
         // >=== BOTÓN 1: AGREGAR NODO ===<
@@ -52,12 +65,17 @@ public class ProgramaPrincipalGrafos {
                 if (!ciudad7.existeVertice(nombre)) {
                     ciudad7.agregarVertice(nombre);
                     actualizarLienzo();
+                    
+                    usoAgregarNodo = true;
+                    verificarVictoria();
                 } else {
                     JOptionPane.showMessageDialog(null, "Ese nodo ya existe.");
                 }
             }
         }));
 
+        
+        
         // >=== BOTÓN 2: CONECTAR NODOS ===<
         acciones.add(new MenuAction("Conectar Nodos (Arista)", () -> {
             if (mapeoNodos.isEmpty()) {
@@ -65,7 +83,7 @@ public class ProgramaPrincipalGrafos {
                 return;
             }
 
-            // Construcción del layout de captura de propiedades de la arista
+            // Construcción de la arista
             JPanel panelFormulario = new JPanel(new GridLayout(5, 2, 10, 10));
 
             JComboBox<String> cbInicio = new JComboBox<>(mapeoNodos.toArray(new String[0]));
@@ -80,6 +98,7 @@ public class ProgramaPrincipalGrafos {
                 cbSentido.setEnabled(cbDireccion.getSelectedIndex() == 1);
             });
 
+            //Opciones para el usuario
             panelFormulario.add(new JLabel("Nodo de Inicio:"));
             panelFormulario.add(cbInicio);
             panelFormulario.add(new JLabel("Nodo Final:"));
@@ -103,7 +122,6 @@ public class ProgramaPrincipalGrafos {
                 try {
                     int peso = Integer.parseInt(txtMasa.getText().trim());
                     
-                    // Validación preventiva, evita la inserción de aristas mayores que 0
                     if (peso < 0) {
                         JOptionPane.showMessageDialog(null, "La masa debe ser mayor a 0.");
                         return;
@@ -116,7 +134,7 @@ public class ProgramaPrincipalGrafos {
                             ciudad7.agregarArista(nodoFin, nodoIn, peso);
                         }
                     } else {
-                        // Inserción estricta de vector dirigido según la selección del usuario
+                        // Inserción estricta de vector dirigido
                         if (sentidoFlujo.equals("Inicio -> Final")) {
                             ciudad7.agregarArista(nodoIn, nodoFin, peso);
                         } else {
@@ -124,6 +142,9 @@ public class ProgramaPrincipalGrafos {
                         }
                     }
                     actualizarLienzo();
+                    
+                    usoConectarNodos = true;
+                    verificarVictoria();
 
                 } catch (NumberFormatException e) {
                     JOptionPane.showMessageDialog(null, "Error: La masa debe ser un número entero válido.");
@@ -133,6 +154,7 @@ public class ProgramaPrincipalGrafos {
 
         // >=== BOTÓN 3: ELIMINAR ARISTA ===<
         acciones.add(new MenuAction("Eliminar Arista", () -> {
+            //Valida que haya nodos en el grafo
             if (mapeoNodos.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "No hay nodos en el grafo.");
                 return;
@@ -147,6 +169,7 @@ public class ProgramaPrincipalGrafos {
                 }
             }
 
+            //Valida que haya aristas en el grafo
             if (!existenAristas) {
                 JOptionPane.showMessageDialog(null, "No hay ninguna conexión (arista) creada en el grafo para eliminar.");
                 return;
@@ -168,7 +191,7 @@ public class ProgramaPrincipalGrafos {
                 String inicio = (String) cbInicio.getSelectedItem();
                 String fin = (String) cbFinal.getSelectedItem();
 
-                // Validación O(E): Confirma la existencia física de la arista en la lista de adyacencia
+                // Validación O(E): Confirma la existencia de la arista en la lista de adyacencia
                 boolean aristaEncontrada = false;
                 for (Arista<String, Integer> arista : ciudad7.getAdyacentes(inicio)) {
                     if (arista.getDestino().getValor().equals(fin)) {
@@ -177,7 +200,7 @@ public class ProgramaPrincipalGrafos {
                     }
                 }
                 
-                // Fallback para grafos dirigidos: Revisa el vector inverso
+                // Revisa el vector inverso
                 if (!aristaEncontrada) {
                     for (Arista<String, Integer> arista : ciudad7.getAdyacentes(fin)) {
                         if (arista.getDestino().getValor().equals(inicio)) {
@@ -186,24 +209,29 @@ public class ProgramaPrincipalGrafos {
                         }
                     }
                 }
-
+                
+                //Valida si la arista está conectada conectada
                 if (!aristaEncontrada) {
                     JOptionPane.showMessageDialog(null, "No existe ninguna arista conectando a " + inicio + " con " + fin + ".");
                     return;
                 }
 
-                // La eliminacion se ejecuta en ambas direcciones para purgar referenciación cruzada
+                // La eliminacion se ejecuta en ambas direcciones para eliminar referenciación cruzada
                 ciudad7.eliminarArista(inicio, fin);
                 if (!inicio.equals(fin)) {
                     ciudad7.eliminarArista(fin, inicio);
                 }
                 
                 actualizarLienzo();
+                
+                usoEliminarArista = true;
+                verificarVictoria();
             }
         }));
 
         // >=== BOTÓN 4: ELIMINAR NODO ===<
         acciones.add(new MenuAction("Eliminar Nodo", () -> {
+            //Valida si no ha nodos
             if (mapeoNodos.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "No hay nodos para destruir.");
                 return;
@@ -211,25 +239,31 @@ public class ProgramaPrincipalGrafos {
 
             JPanel panelEliminarNodo = new JPanel(new GridLayout(1, 2, 10, 10));
             JComboBox<String> cbNodo = new JComboBox<>(mapeoNodos.toArray(new String[0]));
-            
+
+            //Opcion para el usuario
             panelEliminarNodo.add(new JLabel("Seleccione el nodo:"));
             panelEliminarNodo.add(cbNodo);
 
             int clickDestruir = JOptionPane.showConfirmDialog(null, panelEliminarNodo, 
                     "Destruir Nodo", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 
+            //Si se da OK, delega el TDA la recoleccion de basura interna y elimina las aristas que estaban conectadas al nodo
             if (clickDestruir == JOptionPane.OK_OPTION) {
                 String nodoDestruir = (String) cbNodo.getSelectedItem();
                 
-                // Delega al TDA la recolección de basura interna y purga de aristas huérfanas
                 ciudad7.eliminarVertice(nodoDestruir);
                 actualizarLienzo();
+                
+                usoEliminarNodo = true;
+                verificarVictoria();
             }
         }));
 
         // >=== BOTÓN 5: FLUJO MÁXIMO (Ford-Fulkerson) ===<
         acciones.add(new MenuAction("Calcular Flujo Máximo", () -> {
             int totalNodos = ciudad7.getVertices().size();
+            
+            //Valida que haya al menos 2 nodos
             if (totalNodos < 2) {
                 JOptionPane.showMessageDialog(null, "Se necesitan al menos 2 nodos.");
                 return;
@@ -239,6 +273,7 @@ public class ProgramaPrincipalGrafos {
             JComboBox<String> cbFuente = new JComboBox<>(mapeoNodos.toArray(new String[0]));
             JComboBox<String> cbSumidero = new JComboBox<>(mapeoNodos.toArray(new String[0]));
             
+            //Opciones para el usuario
             panelFlujo.add(new JLabel("Nodo Fuente (Inicio):"));
             panelFlujo.add(cbFuente);
             panelFlujo.add(new JLabel("Nodo Sumidero (Final):"));
@@ -256,11 +291,11 @@ public class ProgramaPrincipalGrafos {
                     JOptionPane.showMessageDialog(null, "La fuente y el sumidero no pueden ser el mismo nodo.");
                     return;
                 }
-
+                
                 int indiceFuente = mapeoNodos.indexOf(nodoOrigen);
                 int indiceSumidero = mapeoNodos.indexOf(nodoDestino);
 
-                // Instancia la matriz para llenarlo con los recorridos reales que usa al algoritmo y poder reomarcarlo visualmente
+                // Inicia matriz para llenarlo con los recorridos reales que usa al algoritmo y poder marcarlo visualmente
                 int[][] mtzCapacidades = generarMatrizBase(0);
                 int flujoCalculado = AlgoritmoFordFulkerson.fordFulkerson(mtzCapacidades, indiceFuente, indiceSumidero);
                 int[][] caudalesUsados = AlgoritmoFordFulkerson.obtenerCaudalesUsados(mtzCapacidades, indiceFuente, indiceSumidero);
@@ -273,13 +308,18 @@ public class ProgramaPrincipalGrafos {
                 JOptionPane.showMessageDialog(null, "El Flujo Máximo alcanzado es: " + flujoCalculado + 
                                                     "\n\nLas conexiones de la red activa están resaltadas de color ROJO.");
                 
-                actualizarLienzo(); //Repintado final
+                actualizarLienzo();
+                
+                usoFlujoMaximo = true;
+                verificarVictoria();
             }
         }));
 
         // >=== BOTÓN 6: CAMINO MÍNIMO (Dijkstra) ===<
         acciones.add(new MenuAction("Calcular Caminos Mínimos", () -> {
             int cantNodos = ciudad7.getVertices().size();
+
+            //Valida que haya el menos 2 nodos
             if (cantNodos < 2) {
                 JOptionPane.showMessageDialog(null, "Faltan nodos en el grafo.");
                 return;
@@ -289,6 +329,7 @@ public class ProgramaPrincipalGrafos {
             JComboBox<String> cbOrigen = new JComboBox<>(mapeoNodos.toArray(new String[0]));
             JComboBox<String> cbDestino = new JComboBox<>(mapeoNodos.toArray(new String[0]));
             
+            //Opciones para el usuario
             panelCamino.add(new JLabel("Nodo de Origen:"));
             panelCamino.add(cbOrigen);
             panelCamino.add(new JLabel("Nodo de Destino:"));
@@ -301,7 +342,7 @@ public class ProgramaPrincipalGrafos {
                 String puntoInicio = (String) cbOrigen.getSelectedItem();
                 String puntoFinal = (String) cbDestino.getSelectedItem();
 
-                // Condición de corte temprana
+                // Validacion por si es el mismo nodo el de inicio y fin
                 if (puntoInicio.equals(puntoFinal)) {
                     JOptionPane.showMessageDialog(null, "Ya te encontrás en ese nodo. Distancia: 0");
                     return;
@@ -311,16 +352,19 @@ public class ProgramaPrincipalGrafos {
                     // Ejecuta el algoritmo de camino mínimo interno devolviendo el path-tracking de nodos
                     List<String> listadoRuta = ciudad7.dijkstra(puntoInicio, puntoFinal);
                     
+                    //Validacion por si no hay rutas entre los nodos
                     if (listadoRuta.isEmpty()) {
                         JOptionPane.showMessageDialog(null, "No existe ninguna ruta posible entre estos dos nodos.");
                         return;
                     }
 
+                    // Convierte la ruta de nombres de nodos a sus índices numéricos
                     List<Integer> listadoIndices = new java.util.ArrayList<>();
                     for (String nodo : listadoRuta) {
                         listadoIndices.add(mapeoNodos.indexOf(nodo));
                     }
 
+                    // Prepara la matriz de datos del grafo y crea el gráfico para marcar la ruta calculada en color verde
                     int[][] mtzLienzo = generarMatrizBase(0);
                     GrafoToBitmap motorDibujo = new GrafoToBitmap(mtzLienzo, mapeoNodos, ANCHO, ALTO);
                     motorDibujo.setRutaVerde(listadoIndices); 
@@ -330,6 +374,9 @@ public class ProgramaPrincipalGrafos {
                                                         "\n\nEl camino exacto está trazado en color VERDE.");
                     
                     actualizarLienzo(); 
+                    
+                    usoCaminosMinimos = true;
+                    verificarVictoria();
 
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(null, "Fallo algorítmico: " + e.getMessage());
@@ -337,14 +384,49 @@ public class ProgramaPrincipalGrafos {
             }
         }));
         
-        // Inicializa el bucle de eventos de Swing y delega la ejecución del Timer al visor
+        // >=== BOTÓN 7: SALIR ===<
+        acciones.add(new MenuAction("Salir", () -> {
+            BitmapViewerConMenu.closeViewer();
+        }));
+        
         BitmapViewerConMenu.showBitmapsWithMenu(acciones, lienzoPrincipal);
+    }
+    
+
+    /**
+     * Verifica la condicion de victoria: verifica que se haya seleccionado al menos una vez cada boton del programa
+     * Y muestra el mensaje de desbloqueo de siguiente ciudad.
+     */
+    private static void verificarVictoria() {
+
+        if(ciudad7Completada) {
+            return;
+        }
+
+        if(usoAgregarNodo && usoConectarNodos && usoEliminarArista && 
+           usoEliminarNodo && usoFlujoMaximo && usoCaminosMinimos) {
+
+            ciudad7Completada = true;
+
+            System.out.println("[CIUDAD 7] COMPLETADA");
+
+            JOptionPane.showMessageDialog(
+                    null,
+                    "¡Ciudad 7 completada!\n"
+                    + "Has probado todas y cada una de las herramientas de gestión de la red.\n"
+                    + "La Ciudad 8 ha sido desbloqueada."
+            );
+
+            if(progreso != null) {
+                progreso.desbloquear(8);
+                progreso.guardar();
+            }
+        }
     }
 
     /**
-     * Motor principal de sincronización gráfica.
+     * Motor principal de sincronización gráfica
      * Lee el estado de la estructura de datos dinámica y reconstruye el espacio de dibujo desde cero
-     * mediante la técnica de "Clear & Redraw" para evitar artefactos visuales.
      */
     private static void actualizarLienzo() {
         int n = ciudad7.getVertices().size();
@@ -369,6 +451,21 @@ public class ProgramaPrincipalGrafos {
 
         lienzoPrincipal.pasteBitmap(nuevoDibujo, 0, 0);
     }
+    
+    /**
+     * Si el usuario ya había desbloqueado la ciudad 8 antes y vuelve a entrar a este menú, 
+     * no le vuelve a salir el cartel
+     */
+    public static void setProgreso(ProgresoJuego p) {
+        progreso = p;
+        
+        if (progreso != null && progreso.estaDesbloqueada(8)) {
+            ciudad7Completada = true;
+        }
+    }
+    
+  
+    
 
     /**
      * Transforma la Lista de Adyacencia flexible del TDA a una Matriz de Adyacencia clásica 
