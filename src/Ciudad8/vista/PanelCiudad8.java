@@ -1,45 +1,22 @@
 package Ciudad8.vista;
 
-import javax.swing.JPanel;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-
 import Ciudad8.bitmap.Bitmap;
 import Ciudad8.modelo.Hanoi;
 import Ciudad8.modelo.Movimiento;
-import principal.ProgresoJuego;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
+import principal.PanelMapa;
+import principal.ProgresoJuego;
 
 public class PanelCiudad8 extends JPanel {
 
@@ -92,15 +69,7 @@ public class PanelCiudad8 extends JPanel {
                 );
 
         btnSalir.addActionListener(
-                e -> {
-
-                    javax.swing.JFrame ventana =
-                            (javax.swing.JFrame)
-                            javax.swing.SwingUtilities
-                            .getWindowAncestor(this);
-
-                    ventana.dispose();
-                }
+                e -> volverAlMapa()
         );
 
         menuPanel.add(btnIniciar);
@@ -122,6 +91,31 @@ public class PanelCiudad8 extends JPanel {
                 );
 
         timer.start();
+    }
+
+    /**
+     * pre: -
+     * post: reemplaza el contenido del frame principal por el mapa del juego,
+     *       conservando el progreso, en lugar de cerrar el programa.
+     */
+    private void volverAlMapa() {
+
+        javax.swing.JFrame frame =
+                (javax.swing.JFrame)
+                javax.swing.SwingUtilities.getWindowAncestor(this);
+
+        if(frame != null) {
+
+            frame.getContentPane().removeAll();
+
+            PanelMapa nuevoMapa = new PanelMapa(progreso);
+            nuevoMapa.setFrame(frame);
+            frame.setContentPane(nuevoMapa);
+
+            frame.revalidate();
+            frame.repaint();
+            frame.requestFocusInWindow();
+        }
     }
 
     private void dibujarMenu() {
@@ -238,8 +232,8 @@ public class PanelCiudad8 extends JPanel {
 
     /**
      * pre: el algoritmo de Hanoi terminó.
-     * post: marca la ciudad como completada y desbloquea la siguiente.
-     * DE FORMA DE PRUEBA SE DESBLOQUEA LA 10 Y NO LA 9 AUN.
+     * post: marca la ciudad como completada, avisa al jugador y desbloquea y
+     *       guarda el avance de la Ciudad 9.
      */
     private void finalizarCiudad() {
 
@@ -247,12 +241,12 @@ public class PanelCiudad8 extends JPanel {
                 this,
                 "¡Felicitaciones!\n"
                 + "Completaste la Ciudad 8.\n"
-                + "La Ciudad 10 ha sido desbloqueada."
+                + "La Ciudad 9 ha sido desbloqueada."
         );
 
         if(progreso != null) {
 
-            progreso.desbloquear(10);
+            progreso.desbloquear(9);
 
             progreso.guardar();
         }

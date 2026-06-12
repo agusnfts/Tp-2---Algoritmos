@@ -15,9 +15,8 @@ import principal.PanelMapa;
 import principal.ProgresoJuego;
 
 /**
- * Panel de integración para la Ciudad 7.
- * Actúa como menú intermedio dentro del JFrame principal del juego.
- * Permite instanciar el gestor de grafos independiente o retornar al flujo de navegación base.
+ * Panel de integración para la Ciudad 7
+ * Actúa como menú intermedio dentro del JFrame principal del juego
  */
 public class PanelCiudad7 extends JPanel {
 
@@ -44,22 +43,36 @@ public class PanelCiudad7 extends JPanel {
         gbc.gridy = 0;
         add(titulo, gbc);
 
-        //Botón de Ejecución del Gestor
+        //Botón de ejecución
         JButton btnIniciar = new JButton("Iniciar Programa (Gestor de Redes)");
         btnIniciar.setFont(new Font("Arial", Font.PLAIN, 16));
         btnIniciar.setFocusPainted(false);
 
+        //Inicia el programa
         btnIniciar.addActionListener(e -> {
 
             ProgramaPrincipalGrafos.setProgreso(progreso);
-
             ProgramaPrincipalGrafos.main(new String[0]);
+ 
+            // Mientras inicia el juego, mandamos a la ventana principal de atrás a cargar el mapa
+            JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
+            if (frame != null) {
+                frame.getContentPane().removeAll();
+                
+                PanelMapa nuevoMapa = new PanelMapa(progreso);
+                nuevoMapa.setFrame(frame);
+                frame.setContentPane(nuevoMapa);
+
+                frame.revalidate();
+                frame.repaint();
+                frame.requestFocusInWindow();
+            }
         });
 
         gbc.gridy = 1;
         add(btnIniciar, gbc);
 
-        // Botón de Retorno
+        // Botón de volver
         JButton btnVolver = new JButton("Volver al Mapa Principal");
         btnVolver.setFont(new Font("Arial", Font.PLAIN, 16));
         btnVolver.setFocusPainted(false);
@@ -71,7 +84,10 @@ public class PanelCiudad7 extends JPanel {
             if (frame != null) {
 
                 frame.getContentPane().removeAll();
-                frame.setContentPane(new PanelMapa(progreso));
+                
+                PanelMapa nuevoMapa = new PanelMapa(progreso);
+                nuevoMapa.setFrame(frame);
+                frame.setContentPane(nuevoMapa);
 
                 frame.revalidate();
                 frame.repaint();

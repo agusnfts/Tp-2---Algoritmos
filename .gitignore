@@ -1,0 +1,12 @@
+*.class
+bin/
+out/
+build/
+partidas/
+resources/ciudad2/pasos/
+resources/ciudad6/pasos/
+**/pasos/
+.vscode/*
+!.vscode/settings.json
+
+

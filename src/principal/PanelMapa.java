@@ -1,28 +1,20 @@
 package principal;
 
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-
-import Ciudad1.ui.VentanaCiudad1;
 import Ciudad10.ui.VentanaCiudad10;
 import Ciudad2.PanelCiudad2;
 import Ciudad3.PanelCiudad3;
-import Ciudad8.vista.PanelCiudad8;
-import Ciudad4.vista.PanelCiudad4;
 import Ciudad4.vista.VentanaOrdenamientos;
 import Ciudad5.vista.VentanaBusquedas;
 import Ciudad6.PanelCiudad6;
 import Ciudad7.PanelCiudad7;
-
+import Ciudad8.vista.PanelCiudad8;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 public class PanelMapa extends JPanel {
 
@@ -161,7 +153,9 @@ public class PanelMapa extends JPanel {
                 return;
             }
 
-            cambiarPanel(new PanelCiudad6(progreso));
+            PanelCiudad6 ciudad6 = new PanelCiudad6(progreso);
+            ciudad6.setAccionSiguiente(() -> cambiarPanel(PanelMapa.this));
+            cambiarPanel(ciudad6);
         	
         	
         }

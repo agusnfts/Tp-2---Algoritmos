@@ -10,23 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import javax.imageio.ImageIO;
-
 import utiles.ValidacionesUtiles;
-
-/*
- * Se encarga de dibujar el estado del tablero y guardarlo como imagen BMP.
- * Usa BufferedImage para trabajar los pixeles y Graphics2D como pincel.
- * Genera una imagen por cada paso del backtracking para mostrar el paso a paso.
- * El tablero siempre se dibuja al tamaño fijo que recibe, sin importar N.
- *
- * Atributos:
- * - COLOR_CELDA_CLARA: color de las celdas claras del tablero
- * - COLOR_CELDA_OSCURA: color de las celdas oscuras del tablero
- * - COLOR_REINA: color del circulo cuando se coloca una reina
- * - COLOR_BACKTRACK: color del circulo cuando se hace backtracking
- * - COLOR_FONDO: color del fondo general de la imagen
- * - carpetaSalida: carpeta donde se guardan las imagenes generadas
- */
 
 public class Interfaz {
 

@@ -1,47 +1,59 @@
 package Ciudad6;
-import java.awt.*;
-import java.util.LinkedList;
+
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import principal.ProgresoJuego;
-import utiles.SistemaUtiles;
-import java.awt.*;
-import java.util.LinkedList;
-import java.util.Queue;
-import javax.swing.*;
 import utiles.SistemaUtiles;
 
 public class PanelCiudad6 extends JPanel {
 
+	private static final String CARPETA_PASOS = "resources/ciudad6/pasos";
+
 	private TablaHash tabla;
+	private RenderizadorHash renderizador;
+	private ProgresoJuego progreso;
 	private JTextField campoPalabra;
 	private JTextArea areaExplicacion;
 	private JLabel etiquetaProgreso;
-	private PanelDibujo panelDibujo;
-	private PasoHash pasoActual;
+	private JLabel labelImagen;
+	private JSlider sliderPasos;
+	private JButton botonAnterior;
+	private JButton botonSiguientePaso;
 	private boolean animando;
+	private int totalPasos;
 	private int bucketsRequeridos;
 	private int minPorBucket;
 	private boolean ganada;
 	private JButton botonSiguiente;
 	private Runnable accionSiguiente;
-	
-	private ProgresoJuego progreso;
 
 	/**
 	 * pre: tamanioTabla > 1. bucketsRequeridos > 0. minPorBucket > 0.
 	 * post: arma el panel con sus controles, crea la tabla hash a visualizar y deja
-	 *       todo listo para insertar y buscar. La ciudad se gana cuando al menos
-	 *       'bucketsRequeridos' buckets tienen 'minPorBucket' palabras o más.
+	 *       todo listo para insertar y buscar. El paso a paso se muestra mediante
+	 *       imágenes BMP generadas en cada operación. Conserva la referencia al
+	 *       progreso para desbloquear la siguiente ciudad al ganar. La ciudad se
+	 *       gana cuando al menos 'bucketsRequeridos' buckets tienen 'minPorBucket'
+	 *       palabras o más.
 	 */
-	public PanelCiudad6(int tamanioTabla, int bucketsRequeridos, int minPorBucket,ProgresoJuego progreso) {
-		
-		this.progreso = progreso;
-		
+	public PanelCiudad6(int tamanioTabla, int bucketsRequeridos, int minPorBucket, ProgresoJuego progreso) {
 		this.tabla = new TablaHash(tamanioTabla);
-		this.pasoActual = null;
+		this.renderizador = new RenderizadorHash(CARPETA_PASOS);
+		this.progreso = progreso;
 		this.animando = false;
+		this.totalPasos = 0;
 		this.bucketsRequeridos = bucketsRequeridos;
 		this.minPorBucket = minPorBucket;
 		this.ganada = false;
@@ -62,10 +74,9 @@ public class PanelCiudad6 extends JPanel {
 		controles.add(botonSiguiente);
 		add(controles, BorderLayout.NORTH);
 
-		panelDibujo = new PanelDibujo();
-		add(new JScrollPane(panelDibujo), BorderLayout.CENTER);
+		add(construirPanelImagen(), BorderLayout.CENTER);
 
-		areaExplicacion = new JTextArea(8, 40);
+		areaExplicacion = new JTextArea(10, 40);
 		areaExplicacion.setEditable(false);
 		areaExplicacion.setText(textoIntroduccion());
 		add(new JScrollPane(areaExplicacion), BorderLayout.SOUTH);
@@ -74,18 +85,58 @@ public class PanelCiudad6 extends JPanel {
 		botonBuscar.addActionListener(e -> ejecutar(false));
 		botonSiguiente.addActionListener(e -> pasarASiguienteCiudad());
 	}
-	
+
 	/**
 	 * pre: progreso != null.
-	 * post: crea la Ciudad 6 usando la configuración por defecto del juego
-	 *       (tabla de tamaño 7, objetivo de 3 buckets con al menos 2 palabras)
-	 *       y conserva la referencia al progreso para permitir desbloquear
-	 *       la siguiente ciudad al completar el desafío.
+	 * post: crea la Ciudad 6 con la configuración por defecto del juego (tabla de
+	 *       tamaño 7, objetivo de 3 buckets con al menos 2 palabras) y conserva la
+	 *       referencia al progreso para desbloquear la siguiente ciudad al ganar.
 	 */
 	public PanelCiudad6(ProgresoJuego progreso) {
-	    this(7, 3, 2, progreso);
+		this(7, 3, 2, progreso);
 	}
-	
+
+	/**
+	 * pre: -
+	 * post: devuelve el panel central con el área donde se muestra la imagen BMP
+	 *       del paso actual y, debajo, el slider y los botones para navegarlos.
+	 */
+	private JPanel construirPanelImagen() {
+		JPanel panel = new JPanel(new BorderLayout(5, 5));
+
+		labelImagen = new JLabel("Insertá o buscá una palabra para ver el paso a paso", SwingConstants.CENTER);
+		labelImagen.setVerticalAlignment(SwingConstants.TOP);
+		labelImagen.setFont(new Font("Arial", Font.PLAIN, 14));
+		panel.add(labelImagen, BorderLayout.CENTER);
+
+		sliderPasos = new JSlider(0, 0, 0);
+		sliderPasos.setEnabled(false);
+		sliderPasos.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				mostrarPaso(sliderPasos.getValue());
+			}
+		});
+
+		botonAnterior = new JButton("< Anterior");
+		botonAnterior.setEnabled(false);
+		botonAnterior.addActionListener(e -> irAPaso(sliderPasos.getValue() - 1));
+
+		botonSiguientePaso = new JButton("Siguiente >");
+		botonSiguientePaso.setEnabled(false);
+		botonSiguientePaso.addActionListener(e -> irAPaso(sliderPasos.getValue() + 1));
+
+		JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 4));
+		panelBotones.add(botonAnterior);
+		panelBotones.add(botonSiguientePaso);
+
+		JPanel panelNavegacion = new JPanel(new BorderLayout(3, 3));
+		panelNavegacion.add(sliderPasos, BorderLayout.CENTER);
+		panelNavegacion.add(panelBotones, BorderLayout.SOUTH);
+
+		panel.add(panelNavegacion, BorderLayout.SOUTH);
+		return panel;
+	}
+
 	/**
 	 * pre: -
 	 * post: define la acción que se ejecuta al pasar a la siguiente ciudad (por
@@ -112,39 +163,40 @@ public class PanelCiudad6 extends JPanel {
 	 */
 	private String textoIntroduccion() {
 		return "Ciudad 6: HASHING\n\n"
-			+ "Una tabla hash sirve para encontrar datos muy rápido. La idea es que una\n"
-			+ "función convierte cada palabra en un número, y ese número decide en qué\n"
-			+ "casillero (bucket) se guarda. Para buscarla después no hace falta recorrer\n"
-			+ "toda la tabla: se va directo al bucket que le corresponde.\n\n"
-			+ "Acá la función suma los valores ASCII de las letras y le aplica el módulo "
-			+ tabla.getTamanio() + ",\n"
-			+ "que es la cantidad de buckets. Cuando dos palabras distintas caen en el\n"
-			+ "mismo bucket hay una COLISION, y se resuelven encadenándolas en una lista\n"
-			+ "dentro de ese bucket.\n\n"
-			+ "Insertá y buscá palabras para ver el paso a paso. Al buscar, además se\n"
-			+ "muestra cuánto tarda y cuántas comparaciones hace.\n\n"
-			+ "OBJETIVO: llenar al menos " + bucketsRequeridos + " de los " + tabla.getTamanio()
-			+ " buckets con " + minPorBucket + " palabras o más.";
+			+ "Una tabla hash sirve para encontrar datos muy rápido. Una función convierte\n"
+			+ "cada palabra en un número (acá, la suma de sus valores ASCII módulo "
+			+ tabla.getTamanio() + ") que\n"
+			+ "decide en qué bucket se guarda. Si dos palabras caen en el mismo bucket hay\n"
+			+ "una COLISION y se encadenan en una lista dentro de ese bucket.\n\n"
+			+ "Insertá y buscá palabras para ver el paso a paso. OBJETIVO: llenar al menos "
+			+ bucketsRequeridos + " de\n"
+			+ "los " + tabla.getTamanio() + " buckets con " + minPorBucket + " palabras o más.";
 	}
 
 	/**
 	 * pre: -
 	 * post: si hay texto válido en el campo, ejecuta la inserción (insertar=true)
-	 *       o la búsqueda (insertar=false) y reproduce sus pasos animados. Si la
-	 *       validación falla, muestra el error en el área de explicación.
+	 *       o la búsqueda (insertar=false), genera las imágenes BMP de cada paso y
+	 *       las reproduce. Si la validación falla, muestra el error en el área de
+	 *       explicación.
 	 */
 	private void ejecutar(boolean insertar) {
 		if (animando) {
 			return;
 		}
 		String palabra = campoPalabra.getText().trim();
-		Queue<PasoHash> pasos;
+		Queue<PasoHash> cola;
 		try {
-			pasos = insertar ? tabla.insertar(palabra) : tabla.buscar(palabra);
+			cola = insertar ? tabla.insertar(palabra) : tabla.buscar(palabra);
 		} catch (RuntimeException ex) {
 			areaExplicacion.setText("Error: " + ex.getMessage());
 			return;
 		}
+
+		List<PasoHash> pasos = new ArrayList<PasoHash>(cola);
+		renderizador.generarPasos(tabla, pasos);
+		totalPasos = pasos.size();
+
 		String titulo = (insertar ? "INSERTAR \"" : "BUSCAR \"") + palabra + "\"";
 		String mensajeFinal = null;
 		if (!insertar) {
@@ -159,28 +211,45 @@ public class PanelCiudad6 extends JPanel {
 
 	/**
 	 * pre: pasos != null.
-	 * post: recorre la cola de pasos mostrando uno por vez (resaltado en el dibujo
-	 *       más su descripción en el texto), con una pausa entre cada uno y sin
-	 *       congelar la ventana, ya que corre en un hilo aparte. Al terminar, si
-	 *       hay mensajeFinal lo agrega (por ejemplo el tiempo de búsqueda); si fue
-	 *       una inserción, actualiza el progreso y chequea la victoria.
+	 * post: configura el slider con la cantidad de pasos y recorre la secuencia
+	 *       mostrando un paso por vez (su imagen BMP más su descripción en el
+	 *       texto), con una pausa entre cada uno y sin congelar la ventana, ya que
+	 *       corre en un hilo aparte. Al terminar habilita la navegación manual; si
+	 *       hay mensajeFinal lo agrega; si fue una inserción, actualiza el progreso
+	 *       y chequea la victoria.
 	 */
-	private void reproducir(String titulo, Queue<PasoHash> pasos, boolean esInsercion, String mensajeFinal) {
+	private void reproducir(String titulo, List<PasoHash> pasos, boolean esInsercion, String mensajeFinal) {
 		animando = true;
-		SwingUtilities.invokeLater(() -> areaExplicacion.setText(titulo + "\n"));
+		SwingUtilities.invokeLater(() -> {
+			areaExplicacion.setText(titulo + "\n");
+			sliderPasos.setMinimum(0);
+			sliderPasos.setMaximum(totalPasos - 1);
+			sliderPasos.setValue(0);
+			sliderPasos.setEnabled(false);
+			botonAnterior.setEnabled(false);
+			botonSiguientePaso.setEnabled(false);
+		});
+
 		new Thread(() -> {
-			while (!pasos.isEmpty()) {
-				PasoHash paso = pasos.poll();
-				pasoActual = paso;
+			for (int i = 0; i < pasos.size(); i++) {
+				final int indice = i;
+				final PasoHash paso = pasos.get(i);
 				SwingUtilities.invokeLater(() -> {
 					areaExplicacion.append("  " + paso.getDescripcion() + "\n");
-					panelDibujo.repaint();
+					sliderPasos.setValue(indice);
+					mostrarPaso(indice);
 				});
 				SistemaUtiles.esperar(800);
 			}
 			animando = false;
+			SwingUtilities.invokeLater(() -> {
+				sliderPasos.setEnabled(true);
+				botonAnterior.setEnabled(true);
+				botonSiguientePaso.setEnabled(true);
+			});
 			if (mensajeFinal != null) {
-				SwingUtilities.invokeLater(() -> areaExplicacion.append("  " + mensajeFinal + "\n"));
+				final String texto = mensajeFinal;
+				SwingUtilities.invokeLater(() -> areaExplicacion.append("  " + texto + "\n"));
 			}
 			if (esInsercion) {
 				SwingUtilities.invokeLater(this::actualizarProgreso);
@@ -190,55 +259,62 @@ public class PanelCiudad6 extends JPanel {
 
 	/**
 	 * pre: -
+	 * post: muestra en el label central la imagen BMP del paso indicado, si existe.
+	 */
+	private void mostrarPaso(int numeroPaso) {
+		String ruta = String.format("%s/paso_%04d.bmp", CARPETA_PASOS, numeroPaso);
+		File archivo = new File(ruta);
+		if (!archivo.exists()) {
+			return;
+		}
+		try {
+			Image imagen = ImageIO.read(archivo);
+			labelImagen.setIcon(new ImageIcon(imagen));
+			labelImagen.setText("");
+		} catch (IOException e) {
+			labelImagen.setText("Error al cargar la imagen del paso " + numeroPaso);
+		}
+	}
+
+	/**
+	 * pre: -
+	 * post: navega al paso indicado si está dentro del rango válido, actualizando
+	 *       el slider y la imagen mostrada.
+	 */
+	private void irAPaso(int numeroPaso) {
+		if (numeroPaso < 0 || numeroPaso >= totalPasos) {
+			return;
+		}
+		sliderPasos.setValue(numeroPaso);
+		mostrarPaso(numeroPaso);
+	}
+
+	/**
+	 * pre: -
 	 * post: actualiza la etiqueta de progreso y, si se alcanzó el objetivo y la
-	 *       ciudad aún no estaba ganada, la marca como ganada, desbloquea la
-	 *       Ciudad 7 y avisa al jugador.
+	 *       ciudad aún no estaba ganada, la marca como ganada, desbloquea y guarda
+	 *       el avance de la Ciudad 7 y avisa al jugador.
 	 */
 	private void actualizarProgreso() {
+		int logrados = tabla.cantidadBucketsConAlMenos(minPorBucket);
+		etiquetaProgreso.setText("Buckets con >= " + minPorBucket + ": " + logrados + " / " + bucketsRequeridos);
+		if (!ganada && logrados >= bucketsRequeridos) {
+			ganada = true;
 
-	    int logrados =
-	            tabla.cantidadBucketsConAlMenos(
-	                    minPorBucket
-	            );
+			if (progreso != null && !progreso.estaDesbloqueada(7)) {
+				progreso.desbloquear(7);
+				progreso.guardar();
+			}
 
-	    etiquetaProgreso.setText(
-	            "Buckets con >= "
-	            + minPorBucket
-	            + ": "
-	            + logrados
-	            + " / "
-	            + bucketsRequeridos
-	    );
-
-	    if (!ganada
-	            && logrados >= bucketsRequeridos) {
-
-	        ganada = true;
-
-	        if (progreso != null
-	                && !progreso.estaDesbloqueada(7)) {
-
-	            progreso.desbloquear(7);
-
-	            progreso.guardar();
-
-	            System.out.println(
-	                    "[CIUDAD 6] COMPLETADA"
-	            );
-	        }
-
-	        JOptionPane.showMessageDialog(
-	                this,
-	                "¡Ciudad 6 superada!\n"
-	                + "Has cumplido el objetivo.\n"
-	                + "La Ciudad 7 ha sido desbloqueada."
-	        );
-
-	        botonSiguiente.setVisible(true);
-
-	        revalidate();
-	        repaint();
-	    }
+			JOptionPane.showMessageDialog(this,
+					"¡Ciudad 6 superada! Llenaste " + bucketsRequeridos
+							+ " buckets con al menos " + minPorBucket + " palabras cada uno.\n"
+							+ "Ciudad 7 desbloqueada.",
+					"Victoria", JOptionPane.INFORMATION_MESSAGE);
+			botonSiguiente.setVisible(true);
+			revalidate();
+			repaint();
+		}
 	}
 
 	/**
@@ -247,85 +323,5 @@ public class PanelCiudad6 extends JPanel {
 	 */
 	public boolean estaGanada() {
 		return ganada;
-	}
-
-	/**
-	 * pre: tipo != null.
-	 * post: devuelve el color de resaltado asociado al tipo de paso.
-	 */
-	private Color colorDe(PasoHash.Tipo tipo) {
-		switch (tipo) {
-			case COMPARACION:
-				return Color.CYAN;
-			case COLISION:
-				return Color.ORANGE;
-			case ENCONTRADO:
-			case INSERTADO:
-				return Color.GREEN;
-			case NO_ENCONTRADO:
-				return Color.RED;
-			case YA_EXISTE:
-				return Color.RED;
-			default:
-				return Color.YELLOW;
-		}
-	}
-
-	private class PanelDibujo extends JPanel {
-
-		private static final int ALTO_FILA = 50;
-		private static final int ANCHO_CELDA = 95;
-		private static final int MARGEN = 20;
-
-		@Override
-		public Dimension getPreferredSize() {
-			return new Dimension(800, MARGEN * 2 + tabla.getTamanio() * ALTO_FILA);
-		}
-
-		/**
-		 * pre: -
-		 * post: dibuja el arreglo de buckets con sus cadenas y resalta el bucket
-		 *       y el elemento del paso que se está mostrando.
-		 */
-		@Override
-		protected void paintComponent(Graphics g) {
-			super.paintComponent(g);
-			Graphics2D g2 = (Graphics2D) g;
-			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-					RenderingHints.VALUE_ANTIALIAS_ON);
-
-			int bucketResaltado = (pasoActual != null) ? pasoActual.getBucket() : -1;
-			int posResaltada = (pasoActual != null) ? pasoActual.getPosicionEnCadena() : -1;
-			Color color = (pasoActual != null) ? colorDe(pasoActual.getTipo()) : Color.YELLOW;
-
-			for (int i = 0; i < tabla.getTamanio(); i++) {
-				int y = MARGEN + i * ALTO_FILA;
-
-				if (i == bucketResaltado) {
-					g2.setColor(color);
-					g2.fillRect(MARGEN, y, ANCHO_CELDA, ALTO_FILA - 10);
-				}
-				g2.setColor(Color.BLACK);
-				g2.drawRect(MARGEN, y, ANCHO_CELDA, ALTO_FILA - 10);
-				g2.drawString("Bucket " + i, MARGEN + 10, y + 25);
-
-				LinkedList<String> cadena = tabla.getBucket(i);
-				int x = MARGEN + ANCHO_CELDA;
-				for (int j = 0; j < cadena.size(); j++) {
-					x += 30;
-					g2.setColor(Color.BLACK);
-					g2.drawLine(x - 30, y + 20, x, y + 20);
-
-					if (i == bucketResaltado && j == posResaltada) {
-						g2.setColor(color);
-						g2.fillRect(x, y, ANCHO_CELDA, ALTO_FILA - 10);
-					}
-					g2.setColor(Color.BLACK);
-					g2.drawRect(x, y, ANCHO_CELDA, ALTO_FILA - 10);
-					g2.drawString(cadena.get(j), x + 10, y + 25);
-					x += ANCHO_CELDA;
-				}
-			}
-		}
 	}
 }

@@ -2,8 +2,8 @@ package Ciudad2;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import utiles.ValidacionesUtiles;
+
 public class BacktrackingReinas {
 
 	private TableroReinas tablero;
