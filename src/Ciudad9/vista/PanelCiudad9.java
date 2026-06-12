@@ -25,16 +25,22 @@ public class PanelCiudad9 extends JPanel {
 
     public void actualizar(JugadorCombate jugador, List<Enemigo> enemigos) {
         bmp.dibujarEstadoCombate(jugador, enemigos);
-        lblImagen.repaint();
+        lblImagen.setIcon(new ImageIcon(bmp.getImage()));
+        revalidate();
+        repaint();
     }
 
     public void mostrarVictoria() {
         bmp.dibujarVictoria();
-        lblImagen.repaint();
+        lblImagen.setIcon(new ImageIcon(bmp.getImage()));
+        revalidate();
+        repaint();
     }
 
     public void mostrarDerrota() {
         bmp.dibujarDerrota();
-        lblImagen.repaint();
+        lblImagen.setIcon(new ImageIcon(bmp.getImage()));
+        revalidate();
+        repaint();
     }
 }

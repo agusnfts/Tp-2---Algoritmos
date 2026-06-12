@@ -7,7 +7,6 @@ import java.util.Queue;
 import java.util.Stack;
 
 public class Combate {
-
     private static final int VIDA_JUGADOR = 100;
     private static final int DANIO_ATAQUE = 20;
     private static final int DANIO_HABILIDAD = 40;
@@ -39,6 +38,7 @@ public class Combate {
     }
 
     public void procesarTurno() {
+
         if (turnos.isEmpty()) {
             return;
         }
@@ -46,10 +46,16 @@ public class Combate {
         Personaje actual = turnos.poll();
 
         if (actual instanceof JugadorCombate) {
+
             procesarTurnoJugador();
+
         } else {
+
             Enemigo enemigo = (Enemigo) actual;
-            jugador.recibirDanio(enemigo.getDanio());
+
+            if (enemigo.estaVivo()) {
+                jugador.recibirDanio(enemigo.getDanio());
+            }
         }
 
         if (actual.estaVivo()) {
@@ -59,27 +65,55 @@ public class Combate {
         enemigos.removeIf(e -> !e.estaVivo());
     }
 
+    /**procesa una ronda completa.juega el jugador y despues todos los enemigos. */
+    public void procesarRonda() {
+
+        int cantidadTurnos = turnos.size();
+
+        for (int i = 0; i < cantidadTurnos; i++) {
+
+            if (combateTerminado()) {
+                break;
+            }
+
+            procesarTurno();
+        }
+    }
+
     private void procesarTurnoJugador() {
+
         while (!acciones.isEmpty()) {
+
             Accion accion = acciones.pop();
+
             ejecutarAccion(accion);
         }
     }
 
     private void ejecutarAccion(Accion accion) {
+
         if (accion.getTipo() == TipoAccion.ATAQUE) {
+
             atacarPrimerEnemigo(DANIO_ATAQUE);
+
         } else if (accion.getTipo() == TipoAccion.DEFENSA) {
+
             jugador.curar(CURACION_DEFENSA);
+
         } else if (accion.getTipo() == TipoAccion.HABILIDAD) {
+
             atacarPrimerEnemigo(DANIO_HABILIDAD);
         }
     }
 
     private void atacarPrimerEnemigo(int danio) {
+
         for (Enemigo e : enemigos) {
+
             if (e.estaVivo()) {
+
                 e.recibirDanio(danio);
+
                 return;
             }
         }
