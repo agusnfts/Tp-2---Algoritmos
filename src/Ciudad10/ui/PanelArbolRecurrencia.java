@@ -1,7 +1,7 @@
-package ui;
+package Ciudad10.ui;
 
-import bitmap.Bitmap;
-import logica.NodoExpansion;
+import Ciudad10.bitmap.Bitmap;
+import Ciudad10.logica.NodoExpansion;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;

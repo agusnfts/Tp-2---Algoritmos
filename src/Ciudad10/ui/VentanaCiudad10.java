@@ -1,11 +1,13 @@
-package ui;
+package Ciudad10.ui;
 
-import logica.AnalizadorMaestro;
-import logica.CondicionVictoria;
-import logica.ParserRecurrencia;
-import logica.Recurrencia;
-import logica.ExpansorRecurrencia;
-import logica.NodoExpansion;
+import Ciudad10.logica.AnalizadorMaestro;
+import Ciudad10.logica.CondicionVictoria;
+import Ciudad10.logica.ParserRecurrencia;
+import Ciudad10.logica.Recurrencia;
+import principal.PanelMapa;
+import principal.ProgresoJuego;
+import Ciudad10.logica.ExpansorRecurrencia;
+import Ciudad10.logica.NodoExpansion;
 import java.util.List;
 import javax.swing.*;
 import java.awt.*;
@@ -20,10 +22,12 @@ public class VentanaCiudad10 extends JFrame {
     private JTextArea resultado;
     private JButton botonAnalizar;
     private PanelArbolRecurrencia panelArbol;
-    private CondicionVictoria progreso;
+    private CondicionVictoria condicion;
+    private ProgresoJuego progreso;
 
-    public VentanaCiudad10() {
-        this.progreso = new CondicionVictoria();
+    public VentanaCiudad10(ProgresoJuego progreso) {
+    	this.progreso = progreso;
+        this.condicion = new CondicionVictoria();
 
         setTitle("Ciudad 10 - Complejidad Algoritmica");
         setSize(700, 500);
@@ -88,8 +92,8 @@ public class VentanaCiudad10 extends JFrame {
         }
 
         int caso = analizador.obtenerCaso(r);
-        if (!progreso.casoCompleto(caso)) {
-            progreso.completarCaso(caso);
+        if (!condicion.casoCompleto(caso)) {
+        	condicion.completarCaso(caso);
             JOptionPane.showMessageDialog(this, "¡Descubriste el Caso " + caso + "!");
         }
 
@@ -112,7 +116,7 @@ public class VentanaCiudad10 extends JFrame {
         texto.append("Patrón detectado:\n");
         texto.append("Nivel i -> ").append(r.getA())
              .append("^i problemas de tamaño n/").append(r.getB()).append("^i\n\n");
-        texto.append("=== Progreso ===\n").append(progreso.estado()).append("\n");
+        texto.append("=== Progreso ===\n").append(condicion.estado()).append("\n");
 
         for (NodoExpansion nodo : lista) {
             texto.append("Nivel ").append(nodo.getNivel())
@@ -129,14 +133,18 @@ public class VentanaCiudad10 extends JFrame {
         panelArbol.repaint();
 
         //Se activa al encontrar los 3 casos, y devuelve al mapa(mapa WIP)
-        if (progreso.ciudadCompletada()) {
-            JOptionPane.showMessageDialog(this, "¡Has completado los tres casos de la ciudad 10!\nCiudad completada.");
-            
-            PanelMapa mapa;
+        if (condicion.ciudadCompletada()) {
 
-            mapa = new PanelMapa();
+            JOptionPane.showMessageDialog(
+                    this,
+                    "¡Has completado los tres casos de la Ciudad 10!\n"
+                    + "GANASTE EL VIDEOJUEGO!! Gracias por jugar."
+            );
 
-            mapa.setVisible(true);
+            if (progreso != null) {
+
+                progreso.guardar();
+            }
 
             dispose();
         }

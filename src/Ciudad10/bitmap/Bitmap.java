@@ -1,4 +1,4 @@
-package bitmap;
+package Ciudad10.bitmap;
 
 
 import java.awt.Color;

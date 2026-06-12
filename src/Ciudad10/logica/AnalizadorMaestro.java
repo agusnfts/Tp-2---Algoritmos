@@ -1,4 +1,4 @@
-package logica;
+package Ciudad10.logica;
 
 //Clase que implementa el teorema maestro para analizar recurrencias.
 //Determina el caso (1, 2 o 3) y devuelve la complejidad asintotica.

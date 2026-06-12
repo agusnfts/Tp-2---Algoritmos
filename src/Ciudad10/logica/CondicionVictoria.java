@@ -1,4 +1,4 @@
-package logica;
+package Ciudad10.logica;
 
 /**
  * Clase que lleva el progreso del estudiante en los 3 casos del teorema maestro.

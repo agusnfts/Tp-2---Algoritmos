@@ -1,4 +1,4 @@
-package logica;
+package Ciudad10.logica;
 
 /**
  * Representa un nodo en la expansion del arbol de recurrencia.

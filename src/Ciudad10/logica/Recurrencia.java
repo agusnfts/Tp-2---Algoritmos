@@ -1,4 +1,4 @@
-package logica;
+package Ciudad10.logica;
 
 /**
  * Modelo simple que representa una recurrencia T(n) = aT(n/b) + n^k

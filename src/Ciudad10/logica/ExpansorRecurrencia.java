@@ -1,4 +1,4 @@
-package logica;
+package Ciudad10.logica;
 
 import java.util.ArrayList;
 import java.util.List;
