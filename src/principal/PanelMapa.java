@@ -9,6 +9,8 @@ import Ciudad5.vista.VentanaBusquedas;
 import Ciudad6.PanelCiudad6;
 import Ciudad7.PanelCiudad7;
 import Ciudad8.vista.PanelCiudad8;
+import Ciudad9.vista.VentanaCiudad9;
+
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
@@ -197,6 +199,24 @@ public class PanelMapa extends JPanel {
 
             cambiarPanel(new PanelCiudad8(progreso));
         	
+        	
+        }
+
+        // CIUDAD 9
+        
+        if(x>=729 && x<=917 && y>= 406 && y<= 586) {
+        	
+        	System.out.println(
+                    "[MAPA] Ciudad 9"
+            );
+        	
+        	
+        	 if (!progreso.estaDesbloqueada(9)) {
+                 return;
+             }
+
+        	 VentanaCiudad9 ventana = new VentanaCiudad9(progreso);
+        	    ventana.setVisible(true);
         	
         }
         
