@@ -2,6 +2,8 @@ package Ciudad5.modelo;
 
 import java.util.ArrayList;
 
+import utiles.ValidacionesUtiles;
+
 public class BusquedaLineal {
 
     private ArrayList<String> palabras;
@@ -25,6 +27,21 @@ public class BusquedaLineal {
             int posicion
     ) {
 
+        ValidacionesUtiles.esDistintoDeNull(
+                palabra,
+                "palabra"
+        );
+
+        ValidacionesUtiles.validarMayorACero(
+                linea,
+                "linea"
+        );
+
+        ValidacionesUtiles.validarMayorACero(
+                posicion,
+                "posicion"
+        );
+
         palabras.add(palabra);
 
         lineas.add(linea);
@@ -36,17 +53,22 @@ public class BusquedaLineal {
             String palabra
     ) {
 
+        ValidacionesUtiles.esDistintoDeNull(
+                palabra,
+                "palabra"
+        );
+
         int operaciones = 0;
 
         long inicio = System.nanoTime();
 
-        for(int i = 0;
-            i < palabras.size();
-            i++) {
+        for (int i = 0;
+             i < palabras.size();
+             i++) {
 
             operaciones++;
 
-            if(palabras.get(i)
+            if (palabras.get(i)
                     .equals(palabra)) {
 
                 long fin =
@@ -64,3 +86,4 @@ public class BusquedaLineal {
         return null;
     }
 }
+

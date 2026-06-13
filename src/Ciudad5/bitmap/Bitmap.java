@@ -5,12 +5,24 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+import utiles.ValidacionesUtiles;
+
 public class Bitmap {
 
     private BufferedImage imagen;
     private Graphics2D g;
 
     public Bitmap(int ancho, int alto) {
+
+        ValidacionesUtiles.validarMayorACero(
+                ancho,
+                "ancho"
+        );
+
+        ValidacionesUtiles.validarMayorACero(
+                alto,
+                "alto"
+        );
 
         imagen = new BufferedImage(
                 ancho,
@@ -29,6 +41,16 @@ public class Bitmap {
 
     public void limpiar() {
 
+        ValidacionesUtiles.esDistintoDeNull(
+                g,
+                "graphics"
+        );
+
+        ValidacionesUtiles.esDistintoDeNull(
+                imagen,
+                "imagen"
+        );
+
         g.setColor(Color.WHITE);
 
         g.fillRect(
@@ -40,6 +62,11 @@ public class Bitmap {
     }
 
     public void mostrarTexto(String texto) {
+
+        ValidacionesUtiles.esDistintoDeNull(
+                texto,
+                "texto"
+        );
 
         limpiar();
 
@@ -58,7 +85,7 @@ public class Bitmap {
         String[] lineas =
                 texto.split("\n");
 
-        for(String linea : lineas) {
+        for (String linea : lineas) {
 
             g.drawString(
                     linea,
@@ -70,3 +97,5 @@ public class Bitmap {
         }
     }
 }
+
+

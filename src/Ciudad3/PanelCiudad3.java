@@ -36,14 +36,14 @@ public class PanelCiudad3 extends JPanel {
         gbc.insets = new Insets(20, 20, 20, 20);
         gbc.gridx = 0;
 
-        // Título del Panel
+        // Título Panel
         gbc.gridy = 0;
         JLabel lblTitulo = new JLabel("--- CIUDAD 3: TERMINAL SECRETA ---");
         lblTitulo.setFont(new Font("Courier New", Font.BOLD, 30));
         lblTitulo.setForeground(Color.GREEN);
         add(lblTitulo, gbc);
 
-        // Botón para arrancar el laberinto
+        // Botón arranca laberinto
         gbc.gridy = 1;
         JButton btnArrancar = new JButton("INICIAR PROTOCOLO: LABERINTO HACKER");
         btnArrancar.setFont(new Font("Courier New", Font.BOLD, 22));
@@ -51,18 +51,15 @@ public class PanelCiudad3 extends JPanel {
         btnArrancar.setForeground(Color.CYAN);
         btnArrancar.setFocusPainted(false);
 
+        //Pasa la partida actual y arranca laberinto
         btnArrancar.addActionListener(e -> {
-
-            // Pasamos la partida actual al minijuego
             SalidaLaberinto.setProgreso(progreso);
-
-            // Arrancamos el laberinto
             SalidaLaberinto.main(new String[0]);
         });
 
         add(btnArrancar, gbc);
 
-        // Botón para volver al mapa
+        // Botón volver al mapa
         gbc.gridy = 2;
         JButton btnVolver = new JButton("DESCONECTAR Y VOLVER AL MAPA");
         btnVolver.setFont(new Font("Courier New", Font.BOLD, 22));
@@ -70,14 +67,14 @@ public class PanelCiudad3 extends JPanel {
         btnVolver.setForeground(Color.RED);
         btnVolver.setFocusPainted(false);
 
+        //Vuelve al mapa con el mismo progreso
         btnVolver.addActionListener(e -> {
-
-      
-
             JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
-
             if (frame != null) {
-                frame.setContentPane(new PanelMapa(progreso));
+                PanelMapa nuevoMapa = new PanelMapa(progreso);
+                nuevoMapa.setFrame(frame);
+                
+                frame.setContentPane(nuevoMapa);
                 frame.revalidate();
                 frame.repaint();
             }

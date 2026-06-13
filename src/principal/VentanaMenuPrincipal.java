@@ -1,7 +1,9 @@
 package principal;
 import javax.swing.*;
-import java.awt.*;
 
+import utiles.ValidacionesUtiles;
+
+import java.awt.*;
 public class VentanaMenuPrincipal extends JFrame {
 
     private ProgresoJuego progreso;
@@ -12,22 +14,40 @@ public class VentanaMenuPrincipal extends JFrame {
         setSize(500, 400);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLayout(new GridLayout(4, 1, 10, 10)); // 👈 ahora 4 filas
+        setLayout(new GridLayout(4, 1, 10, 10));
 
-        JButton btnIniciar = new JButton("Iniciar Partida");
-        JButton btnCargar = new JButton("Cargar Partida");
-        JButton btnBorrar = new JButton("Borrar Partida");
-        JButton btnSalir = new JButton("Salir");
+        JButton btnIniciar =
+                new JButton("Iniciar Partida");
+
+        JButton btnCargar =
+                new JButton("Cargar Partida");
+
+        JButton btnBorrar =
+                new JButton("Borrar Partida");
+
+        JButton btnSalir =
+                new JButton("Salir");
 
         add(btnIniciar);
         add(btnCargar);
         add(btnBorrar);
         add(btnSalir);
 
-        btnIniciar.addActionListener(e -> iniciarNuevaPartida());
-        btnCargar.addActionListener(e -> cargarPartida());
-        btnBorrar.addActionListener(e -> borrarPartida());
-        btnSalir.addActionListener(e -> System.exit(0));
+        btnIniciar.addActionListener(
+                e -> iniciarNuevaPartida()
+        );
+
+        btnCargar.addActionListener(
+                e -> cargarPartida()
+        );
+
+        btnBorrar.addActionListener(
+                e -> borrarPartida()
+        );
+
+        btnSalir.addActionListener(
+                e -> System.exit(0)
+        );
     }
 
     // =========================
@@ -35,14 +55,32 @@ public class VentanaMenuPrincipal extends JFrame {
     // =========================
     private void iniciarNuevaPartida() {
 
-        String nombre = JOptionPane.showInputDialog(this, "Nombre del jugador:");
+        String nombre =
+                JOptionPane.showInputDialog(
+                        this,
+                        "Nombre del jugador:"
+                );
 
-        if (nombre == null || nombre.trim().isEmpty()) {
+        if (nombre == null) {
             return;
         }
 
-        progreso = new ProgresoJuego();
-        progreso.setNombreJugador(nombre);
+        nombre = nombre.trim();
+
+        ValidacionesUtiles.validarLongitudDeTexto(
+                nombre,
+                1,
+                null,
+                "nombre del jugador"
+        );
+
+        progreso =
+                new ProgresoJuego();
+
+        progreso.setNombreJugador(
+                nombre
+        );
+
         progreso.guardar();
 
         abrirMapa();
@@ -53,66 +91,100 @@ public class VentanaMenuPrincipal extends JFrame {
     // =========================
     private void cargarPartida() {
 
-        String[] partidas = ProgresoJuego.listarPartidas();
+        String[] partidas =
+                ProgresoJuego.listarPartidas();
 
         if (partidas.length == 0) {
-            JOptionPane.showMessageDialog(this, "No hay partidas guardadas");
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "No hay partidas guardadas"
+            );
+
             return;
         }
 
-        String seleccion = (String) JOptionPane.showInputDialog(
-                this,
-                "Elegí una partida:",
-                "Cargar partida",
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                partidas,
-                partidas[0]
+        String seleccion =
+                (String) JOptionPane.showInputDialog(
+                        this,
+                        "Elegí una partida:",
+                        "Cargar partida",
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        partidas,
+                        partidas[0]
+                );
+
+        if (seleccion == null) {
+            return;
+        }
+
+        String nombre =
+                seleccion.replace(
+                        ".dat",
+                        ""
+                );
+
+        progreso =
+                ProgresoJuego.cargar(
+                        nombre
+                );
+
+        ValidacionesUtiles.esDistintoDeNull(
+                progreso,
+                "progreso"
         );
-
-        if (seleccion == null) return;
-
-        String nombre = seleccion.replace(".dat", "");
-
-        progreso = ProgresoJuego.cargar(nombre);
-
-        if (progreso == null) {
-            JOptionPane.showMessageDialog(this, "Error al cargar partida");
-            return;
-        }
 
         abrirMapa();
     }
 
     // =========================
-    // ❌ BORRAR PARTIDA
+    // BORRAR PARTIDA
     // =========================
     private void borrarPartida() {
 
-        String[] partidas = ProgresoJuego.listarPartidas();
+        String[] partidas =
+                ProgresoJuego.listarPartidas();
 
         if (partidas.length == 0) {
-            JOptionPane.showMessageDialog(this, "No hay partidas guardadas");
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "No hay partidas guardadas"
+            );
+
             return;
         }
 
-        String seleccion = (String) JOptionPane.showInputDialog(
-                this,
-                "Elegí partida a borrar:",
-                "Borrar partida",
-                JOptionPane.WARNING_MESSAGE,
-                null,
-                partidas,
-                partidas[0]
+        String seleccion =
+                (String) JOptionPane.showInputDialog(
+                        this,
+                        "Elegí partida a borrar:",
+                        "Borrar partida",
+                        JOptionPane.WARNING_MESSAGE,
+                        null,
+                        partidas,
+                        partidas[0]
+                );
+
+        if (seleccion == null) {
+            return;
+        }
+
+        String nombre =
+                seleccion.replace(
+                        ".dat",
+                        ""
+                );
+
+        ProgresoJuego.borrar(
+                nombre
         );
 
-        if (seleccion == null) return;
-
-        String nombre = seleccion.replace(".dat", "");
-
-        ProgresoJuego.borrar(nombre);
-
-        JOptionPane.showMessageDialog(this, "Partida borrada correctamente");
+        JOptionPane.showMessageDialog(
+                this,
+                "Partida borrada correctamente"
+        );
     }
 
     // =========================
@@ -120,17 +192,34 @@ public class VentanaMenuPrincipal extends JFrame {
     // =========================
     private void abrirMapa() {
 
-        JFrame frame = new JFrame("Mapa");
+        ValidacionesUtiles.esDistintoDeNull(
+                progreso,
+                "progreso"
+        );
+
+        JFrame frame =
+                new JFrame("Mapa");
 
         frame.setSize(1000, 700);
+
         frame.setLocationRelativeTo(null);
-        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        PanelMapa mapa = new PanelMapa(progreso);
+        frame.setDefaultCloseOperation(
+                EXIT_ON_CLOSE
+        );
 
-        mapa.setFrame(frame);
+        PanelMapa mapa =
+                new PanelMapa(
+                        progreso
+                );
 
-        frame.setContentPane(mapa);
+        mapa.setFrame(
+                frame
+        );
+
+        frame.setContentPane(
+                mapa
+        );
 
         frame.setVisible(true);
 

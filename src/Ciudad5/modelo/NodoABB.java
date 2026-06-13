@@ -1,5 +1,7 @@
 package Ciudad5.modelo;
 
+import utiles.ValidacionesUtiles;
+
 public class NodoABB {
 
     String palabra;
@@ -17,6 +19,21 @@ public class NodoABB {
             int linea,
             int posicion
     ) {
+
+        ValidacionesUtiles.esDistintoDeNull(
+                palabra,
+                "palabra"
+        );
+
+        ValidacionesUtiles.validarMayorACero(
+                linea,
+                "linea"
+        );
+
+        ValidacionesUtiles.validarMayorACero(
+                posicion,
+                "posicion"
+        );
 
         this.palabra = palabra;
 

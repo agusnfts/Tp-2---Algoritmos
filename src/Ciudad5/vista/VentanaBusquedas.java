@@ -14,6 +14,7 @@ import javax.swing.JTextField;
 
 import Ciudad5.util.LectorArchivo;
 import principal.ProgresoJuego;
+import utiles.ValidacionesUtiles;
 import Ciudad5.modelo.ArbolBusqueda;
 import Ciudad5.modelo.BusquedaLineal;
 import Ciudad5.modelo.ResultadoBusqueda;
@@ -33,14 +34,18 @@ public class VentanaBusquedas extends JFrame {
     private ArbolBusqueda arbol;
 
     private BusquedaLineal lista;
-    
-    private ProgresoJuego progreso;
 
+    private ProgresoJuego progreso;
 
     private boolean archivoCargado = false;
     private int cantidadBusquedas = 0;
 
     public VentanaBusquedas(ProgresoJuego progreso) {
+
+        ValidacionesUtiles.esDistintoDeNull(
+                progreso,
+                "progreso"
+        );
 
         this.progreso = progreso;
 
@@ -60,8 +65,6 @@ public class VentanaBusquedas extends JFrame {
 
         inicializar();
     }
-    
-  
 
     private void inicializar() {
 
@@ -173,11 +176,16 @@ public class VentanaBusquedas extends JFrame {
                         this
                 );
 
-        if(resultado ==
+        if (resultado ==
                 JFileChooser.APPROVE_OPTION) {
 
             File archivo =
                     chooser.getSelectedFile();
+
+            ValidacionesUtiles.esDistintoDeNull(
+                    archivo,
+                    "archivo"
+            );
 
             arbol =
                     new ArbolBusqueda();
@@ -190,7 +198,9 @@ public class VentanaBusquedas extends JFrame {
                     arbol,
                     lista
             );
+
             archivoCargado = true;
+
             JOptionPane.showMessageDialog(
                     this,
                     "Archivo cargado correctamente"
@@ -206,16 +216,12 @@ public class VentanaBusquedas extends JFrame {
                         .trim()
                         .toLowerCase();
 
-        if(palabra.isEmpty()) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Ingrese una palabra"
-            );
-           
-            
-            return;
-        }
+        ValidacionesUtiles.validarLongitudDeTexto(
+                palabra,
+                1,
+                null,
+                "palabra"
+        );
 
         ResultadoBusqueda resultadoLineal =
                 lista.buscar(
@@ -232,7 +238,9 @@ public class VentanaBusquedas extends JFrame {
                 resultadoLineal,
                 resultadoArbol
         );
+
         cantidadBusquedas++;
+
         verificarVictoria();
     }
 
@@ -242,37 +250,42 @@ public class VentanaBusquedas extends JFrame {
             ResultadoBusqueda arbolRes
     ) {
 
+        ValidacionesUtiles.esDistintoDeNull(
+                palabra,
+                "palabra"
+        );
+
         String texto = "";
 
         texto +=
                 "PALABRA BUSCADA: "
-                + palabra
-                + "\n\n";
+                        + palabra
+                        + "\n\n";
 
         texto +=
                 "===== BUSQUEDA LINEAL =====\n";
 
-        if(lineal != null) {
+        if (lineal != null) {
 
             texto +=
                     "Linea: "
-                    + lineal.getLinea()
-                    + "\n";
+                            + lineal.getLinea()
+                            + "\n";
 
             texto +=
                     "Posicion: "
-                    + lineal.getPosicion()
-                    + "\n";
+                            + lineal.getPosicion()
+                            + "\n";
 
             texto +=
                     "Tiempo: "
-                    + lineal.getTiempo()
-                    + " ns\n";
+                            + lineal.getTiempo()
+                            + " ns\n";
 
             texto +=
                     "Operaciones: "
-                    + lineal.getOperaciones()
-                    + "\n\n";
+                            + lineal.getOperaciones()
+                            + "\n\n";
 
         } else {
 
@@ -283,27 +296,27 @@ public class VentanaBusquedas extends JFrame {
         texto +=
                 "===== ARBOL BINARIO =====\n";
 
-        if(arbolRes != null) {
+        if (arbolRes != null) {
 
             texto +=
                     "Linea: "
-                    + arbolRes.getLinea()
-                    + "\n";
+                            + arbolRes.getLinea()
+                            + "\n";
 
             texto +=
                     "Posicion: "
-                    + arbolRes.getPosicion()
-                    + "\n";
+                            + arbolRes.getPosicion()
+                            + "\n";
 
             texto +=
                     "Tiempo: "
-                    + arbolRes.getTiempo()
-                    + " ns\n";
+                            + arbolRes.getTiempo()
+                            + " ns\n";
 
             texto +=
                     "Operaciones: "
-                    + arbolRes.getOperaciones()
-                    + "\n\n";
+                            + arbolRes.getOperaciones()
+                            + "\n\n";
 
         } else {
 
@@ -311,13 +324,13 @@ public class VentanaBusquedas extends JFrame {
                     "Palabra no encontrada\n\n";
         }
 
-        if(lineal != null
+        if (lineal != null
                 && arbolRes != null) {
 
             texto +=
                     "===== COMPARACION =====\n";
 
-            if(arbolRes.getTiempo()
+            if (arbolRes.getTiempo()
                     < lineal.getTiempo()) {
 
                 texto +=
@@ -329,7 +342,7 @@ public class VentanaBusquedas extends JFrame {
                         "La busqueda lineal fue mas rapida\n";
             }
 
-            if(arbolRes.getOperaciones()
+            if (arbolRes.getOperaciones()
                     < lineal.getOperaciones()) {
 
                 texto +=
@@ -346,7 +359,7 @@ public class VentanaBusquedas extends JFrame {
                 texto
         );
     }
-    
+
     /**
      * Desbloquea la Ciudad 6 cuando el jugador:
      * - carga un archivo
@@ -354,10 +367,15 @@ public class VentanaBusquedas extends JFrame {
      */
     private void verificarVictoria() {
 
-        if(archivoCargado
+        ValidacionesUtiles.validarMayorOIgualACero(
+                cantidadBusquedas,
+                "cantidadBusquedas"
+        );
+
+        if (archivoCargado
                 && cantidadBusquedas >= 3) {
 
-            if(progreso != null
+            if (progreso != null
                     && !progreso.estaDesbloqueada(6)) {
 
                 System.out.println(
@@ -371,11 +389,10 @@ public class VentanaBusquedas extends JFrame {
                 JOptionPane.showMessageDialog(
                         this,
                         "¡Felicitaciones!\n"
-                        + "Completaste la Ciudad 5.\n"
-                        + "La Ciudad 6 ha sido desbloqueada."
+                                + "Completaste la Ciudad 5.\n"
+                                + "La Ciudad 6 ha sido desbloqueada."
                 );
             }
         }
     }
-    
 }

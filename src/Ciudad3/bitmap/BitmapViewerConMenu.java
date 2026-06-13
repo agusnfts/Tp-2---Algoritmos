@@ -67,7 +67,7 @@ public class BitmapViewerConMenu {
      */
     private void createAndShowGUI() {
         frame = new JFrame("Visualizador de Bitmaps");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
         panel = new JPanel(new java.awt.GridBagLayout());

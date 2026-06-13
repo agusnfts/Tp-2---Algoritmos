@@ -3,15 +3,22 @@ package Ciudad8.modelo;
 import java.util.ArrayList;
 import java.util.List;
 
+import utiles.ValidacionesUtiles;
 public class Hanoi {
 
     private List<Movimiento> movimientos;
 
     public Hanoi() {
+
         movimientos = new ArrayList<>();
     }
 
     public List<Movimiento> resolver(int cantidadDiscos) {
+
+        ValidacionesUtiles.validarMayorACero(
+                cantidadDiscos,
+                "cantidadDiscos"
+        );
 
         movimientos.clear();
 
@@ -31,6 +38,32 @@ public class Hanoi {
             int destino,
             int auxiliar
     ) {
+
+        ValidacionesUtiles.validarMayorACero(
+                discos,
+                "discos"
+        );
+
+        ValidacionesUtiles.validarRangoNumerico(
+                origen,
+                0,
+                2,
+                "origen"
+        );
+
+        ValidacionesUtiles.validarRangoNumerico(
+                destino,
+                0,
+                2,
+                "destino"
+        );
+
+        ValidacionesUtiles.validarRangoNumerico(
+                auxiliar,
+                0,
+                2,
+                "auxiliar"
+        );
 
         if (discos == 1) {
 

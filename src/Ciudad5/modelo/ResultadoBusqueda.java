@@ -1,5 +1,7 @@
 package Ciudad5.modelo;
 
+import utiles.ValidacionesUtiles;
+
 public class ResultadoBusqueda {
 
     private int linea;
@@ -16,6 +18,26 @@ public class ResultadoBusqueda {
             long tiempo,
             int operaciones
     ) {
+
+        ValidacionesUtiles.validarMayorACero(
+                linea,
+                "linea"
+        );
+
+        ValidacionesUtiles.validarMayorACero(
+                posicion,
+                "posicion"
+        );
+
+        ValidacionesUtiles.validarMayorOIgualACero(
+                tiempo,
+                "tiempo"
+        );
+
+        ValidacionesUtiles.validarMayorOIgualACero(
+                operaciones,
+                "operaciones"
+        );
 
         this.linea = linea;
         this.posicion = posicion;
@@ -39,3 +61,4 @@ public class ResultadoBusqueda {
         return operaciones;
     }
 }
+

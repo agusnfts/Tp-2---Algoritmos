@@ -1,5 +1,7 @@
 package Ciudad5.modelo;
 
+import utiles.ValidacionesUtiles;
+
 public class ArbolBusqueda {
 
     private NodoABB raiz;
@@ -11,6 +13,21 @@ public class ArbolBusqueda {
             int linea,
             int posicion
     ) {
+
+        ValidacionesUtiles.esDistintoDeNull(
+                palabra,
+                "palabra"
+        );
+
+        ValidacionesUtiles.validarMayorACero(
+                linea,
+                "linea"
+        );
+
+        ValidacionesUtiles.validarMayorACero(
+                posicion,
+                "posicion"
+        );
 
         raiz = insertarRec(
                 raiz,
@@ -27,7 +44,12 @@ public class ArbolBusqueda {
             int posicion
     ) {
 
-        if(actual == null) {
+        ValidacionesUtiles.esDistintoDeNull(
+                palabra,
+                "palabra"
+        );
+
+        if (actual == null) {
 
             return new NodoABB(
                     palabra,
@@ -36,7 +58,7 @@ public class ArbolBusqueda {
             );
         }
 
-        if(palabra.compareTo(
+        if (palabra.compareTo(
                 actual.palabra) < 0) {
 
             actual.izquierda =
@@ -65,16 +87,24 @@ public class ArbolBusqueda {
             String palabra
     ) {
 
+        ValidacionesUtiles.esDistintoDeNull(
+                palabra,
+                "palabra"
+        );
+
         operaciones = 0;
 
         long inicio = System.nanoTime();
 
         NodoABB resultado =
-                buscarRec(raiz, palabra);
+                buscarRec(
+                        raiz,
+                        palabra
+                );
 
         long fin = System.nanoTime();
 
-        if(resultado == null) {
+        if (resultado == null) {
 
             return null;
         }
@@ -92,21 +122,28 @@ public class ArbolBusqueda {
             String palabra
     ) {
 
+        ValidacionesUtiles.esDistintoDeNull(
+                palabra,
+                "palabra"
+        );
+
         operaciones++;
 
-        if(actual == null) {
+        if (actual == null) {
 
             return null;
         }
 
-        if(actual.palabra.equals(
-                palabra)) {
+        if (actual.palabra.equals(
+                palabra
+        )) {
 
             return actual;
         }
 
-        if(palabra.compareTo(
-                actual.palabra) < 0) {
+        if (palabra.compareTo(
+                actual.palabra
+        ) < 0) {
 
             return buscarRec(
                     actual.izquierda,
@@ -120,3 +157,4 @@ public class ArbolBusqueda {
         );
     }
 }
+

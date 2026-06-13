@@ -1,7 +1,8 @@
 package Ciudad4.modelo;
-
-import java.util.Queue;
 import java.util.LinkedList;
+import java.util.Queue;
+
+import utiles.ValidacionesUtiles;
 
 public class QuickSort {
 
@@ -16,10 +17,10 @@ public class QuickSort {
      */
     public static Queue<int[]> ordenar(int[] vector) {
 
-        if (vector == null) {
-            throw new IllegalArgumentException(
-                    "El vector no puede ser null");
-        }
+        ValidacionesUtiles.esDistintoDeNull(
+                vector,
+                "vector"
+        );
 
         pasos = new LinkedList<>();
 

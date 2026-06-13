@@ -5,6 +5,7 @@ import java.io.FileReader;
 
 import Ciudad5.modelo.ArbolBusqueda;
 import Ciudad5.modelo.BusquedaLineal;
+import utiles.ValidacionesUtiles;
 
 public class LectorArchivo {
 
@@ -14,26 +15,38 @@ public class LectorArchivo {
             BusquedaLineal lista
     ) {
 
-        try {
+        ValidacionesUtiles.esDistintoDeNull(
+                ruta,
+                "ruta"
+        );
 
-            BufferedReader br =
-                    new BufferedReader(
-                            new FileReader(ruta)
-                    );
+        ValidacionesUtiles.esDistintoDeNull(
+                arbol,
+                "arbol"
+        );
+
+        ValidacionesUtiles.esDistintoDeNull(
+                lista,
+                "lista"
+        );
+
+        try (BufferedReader br =
+                     new BufferedReader(
+                             new FileReader(ruta)
+                     )) {
 
             String linea;
 
             int nroLinea = 1;
 
-            while((linea = br.readLine())
-                    != null) {
+            while ((linea = br.readLine()) != null) {
 
                 String[] palabras =
                         linea.split(" ");
 
-                for(int i = 0;
-                    i < palabras.length;
-                    i++) {
+                for (int i = 0;
+                     i < palabras.length;
+                     i++) {
 
                     String palabra =
                             palabras[i]
@@ -55,11 +68,12 @@ public class LectorArchivo {
                 nroLinea++;
             }
 
-            br.close();
+        } catch (Exception e) {
 
-        } catch(Exception e) {
-
-            e.printStackTrace();
+            throw new RuntimeException(
+                    "Error al cargar el archivo",
+                    e
+            );
         }
     }
 }

@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 
 import Ciudad4.bitmap.Bitmap;
 import principal.ProgresoJuego;
+import utiles.ValidacionesUtiles;
 
 public class PanelCiudad4 extends JPanel {
 
@@ -17,6 +18,11 @@ public class PanelCiudad4 extends JPanel {
     private ProgresoJuego progreso;
 
     public PanelCiudad4(ProgresoJuego progreso) {
+
+        ValidacionesUtiles.esDistintoDeNull(
+                progreso,
+                "progreso"
+        );
 
         this.progreso = progreso;
 
@@ -29,15 +35,20 @@ public class PanelCiudad4 extends JPanel {
         add(lblImagen, BorderLayout.CENTER);
     }
 
-    //  Constructor por compatibilidad
+    // Constructor por compatibilidad
     public PanelCiudad4() {
         this(new ProgresoJuego());
     }
 
     /**
-     *  Se llama cuando el algoritmo genera datos
+     * Se llama cuando el algoritmo genera datos
      */
     public void mostrarDatos(int[] datos) {
+
+        ValidacionesUtiles.esDistintoDeNull(
+                datos,
+                "datos"
+        );
 
         bmp.dibujarBarras(datos);
 
@@ -50,3 +61,5 @@ public class PanelCiudad4 extends JPanel {
         }
     }
 }
+
+

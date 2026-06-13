@@ -5,12 +5,24 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+import utiles.ValidacionesUtiles;
+
 public class Bitmap {
 
     private BufferedImage imagen;
     private Graphics2D g;
 
     public Bitmap(int ancho, int alto) {
+
+        ValidacionesUtiles.validarMayorACero(
+                ancho,
+                "ancho"
+        );
+
+        ValidacionesUtiles.validarMayorACero(
+                alto,
+                "alto"
+        );
 
         imagen = new BufferedImage(
                 ancho,
@@ -37,6 +49,11 @@ public class Bitmap {
 
     public void rellenar(Color color) {
 
+        ValidacionesUtiles.esDistintoDeNull(
+                color,
+                "color"
+        );
+
         g.setColor(color);
 
         g.fillRect(
@@ -54,6 +71,11 @@ public class Bitmap {
             int y2,
             Color color
     ) {
+
+        ValidacionesUtiles.esDistintoDeNull(
+                color,
+                "color"
+        );
 
         g.setColor(color);
 
@@ -73,6 +95,21 @@ public class Bitmap {
             Color color
     ) {
 
+        ValidacionesUtiles.validarMayorOIgualACero(
+                ancho,
+                "ancho"
+        );
+
+        ValidacionesUtiles.validarMayorOIgualACero(
+                alto,
+                "alto"
+        );
+
+        ValidacionesUtiles.esDistintoDeNull(
+                color,
+                "color"
+        );
+
         g.setColor(color);
 
         g.drawRect(
@@ -91,6 +128,21 @@ public class Bitmap {
             Color color
     ) {
 
+        ValidacionesUtiles.validarMayorOIgualACero(
+                ancho,
+                "ancho"
+        );
+
+        ValidacionesUtiles.validarMayorOIgualACero(
+                alto,
+                "alto"
+        );
+
+        ValidacionesUtiles.esDistintoDeNull(
+                color,
+                "color"
+        );
+
         g.setColor(color);
 
         g.fillRect(
@@ -108,6 +160,16 @@ public class Bitmap {
             Color color
     ) {
 
+        ValidacionesUtiles.validarMayorOIgualACero(
+                radio,
+                "radio"
+        );
+
+        ValidacionesUtiles.esDistintoDeNull(
+                color,
+                "color"
+        );
+
         g.setColor(color);
 
         g.drawOval(
@@ -124,6 +186,16 @@ public class Bitmap {
             int radio,
             Color color
     ) {
+
+        ValidacionesUtiles.validarMayorOIgualACero(
+                radio,
+                "radio"
+        );
+
+        ValidacionesUtiles.esDistintoDeNull(
+                color,
+                "color"
+        );
 
         g.setColor(color);
 
@@ -144,6 +216,26 @@ public class Bitmap {
             Color fondo
     ) {
 
+        ValidacionesUtiles.esDistintoDeNull(
+                texto,
+                "texto"
+        );
+
+        ValidacionesUtiles.esDistintoDeNull(
+                fuente,
+                "fuente"
+        );
+
+        ValidacionesUtiles.esDistintoDeNull(
+                color,
+                "color"
+        );
+
+        ValidacionesUtiles.esDistintoDeNull(
+                fondo,
+                "fondo"
+        );
+
         g.setFont(fuente);
 
         g.setColor(color);
@@ -155,3 +247,5 @@ public class Bitmap {
         );
     }
 }
+
+

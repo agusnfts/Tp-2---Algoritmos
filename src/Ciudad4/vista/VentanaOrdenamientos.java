@@ -13,6 +13,7 @@ import javax.swing.Timer;
 import Ciudad4.modelo.BubbleSort;
 import Ciudad4.modelo.QuickSort;
 import principal.ProgresoJuego;
+import utiles.ValidacionesUtiles;
 
 public class VentanaOrdenamientos extends JFrame {
 
@@ -32,6 +33,11 @@ public class VentanaOrdenamientos extends JFrame {
 
     public VentanaOrdenamientos(ProgresoJuego progreso) {
 
+        ValidacionesUtiles.esDistintoDeNull(
+                progreso,
+                "progreso"
+        );
+
         this.progreso = progreso;
 
         setTitle("Ciudad 4 - Ordenamientos");
@@ -46,8 +52,6 @@ public class VentanaOrdenamientos extends JFrame {
 
         inicializar();
     }
-
-
 
     private void inicializar() {
 
@@ -98,62 +102,77 @@ public class VentanaOrdenamientos extends JFrame {
 
     private void ordenar() {
 
-        try {
+        ValidacionesUtiles.validarLongitudDeTexto(
+                txtNumeros.getText(),
+                1,
+                null,
+                "numeros"
+        );
 
-            String[] partes =
-                    txtNumeros
-                            .getText()
-                            .split(",");
+        String[] partes =
+                txtNumeros
+                        .getText()
+                        .split(",");
 
-            int[] datos =
-                    new int[partes.length];
+        ValidacionesUtiles.validarMayorACero(
+                partes.length,
+                "cantidad de numeros"
+        );
 
-            for(int i = 0;
-                i < partes.length;
-                i++) {
+        int[] datos =
+                new int[partes.length];
 
-                datos[i] =
-                        Integer.parseInt(
-                                partes[i]
-                                        .trim()
-                        );
-            }
+        for (int i = 0;
+             i < partes.length;
+             i++) {
 
-            Queue<int[]> pasos;
+            ValidacionesUtiles.validarLongitudDeTexto(
+                    partes[i].trim(),
+                    1,
+                    null,
+                    "numero"
+            );
 
-            String algoritmo =
-                    combo
-                            .getSelectedItem()
-                            .toString();
-
-            if(algoritmo.equals(
-                    "BubbleSort")) {
-
-                usoBubbleSort = true;
-
-                pasos =
-                        BubbleSort.ordenar(
-                                datos
-                        );
-
-            } else {
-
-                usoQuickSort = true;
-
-                pasos =
-                        QuickSort.ordenar(
-                                datos
-                        );
-            }
-
-            verificarVictoria();
-
-            animar(pasos);
-
-        } catch(Exception ex) {
-
-            ex.printStackTrace();
+            datos[i] =
+                    Integer.parseInt(
+                            partes[i]
+                                    .trim()
+                    );
         }
+
+        Queue<int[]> pasos;
+
+        String algoritmo =
+                (String) combo.getSelectedItem();
+
+        ValidacionesUtiles.esDistintoDeNull(
+                algoritmo,
+                "algoritmo"
+        );
+
+        if (algoritmo.equals(
+                "BubbleSort")) {
+
+            usoBubbleSort = true;
+
+            pasos =
+                    BubbleSort.ordenar(
+                            datos
+                    );
+
+        } else {
+
+            usoQuickSort = true;
+
+            pasos =
+                    QuickSort.ordenar(
+                            datos
+                    );
+        }
+
+        verificarVictoria();
+
+        animar(pasos);
     }
 
     /**
@@ -165,17 +184,21 @@ public class VentanaOrdenamientos extends JFrame {
         System.out.println("Bubble: " + usoBubbleSort);
         System.out.println("Quick: " + usoQuickSort);
 
-        if(progreso != null) {
-            System.out.println("Ciudad 5 desbloqueada: "
-                    + progreso.estaDesbloqueada(5));
+        if (progreso != null) {
+            System.out.println(
+                    "Ciudad 5 desbloqueada: "
+                            + progreso.estaDesbloqueada(5)
+            );
         }
 
-        if(usoBubbleSort && usoQuickSort) {
+        if (usoBubbleSort && usoQuickSort) {
 
-            if(progreso != null
+            if (progreso != null
                     && !progreso.estaDesbloqueada(5)) {
 
-                System.out.println("[CIUDAD 4] COMPLETADA");
+                System.out.println(
+                        "[CIUDAD 4] COMPLETADA"
+                );
 
                 progreso.desbloquear(5);
 
@@ -184,8 +207,8 @@ public class VentanaOrdenamientos extends JFrame {
                 JOptionPane.showMessageDialog(
                         this,
                         "¡Felicitaciones!\n"
-                        + "Utilizaste BubbleSort y QuickSort.\n"
-                        + "La Ciudad 5 ha sido desbloqueada."
+                                + "Utilizaste BubbleSort y QuickSort.\n"
+                                + "La Ciudad 5 ha sido desbloqueada."
                 );
             }
         }
@@ -195,6 +218,11 @@ public class VentanaOrdenamientos extends JFrame {
             Queue<int[]> pasos
     ) {
 
+        ValidacionesUtiles.esDistintoDeNull(
+                pasos,
+                "pasos"
+        );
+
         Timer timer =
                 new Timer(
                         700,
@@ -203,7 +231,7 @@ public class VentanaOrdenamientos extends JFrame {
 
         timer.addActionListener(e -> {
 
-            if(!pasos.isEmpty()) {
+            if (!pasos.isEmpty()) {
 
                 int[] estado =
                         pasos.poll();
@@ -221,3 +249,4 @@ public class VentanaOrdenamientos extends JFrame {
         timer.start();
     }
 }
+

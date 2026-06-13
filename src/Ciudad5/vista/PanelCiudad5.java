@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 
 import Ciudad5.bitmap.Bitmap;
 import principal.ProgresoJuego;
+import utiles.ValidacionesUtiles;
 
 public class PanelCiudad5 extends JPanel {
 
@@ -17,6 +18,11 @@ public class PanelCiudad5 extends JPanel {
     private ProgresoJuego progreso;
 
     public PanelCiudad5(ProgresoJuego progreso) {
+
+        ValidacionesUtiles.esDistintoDeNull(
+                progreso,
+                "progreso"
+        );
 
         this.progreso = progreso;
 
@@ -29,14 +35,18 @@ public class PanelCiudad5 extends JPanel {
         add(lblImagen, BorderLayout.CENTER);
     }
 
-
-
     /**
-     *  Muestra el resultado del algoritmo de búsqueda
+     * Muestra el resultado del algoritmo de búsqueda
      */
     public void mostrarResultado(String texto) {
 
+        ValidacionesUtiles.esDistintoDeNull(
+                texto,
+                "texto"
+        );
+
         bmp.mostrarTexto(texto);
+
         lblImagen.repaint();
 
         // DESBLOQUEO CIUDAD 6
@@ -46,3 +56,4 @@ public class PanelCiudad5 extends JPanel {
         }
     }
 }
+

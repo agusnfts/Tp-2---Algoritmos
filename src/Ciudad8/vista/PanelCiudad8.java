@@ -28,6 +28,8 @@ import Ciudad8.bitmap.Bitmap;
 import Ciudad8.modelo.Hanoi;
 import Ciudad8.modelo.Movimiento;
 import principal.ProgresoJuego;
+import utiles.SistemaUtiles;
+import utiles.ValidacionesUtiles;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -46,13 +48,18 @@ public class PanelCiudad8 extends JPanel {
     private Bitmap bmp;
 
     private ProgresoJuego progreso;
-    
+
     private JLabel lblImagen;
 
     public PanelCiudad8(ProgresoJuego progreso) {
 
-    	this.progreso = progreso;
-    	
+        ValidacionesUtiles.esDistintoDeNull(
+                progreso,
+                "progreso"
+        );
+
+        this.progreso = progreso;
+
         setLayout(new BorderLayout());
 
         bmp = new Bitmap(
@@ -99,7 +106,9 @@ public class PanelCiudad8 extends JPanel {
                             javax.swing.SwingUtilities
                             .getWindowAncestor(this);
 
-                    ventana.dispose();
+                    if (ventana != null) {
+                        ventana.dispose();
+                    }
                 }
         );
 
@@ -159,50 +168,46 @@ public class PanelCiudad8 extends JPanel {
 
         new Thread(() -> {
 
-            try {
+            List<List<Integer>> torres =
+                    crearTorres(4);
 
-                List<List<Integer>> torres =
-                        crearTorres(4);
+            dibujarEstado(
+                    torres
+            );
+
+            Hanoi hanoi =
+                    new Hanoi();
+
+            List<Movimiento> movimientos =
+                    hanoi.resolver(4);
+
+            SistemaUtiles.esperar(1000);
+
+            for (Movimiento m : movimientos) {
+
+                int disco =
+                        torres.get(
+                                m.getOrigen()
+                        ).remove(
+                                torres.get(
+                                        m.getOrigen()
+                                ).size() - 1
+                        );
+
+                torres.get(
+                        m.getDestino()
+                ).add(disco);
 
                 dibujarEstado(
                         torres
                 );
 
-                Hanoi hanoi =
-                        new Hanoi();
-
-                List<Movimiento> movimientos =
-                        hanoi.resolver(4);
-
-                Thread.sleep(1000);
-
-                for(Movimiento m : movimientos) {
-
-                    int disco =
-                            torres.get(
-                                    m.getOrigen()
-                            ).remove(
-                                    torres.get(
-                                            m.getOrigen()
-                                    ).size() - 1
-                            );
-
-                    torres.get(
-                            m.getDestino()
-                    ).add(disco);
-
-                    dibujarEstado(
-                            torres
-                    );
-
-                    Thread.sleep(700);
-                }
-                SwingUtilities.invokeLater(() -> finalizarCiudad());
-
-            } catch(Exception ex) {
-
-                ex.printStackTrace();
+                SistemaUtiles.esperar(700);
             }
+
+            SwingUtilities.invokeLater(
+                    () -> finalizarCiudad()
+            );
 
         }).start();
     }
@@ -210,6 +215,11 @@ public class PanelCiudad8 extends JPanel {
     private List<List<Integer>> crearTorres(
             int discos
     ) {
+
+        ValidacionesUtiles.validarMayorACero(
+                discos,
+                "discos"
+        );
 
         List<List<Integer>> torres =
                 new ArrayList<>();
@@ -226,9 +236,9 @@ public class PanelCiudad8 extends JPanel {
                 new ArrayList<>()
         );
 
-        for(int i = discos;
-            i >= 1;
-            i--) {
+        for (int i = discos;
+             i >= 1;
+             i--) {
 
             torres.get(0).add(i);
         }
@@ -239,28 +249,33 @@ public class PanelCiudad8 extends JPanel {
     /**
      * pre: el algoritmo de Hanoi terminó.
      * post: marca la ciudad como completada y desbloquea la siguiente.
-     * DE FORMA DE PRUEBA SE DESBLOQUEA LA 10 Y NO LA 9 AUN.
+     * 
      */
     private void finalizarCiudad() {
 
         JOptionPane.showMessageDialog(
                 this,
                 "¡Felicitaciones!\n"
-                + "Completaste la Ciudad 8.\n"
-                + "La Ciudad 10 ha sido desbloqueada."
+                        + "Completaste la Ciudad 8.\n"
+                        + "La Ciudad 10 ha sido desbloqueada."
         );
 
-        if(progreso != null) {
+        if (progreso != null) {
 
-            progreso.desbloquear(10);
+            progreso.desbloquear(9);
 
             progreso.guardar();
         }
     }
-    
+
     private void dibujarEstado(
             List<List<Integer>> torres
     ) {
+
+        ValidacionesUtiles.esDistintoDeNull(
+                torres,
+                "torres"
+        );
 
         bmp.rellenar(Color.BLACK);
 
@@ -270,7 +285,7 @@ public class PanelCiudad8 extends JPanel {
                 1050
         };
 
-        for(int x : posiciones) {
+        for (int x : posiciones) {
 
             bmp.drawLine(
                     x,
@@ -289,31 +304,35 @@ public class PanelCiudad8 extends JPanel {
                 Color.WHITE
         );
 
-        for(int torre = 0;
-            torre < 3;
-            torre++) {
+        for (int torre = 0;
+             torre < 3;
+             torre++) {
 
             List<Integer> discos =
                     torres.get(torre);
 
-            for(int i = 0;
-                i < discos.size();
-                i++) {
+            ValidacionesUtiles.esDistintoDeNull(
+                    discos,
+                    "discos"
+            );
+
+            for (int i = 0;
+                 i < discos.size();
+                 i++) {
 
                 int valor =
                         discos.get(i);
 
                 int ancho =
-                        60 +
-                        valor * 40;
+                        60 + valor * 40;
 
                 int x =
                         posiciones[torre]
-                        - ancho / 2;
+                                - ancho / 2;
 
                 int y =
                         650
-                        - i * 40;
+                                - i * 40;
 
                 bmp.fillRectangle(
                         x,
