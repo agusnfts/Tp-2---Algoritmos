@@ -1,4 +1,4 @@
-package Ciudad1.bitmap;
+package bitmap;
 
 import java.awt.BorderLayout;
 import java.awt.Component;

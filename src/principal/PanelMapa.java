@@ -1,5 +1,6 @@
 package principal;
 
+import Ciudad1.ui.VentanaCiudad1;
 import Ciudad10.ui.VentanaCiudad10;
 import Ciudad2.PanelCiudad2;
 import Ciudad3.PanelCiudad3;
@@ -73,11 +74,17 @@ public class PanelMapa extends JPanel {
     private void verificarCiudad(int x, int y) {
 
         // CIUDAD 1
-        if (x >= 54 && x <= 252 && y >= 393 && y <= 597) {
-            System.out.println("[MAPA] Ciudad 1");
-            return;
-        }
+    	if (x >= 54 && x <= 252 && y >= 393 && y <= 597) {
 
+    	    System.out.println("[MAPA] Ciudad 1");
+
+    	    VentanaCiudad1 ventana =
+    	            new VentanaCiudad1(progreso);
+
+    	    ventana.setVisible(true);
+
+    	    return;
+    	}
         // CIUDAD 2
         if (x >= 270 && x <= 455 && y >= 415 && y <= 550) {
 
@@ -153,9 +160,7 @@ public class PanelMapa extends JPanel {
                 return;
             }
 
-            PanelCiudad6 ciudad6 = new PanelCiudad6(progreso);
-            ciudad6.setAccionSiguiente(() -> cambiarPanel(PanelMapa.this));
-            cambiarPanel(ciudad6);
+            cambiarPanel(new PanelCiudad6(progreso));
         	
         	
         }

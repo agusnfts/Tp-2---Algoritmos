@@ -3,81 +3,28 @@ package Ciudad1.elementos;
 import Ciudad1.Personaje.Jugador;
 
 /**
- * Representa un elemento utilizable por el jugador.
+ * Representa un elemento base del juego.
  */
 public abstract class Elemento {
 
-    // ATRIBUTOS
+    protected String nombre;
+    protected String descripcion;
 
-    private String nombre;
-
-    private String descripcion;
-
-    // ==================
-    // CONSTRUCTOR
-    // ==================
-
-    /**
-     * PRE:
-     * nombre != null
-     * descripcion != null
-     *
-     * POST:
-     * crea un elemento.
-     */
-    public Elemento(
-            String nombre,
-            String descripcion
-    ) {
-
-        this.nombre = nombre;
-        this.descripcion = descripcion;
+    public Elemento() {
     }
 
-    // ==================
-    // GETTERS SIMPLES
-    // ==================
-
-    /**
-     * POST:
-     * devuelve el nombre.
-     */
     public String getNombre() {
-
-        return this.nombre;
+        return nombre;
     }
 
-    /**
-     * POST:
-     * devuelve la descripción.
-     */
     public String getDescripcion() {
-
-        return this.descripcion;
+        return descripcion;
     }
-    
 
-    // ==================
-    // METODO ABSTRACTO
-    // ==================
-
-    /**
-     * PRE:
-     * partida != null
-     *
-     * POST:
-     * aplica el efecto del elemento.
-     */
-    public abstract void usar(
-            Jugador jugador
-    );
-    // ==================
-    // TO STRING
-    // ==================
+    public abstract void usar(Jugador jugador);
 
     @Override
     public String toString() {
-
-        return this.nombre;
+        return nombre;
     }
 }

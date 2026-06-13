@@ -1,407 +1,274 @@
 package Ciudad1.partida;
 
+import javax.swing.JOptionPane;
+
 import Ciudad1.Personaje.Jugador;
 import Ciudad1.Personaje.Mochila;
 import Ciudad1.tablero.Casillero;
 import Ciudad1.tablero.GeneradorTablero;
 import Ciudad1.tablero.Tablero;
 import Ciudad1.tablero.TipoCasillero;
+import principal.ProgresoJuego;
 import Ciudad1.tablero.Cofre;
 import Ciudad1.elementos.Elemento;
 import Ciudad1.elementos.ElementoUtilizable;
 import Ciudad1.elementos.Trampa;
-import Ciudad1.elementos.AmuletoMistico;
 import Ciudad1.elementos.AntorchaPerdida;
-import Ciudad1.elementos.MapaRasgado;
 
-/**
- * Representa una partida en curso.
- */
+//Representa una partida en curso
 public class Partida {
-
-    // ATRIBUTOS
 
     private Jugador jugador;
     private Tablero tablero;
     private String mensaje;
     private GeneradorTablero generador;
-    private int turnos;
-    private Partida partida;
 
-    /**
-     * POST:
-     * crea una nueva partida.
-     */
-    public Partida() {
+    private int elementosRecolectados;
+    private boolean victoria;
+    private boolean partidaTerminada;
+    
+    private ProgresoJuego progreso;
+    private Runnable accionVictoria;
+
+    //POST: crea una nueva partida
+    public Partida(ProgresoJuego progreso) {
+
+        this.progreso = progreso;
 
         this.jugador = new Jugador();
-        
         this.jugador.setPartida(this);
-        
+
         this.tablero = new Tablero();
-        
         this.jugador.setPosicion(1, 1, 0);
-        
+
         this.generador = new GeneradorTablero();
-        
         this.generador.generar(this.tablero);
 
-        this.turnos = 0;
-        
         this.mensaje = "";
+        this.elementosRecolectados = 0;
+        this.victoria = false;
+        this.partidaTerminada = false;
+        
+        this.mensaje = "¡Bienvenido a la Ciudad1!\nEncuentra los 3 objetos perdidos para ganar.";
+        
     }
-    
-    public Partida getPartida() {
-        return partida;
-    }
-    
-    
-    //METODOS
-    
-    /**
-     * POST:
-     * abre el cofre de la posición actual
-     * del jugador.
-     */
-    public void abrirCofre() {
 
-        Casillero casillero;
-        Cofre cofre;
-        Elemento contenido;
-        
-        casillero = tablero.getCasillero(
-                	jugador.getPosX(),
-                	jugador.getPosY(),
-                	jugador.getPosZ()
-                	
+
+     //POST: abre el cofre de la posicion actual del jugador
+    
+    public void abrirCofre() {
+        if (partidaTerminada) return;
+
+        Casillero casillero = tablero.getCasillero(
+                jugador.getPosX(),
+                jugador.getPosY(),
+                jugador.getPosZ()
         );
-        
+
         if (casillero.getTipo() != TipoCasillero.COFRE) {
             setMensaje("No hay cofre aquí");
             return;
         }
 
-        cofre = casillero.getCofre();
-
-        if (cofre == null || !cofre.tieneContenido()) {
-            setMensaje("El cofre está vacío");
+        Cofre cofre = casillero.getCofre();
+        
+        if (cofre == null) {
+            setMensaje("Este cofre está vacío");
             return;
         }
 
-        contenido = cofre.getContenido();
+        if (cofre.estaAbierto()) {
+            setMensaje("Este cofre ya fue abierto");
+            return;
+        }
 
-        if (casillero.getTipo() == TipoCasillero.COFRE
-                && casillero.tieneCofre()) {
+        Elemento contenido = cofre.getContenido();
 
-            cofre = casillero.getCofre();
+        //Cofre vacio desde el principio
+        if (contenido == null) {
+            cofre.abrir();
+            setMensaje("El cofre estaba vacío");
+            return;
+        }
 
-            if (!cofre.estaAbierto() && cofre.tieneContenido()) {
+        //Elemento utilizable
+        if (contenido instanceof ElementoUtilizable && !(contenido instanceof Trampa)) {
+            jugador.agregarElemento(contenido);
+            elementosRecolectados++;
 
-                contenido = cofre.getContenido();
-
-                if ( contenido instanceof ElementoUtilizable ) {
-
-                    this.jugador.agregarElemento(contenido);
-                    
-                    if (
-                            contenido
-                            instanceof AntorchaPerdida
-                    )
-                    {
-                        this.jugador.mejorarVision();
-                    }
-                    setMensaje("Encontraste un objeto.");
-                }
-                
-
-                if (contenido instanceof Trampa) {
-
-                    contenido.usar(
-                            this.jugador
-                    );
-                    this.setMensaje(
-                            "Has activado una trampa."
-                    );
-                }
-                
-
-                cofre.abrir();
-
-                cofre.vaciar();
-
+            if (contenido instanceof AntorchaPerdida) {
+                jugador.mejorarVision();
             }
-        }
-    }
-    
-    public void setMensaje(
-            String mensaje
-    ) {
-        this.mensaje = mensaje;
-    }
 
-    public String getMensaje() {
+            cofre.abrir();
+            cofre.vaciar();
 
-        if (this.mensaje == null) {
+            if (verificarVictoria()) return;
 
-            return "";
+            setMensaje("Encontraste: " + contenido.getNombre());
+            return;
         }
 
-        return this.mensaje;
+        // Cofre Trampa
+        if (contenido instanceof Trampa) {
+            contenido.usar(jugador);
+            setMensaje("¡Has activado una trampa!");
+            cofre.abrir();
+            cofre.vaciar();
+            return;
+        }
     }
 
-    // ==================
-    // GETTERS
-    // ==================
-
-    public Jugador getJugador() {
-
-        return this.jugador;
-    }
-
-    public Tablero getTablero() {
-
-        return this.tablero;
-    }
-
-    public int getTurnos() {
-
-        return this.turnos;
-    }
-
-    // ==================
-    // COMPORTAMIENTO
-    // ==================
-
-    /**
-     * POST:
-     * avanza un turno, y si posee un efecto, se le agregara.
-     */
-    public void avanzarTurno() {
-
-        this.turnos++;
-
-        this.jugador.actualizarEfectos();
-    }
-    
-    /**
-     * PRE:
-     * desplazamientos válidos.
-     *
-     * POST:
-     * mueve al jugador si la posición es válida
-     * y no existe una pared.
-     */
+     //PRE:  desplazamientos validos
+     // POST: mueve al jugador si la posicion es valida y no existe una pared
     public boolean moverJugador(int dx, int dy, int dz) {
+        if (partidaTerminada) return false;
 
-        int nx = jugador.getPosX() + dx;
-        int ny = jugador.getPosY() + dy;
-        int nz = jugador.getPosZ() + dz;
+        int nuevoX = jugador.getPosX() + dx;
+        int nuevoY = jugador.getPosY() + dy;
+        int nuevoZ = jugador.getPosZ() + dz;
 
-        if (!tablero.posicionValida(nx, ny, nz)) return false;
+        if (!tablero.posicionValida(nuevoX, nuevoY, nuevoZ)) return false;
 
-        Casillero destino = tablero.getCasillero(nx, ny, nz);
-
-        if (destino.getTipo() == TipoCasillero.PARED) 
-        	return false;
+        Casillero destino = tablero.getCasillero(nuevoX, nuevoY, nuevoZ);
+        if (destino.getTipo() == TipoCasillero.PARED) return false;
 
         jugador.mover(dx, dy, dz);
         avanzarTurno();
-
         return true;
     }
-    
-    /**
-     * POST:
-     * sube un piso si el jugador está
-     * sobre una escalera de subida.
-     */
+
+    //POST: avanza un turno(movimiento) y actualiza efectos
+    public void avanzarTurno() {
+        this.jugador.actualizarEfectos();
+    }
+
+    //POST: sube un piso si el jugador esta sobre una escalera de subida
     public boolean subirPiso() {
+        Casillero casilleroActual = tablero.getCasillero(
+                jugador.getPosX(),
+                jugador.getPosY(),
+                jugador.getPosZ()
+        );
 
-        boolean pudoSubir;
-
-        Casillero casilleroActual;
-
-        pudoSubir = false;
-
-        casilleroActual =
-                this.tablero.getCasillero(
-                        this.jugador.getPosX(),
-                        this.jugador.getPosY(),
-                        this.jugador.getPosZ()
-                );
-
-        if (
-                casilleroActual.getTipo()
-                ==
-                TipoCasillero.ESCALERA_SUBE
-        ) {
-
-            if (
-                    this.tablero.posicionValida(
-                            this.jugador.getPosX(),
-                            this.jugador.getPosY(),
-                            this.jugador.getPosZ() + 1
-                    )
-            ) {
-
-                this.jugador.setPosicion(
-                        this.jugador.getPosX(),
-                        this.jugador.getPosY(),
-                        this.jugador.getPosZ() + 1
-                );
-
-                this.avanzarTurno();
-
-                pudoSubir = true;
+        if (casilleroActual.getTipo() == TipoCasillero.ESCALERA_SUBE) {
+            int nuevoZ = jugador.getPosZ() + 1;
+            if (tablero.posicionValida(jugador.getPosX(), jugador.getPosY(), nuevoZ)) {
+                jugador.setPosicion(jugador.getPosX(), jugador.getPosY(), nuevoZ);
+                avanzarTurno();
+                return true;
             }
         }
-
-        return pudoSubir;
+        return false;
     }
-    
+
     /**
-     * POST:
-     * baja un piso si el jugador está
-     * sobre una escalera de bajada.
+     * POST: baja un piso si el jugador esta sobre una escalera de bajada
      */
     public boolean bajarPiso() {
+        Casillero casilleroActual = tablero.getCasillero(
+                jugador.getPosX(),
+                jugador.getPosY(),
+                jugador.getPosZ()
+        );
 
-        boolean pudoBajar;
-
-        Casillero casilleroActual;
-
-        pudoBajar = false;
-
-        casilleroActual =
-                this.tablero.getCasillero(
-                        this.jugador.getPosX(),
-                        this.jugador.getPosY(),
-                        this.jugador.getPosZ()
-                );
-
-        if (
-                casilleroActual.getTipo()
-                ==
-                TipoCasillero.ESCALERA_BAJA
-        ) {
-
-            if (
-                    this.tablero.posicionValida(
-                            this.jugador.getPosX(),
-                            this.jugador.getPosY(),
-                            this.jugador.getPosZ() - 1
-                    )
-            ) {
-
-                this.jugador.setPosicion(
-                        this.jugador.getPosX(),
-                        this.jugador.getPosY(),
-                        this.jugador.getPosZ() - 1
-                );
-
-                this.avanzarTurno();
-
-                pudoBajar = true;
+        if (casilleroActual.getTipo() == TipoCasillero.ESCALERA_BAJA) {
+            int nuevoZ = jugador.getPosZ() - 1;
+            if (tablero.posicionValida(jugador.getPosX(), jugador.getPosY(), nuevoZ)) {
+                jugador.setPosicion(jugador.getPosX(), jugador.getPosY(), nuevoZ);
+                avanzarTurno();
+                return true;
             }
         }
-
-        return pudoBajar;
+        return false;
     }
-    
+
     public void interactuar() {
+        if (partidaTerminada) return;
 
-        Casillero actual;
-
-        actual =
-                this.tablero.getCasillero(
-                        this.jugador.getPosX(),
-                        this.jugador.getPosY(),
-                        this.jugador.getPosZ()
-                );
+        Casillero actual = tablero.getCasillero(
+                jugador.getPosX(),
+                jugador.getPosY(),
+                jugador.getPosZ()
+        );
 
         if (actual.getTipo() == TipoCasillero.ESCALERA_SUBE) {
-
-            this.subirPiso();
-        }
-
-        else if (actual.getTipo() == TipoCasillero.ESCALERA_BAJA) {
-
-            this.bajarPiso();
-        }
-
-        else if (actual.getTipo() == TipoCasillero.COFRE) {
-
-            this.abrirCofre();
+            subirPiso();
+        } else if (actual.getTipo() == TipoCasillero.ESCALERA_BAJA) {
+            bajarPiso();
+        } else if (actual.getTipo() == TipoCasillero.COFRE) {
+            abrirCofre();
         }
     }
-    
+
     public void usarElemento(int index) {
-
+    	 if (partidaTerminada) {
+    	        return;
+    	    }
         Mochila mochila = jugador.getMochila();
-
         if (index < 0 || index >= mochila.cantidadElementos()) {
-            setMensaje("No llevas nada ahí");
+            setMensaje("No llevas nada ahi");
             return;
         }
-
-        Elemento e = mochila.getElemento(index);
-        e.usar(jugador);
+        Elemento elemento = mochila.getElemento(index);
+        elemento.usar(jugador);
     }
 
-    public void usarMapa() {
+    public GeneradorTablero getGenerador() {
+        return generador;
+    }
+    
+    public Jugador getJugador() {
+        return jugador;
+    }
 
-        System.out.println(
-                obtenerPistaObjetoFaltante()
-        );
+    public Tablero getTablero() {
+        return tablero;
     }
     
 
-    public String obtenerPistaObjetoFaltante() {
-
-        return
-                "Objeto util detectado en X=7 Y=7 Piso=2";
+    public int getElementosRecolectados() {
+        return elementosRecolectados;
     }
 
-    
-    //VICTORY ROYALE
-    
-    /**
-     * POST:
-     * devuelve true si el jugador
-     * posee los tres elementos.
-     */
-    public boolean gano() {
+    public String getMensaje() {
+        return (mensaje == null) ? "" : mensaje;
+    }
 
-        boolean tieneAntorcha = false;
-        boolean tieneAmuleto = false;
-        boolean tieneMapa = false;
+    public void setMensaje(String mensaje) {
+        this.mensaje = mensaje;
+    }
 
-        int i = 0;
+    public void setAccionVictoria(Runnable accionVictoria) {
+        this.accionVictoria = accionVictoria;
+    }
 
-        while (i < jugador.getMochila().cantidadElementos()) {
+    // VICTORIA
+    private boolean verificarVictoria() {
 
-            Elemento element = jugador.getMochila().getElemento(i);
+        if (elementosRecolectados >= 3 && !victoria) {
 
-            if (element instanceof AntorchaPerdida) {
-                tieneAntorcha = true;
+            victoria = true;
+            partidaTerminada = true;
+
+            Object[] opciones = {"Salir al mapa"};
+
+            progreso.desbloquear(2);
+            progreso.guardar();
+            
+            JOptionPane.showMessageDialog(
+                    null,
+                    "¡Ciudad 1 completada!\nLa Ciudad 2 fue desbloqueada."
+            );
+
+            if (accionVictoria != null) {
+                accionVictoria.run();
             }
 
-            if (element instanceof AmuletoMistico) {
-                tieneAmuleto = true;
-            }
-
-            if (element instanceof MapaRasgado) {
-                tieneMapa = true;
-            }
-
-            i++;
+            return true;
         }
 
-        return tieneAntorcha && tieneAmuleto && tieneMapa;
+        return false;
     }
-
-    public boolean verificarVictoria() {
-        return gano();
-    }
-    
 }
+    

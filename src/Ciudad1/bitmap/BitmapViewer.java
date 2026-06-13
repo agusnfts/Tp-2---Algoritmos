@@ -1,4 +1,4 @@
-package Ciudad1.bitmap;
+package bitmap;
 
 import java.awt.Component;
 import java.awt.GridLayout;
