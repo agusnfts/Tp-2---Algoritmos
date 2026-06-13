@@ -1,18 +1,25 @@
-## Getting Started
+# TP 2 - Algoritmos y estructuras de datos
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+## Los eslabones
 
-## Folder Structure
+### Integranes:
 
-The workspace contains two folders by default, where:
+Nombre: Agustin Gomez
+Padrón: 113941
+Email: agugomez@fi.uba.ar
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+Nombre: Agustin Sosa
+Padrón: 114009
+Email: agsosa@fi.uba.ar
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
+Nombre: Braian Ramos
+Padrón: 114411
+Email: bramos@fi.uba.ar
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
+Nombre: Diego Enrique Andrade
+Padrón: 114418
+Email: deandrade@fi.uba.ar
 
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+Nombre: Joaquin Leonel Orlando
+Padrón: 114650
+Email: jlorlando@fi.uba.ar
