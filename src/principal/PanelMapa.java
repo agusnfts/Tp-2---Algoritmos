@@ -149,9 +149,8 @@ public class PanelMapa extends JPanel {
         }
         
         // CIUDAD 6
-        
         if(x>= 523 && x<=700 && y>=298 && y<=415) {
-        	
+            
             System.out.println("[MAPA] Ciudad 6");
             System.out.println("[MAPA] Desbloqueada: "
                     + progreso.estaDesbloqueada(6));
@@ -160,11 +159,13 @@ public class PanelMapa extends JPanel {
                 return;
             }
 
-            cambiarPanel(new PanelCiudad6(progreso));
-        	
-        	
+            PanelCiudad6 ciudad6 = new PanelCiudad6(progreso);
+            
+            ciudad6.setAccionSiguiente(() -> cambiarPanel(PanelMapa.this)); 
+            
+            cambiarPanel(ciudad6);
         }
-        
+                
         // CIUDAD 7
         
         if(x>= 719 && x<= 872 && y>=262 && y<= 408) {
