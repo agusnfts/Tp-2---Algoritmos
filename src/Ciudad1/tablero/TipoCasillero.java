@@ -1,4 +1,4 @@
-package tablero;
+package Ciudad1.tablero;
 
 public enum TipoCasillero {
 

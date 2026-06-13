@@ -1,6 +1,6 @@
-package tablero;
+package Ciudad1.tablero;
 
-import elementos.Elemento;
+import Ciudad1.elementos.Elemento;
 
 
 //Representa un cofre del tablero.

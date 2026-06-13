@@ -1,4 +1,4 @@
-package utiles;
+package Ciudad1.utiles;
 
 public class ValidacionesUtiles {
 //INTERFACES ----------------------------------------------------------------------------------------------

@@ -1,6 +1,6 @@
-package elementos;
+package Ciudad1.elementos;
 
-import Personaje.Jugador;
+import Ciudad1.Personaje.Jugador;
 
 //Te permite saber la casilla en la que te encuentras.
 public class AmuletoMistico extends ElementoUtilizable {

@@ -1,4 +1,4 @@
-package ui;
+package Ciudad1.ui;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
@@ -6,8 +6,8 @@ import java.awt.event.KeyListener;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import bitmap.Bitmap;
-import partida.Partida;
+import Ciudad1.bitmap.Bitmap;
+import Ciudad1.partida.Partida;
 import javax.swing.JOptionPane;
 
 //Panel principal que maneja la entrada de teclado y muestra el juego.

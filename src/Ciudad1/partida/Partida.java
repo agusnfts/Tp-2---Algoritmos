@@ -1,16 +1,19 @@
-package partida;
+package Ciudad1.partida;
 
-import Personaje.Jugador;
-import Personaje.Mochila;
-import tablero.Casillero;
-import tablero.GeneradorTablero;
-import tablero.Tablero;
-import tablero.TipoCasillero;
-import tablero.Cofre;
-import elementos.Elemento;
-import elementos.ElementoUtilizable;
-import elementos.Trampa;
-import elementos.AntorchaPerdida;
+import javax.swing.JOptionPane;
+
+import Ciudad1.Personaje.Jugador;
+import Ciudad1.Personaje.Mochila;
+import Ciudad1.tablero.Casillero;
+import Ciudad1.tablero.GeneradorTablero;
+import Ciudad1.tablero.Tablero;
+import Ciudad1.tablero.TipoCasillero;
+import principal.ProgresoJuego;
+import Ciudad1.tablero.Cofre;
+import Ciudad1.elementos.Elemento;
+import Ciudad1.elementos.ElementoUtilizable;
+import Ciudad1.elementos.Trampa;
+import Ciudad1.elementos.AntorchaPerdida;
 
 //Representa una partida en curso
 public class Partida {
@@ -24,10 +27,14 @@ public class Partida {
     private boolean victoria;
     private boolean partidaTerminada;
     
-    
+    private ProgresoJuego progreso;
+    private Runnable accionVictoria;
 
     //POST: crea una nueva partida
-    public Partida() {
+    public Partida(ProgresoJuego progreso) {
+
+        this.progreso = progreso;
+
         this.jugador = new Jugador();
         this.jugador.setPartida(this);
 
@@ -232,15 +239,35 @@ public class Partida {
         this.mensaje = mensaje;
     }
 
+    public void setAccionVictoria(Runnable accionVictoria) {
+        this.accionVictoria = accionVictoria;
+    }
 
     // VICTORIA
     private boolean verificarVictoria() {
+
         if (elementosRecolectados >= 3 && !victoria) {
+
             victoria = true;
             partidaTerminada = true;
-            mensaje = "¡Enhorabuena! Encontraste todos los objetos perdidos";
+
+            Object[] opciones = {"Salir al mapa"};
+
+            progreso.desbloquear(2);
+            progreso.guardar();
+            
+            JOptionPane.showMessageDialog(
+                    null,
+                    "¡Ciudad 1 completada!\nLa Ciudad 2 fue desbloqueada."
+            );
+
+            if (accionVictoria != null) {
+                accionVictoria.run();
+            }
+
             return true;
         }
+
         return false;
     }
 }

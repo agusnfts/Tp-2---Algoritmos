@@ -1,7 +1,7 @@
-package Personaje;
+package Ciudad1.Personaje;
 
-import elementos.Elemento;
-import partida.Partida;
+import Ciudad1.elementos.Elemento;
+import Ciudad1.partida.Partida;
 
 
 //Representa al jugador de la partida

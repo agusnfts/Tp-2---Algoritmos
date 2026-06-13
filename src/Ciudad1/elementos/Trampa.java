@@ -1,6 +1,6 @@
-package elementos;
+package Ciudad1.elementos;
 
-import Personaje.Jugador;
+import Ciudad1.Personaje.Jugador;
 
 /**
  * Trampa que se activa inmediatamente al abrir un cofre.

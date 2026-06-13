@@ -1,8 +1,8 @@
-package elementos;
+package Ciudad1.elementos;
 
-import Personaje.Jugador;
-import partida.Partida;
-import tablero.GeneradorTablero;
+import Ciudad1.Personaje.Jugador;
+import Ciudad1.partida.Partida;
+import Ciudad1.tablero.GeneradorTablero;
 
 /**
  * Revela información sobre el mapa.

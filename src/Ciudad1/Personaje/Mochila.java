@@ -1,7 +1,7 @@
-package Personaje;
+package Ciudad1.Personaje;
 
 import java.util.ArrayList;
-import elementos.Elemento;
+import Ciudad1.elementos.Elemento;
 
 
 //Administra los elementos obtenidos por el jugador

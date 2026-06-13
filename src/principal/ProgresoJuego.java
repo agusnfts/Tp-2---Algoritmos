@@ -14,8 +14,8 @@ public class ProgresoJuego implements Serializable {
 
         ciudades = new boolean[11];
 
-        ciudades[1] = true; // Ciudad 1 y 2 desbloqueada por defecto
-        ciudades[2]=true;
+        ciudades[1] = true; // Ciudad 1 desbloqueada por defecto
+        ciudades[2]=false;
     }
 
     public void desbloquear(int ciudad) {

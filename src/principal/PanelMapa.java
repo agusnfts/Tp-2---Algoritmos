@@ -81,11 +81,17 @@ public class PanelMapa extends JPanel {
     private void verificarCiudad(int x, int y) {
 
         // CIUDAD 1
-        if (x >= 54 && x <= 252 && y >= 393 && y <= 597) {
-            System.out.println("[MAPA] Ciudad 1");
-            return;
-        }
+    	if (x >= 54 && x <= 252 && y >= 393 && y <= 597) {
 
+    	    System.out.println("[MAPA] Ciudad 1");
+
+    	    VentanaCiudad1 ventana =
+    	            new VentanaCiudad1(progreso);
+
+    	    ventana.setVisible(true);
+
+    	    return;
+    	}
         // CIUDAD 2
         if (x >= 270 && x <= 455 && y >= 415 && y <= 550) {
 

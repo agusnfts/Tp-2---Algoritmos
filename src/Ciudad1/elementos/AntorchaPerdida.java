@@ -1,6 +1,6 @@
-package elementos;
+package Ciudad1.elementos;
 
-import Personaje.Jugador;
+import Ciudad1.Personaje.Jugador;
 
 //Elemento que aumenta temporalmente la visión del jugador.
 public class AntorchaPerdida extends ElementoUtilizable {

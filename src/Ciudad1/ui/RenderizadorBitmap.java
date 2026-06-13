@@ -1,17 +1,17 @@
-package ui;
+package Ciudad1.ui;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import sprites.Sprites;
-import Personaje.Jugador;
-import Personaje.Mochila;
-import bitmap.Bitmap;
-import tablero.Casillero;
-import tablero.TipoCasillero;
-import partida.Partida;
-import tablero.Tablero;
+import Ciudad1.sprites.Sprites;
+import Ciudad1.Personaje.Jugador;
+import Ciudad1.Personaje.Mochila;
+import Ciudad1.bitmap.Bitmap;
+import Ciudad1.tablero.Casillero;
+import Ciudad1.tablero.TipoCasillero;
+import Ciudad1.partida.Partida;
+import Ciudad1.tablero.Tablero;
 
 public class RenderizadorBitmap {
 
@@ -89,7 +89,8 @@ public class RenderizadorBitmap {
     private void dibujarImagen(Bitmap bitmap, BufferedImage imagen, int x, int y) {
         if (imagen == null) return;
 
-        Bitmap temp = new Bitmap(imagen.getWidth(), imagen.getHeight());
+        Bitmap temp = 
+        		new Bitmap(imagen.getWidth(), imagen.getHeight());
         
         Graphics2D g = temp.getImage().createGraphics();
         g.drawImage(imagen, 0, 0, null);
@@ -137,7 +138,8 @@ public class RenderizadorBitmap {
             }
         }
 
-        bitmap.drawText(tecla + " - " + nombre,x,y + SLOT_SIZE + 20,new Font("Arial", Font.PLAIN, 13),Color.WHITE,Color.BLACK);
+        bitmap.drawText(tecla + " - " + nombre,x,y + SLOT_SIZE + 20,
+        		new Font("Arial", Font.PLAIN, 13),Color.WHITE,Color.BLACK);
     }
 
     private BufferedImage getImagenItem(String nombre) {

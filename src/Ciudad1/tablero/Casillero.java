@@ -1,7 +1,7 @@
-package tablero;
+package Ciudad1.tablero;
 
-import Personaje.Jugador;
-import partida.Partida;
+import Ciudad1.Personaje.Jugador;
+import Ciudad1.partida.Partida;
 
 //Representa una posición del mapa
 

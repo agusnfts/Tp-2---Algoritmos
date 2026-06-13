@@ -1,6 +1,6 @@
-package elementos;
+package Ciudad1.elementos;
 
-import Personaje.Jugador;
+import Ciudad1.Personaje.Jugador;
 
 /**
  * Representa un elemento base del juego.

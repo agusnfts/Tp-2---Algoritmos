@@ -1,12 +1,12 @@
-package tablero;
+package Ciudad1.tablero;
 
 import java.util.Random;
 
-import elementos.AmuletoMistico;
-import elementos.AntorchaPerdida;
-import elementos.MapaRasgado;
-import elementos.Interferencia;
-import elementos.PortalInestable;
+import Ciudad1.elementos.AmuletoMistico;
+import Ciudad1.elementos.AntorchaPerdida;
+import Ciudad1.elementos.MapaRasgado;
+import Ciudad1.elementos.Interferencia;
+import Ciudad1.elementos.PortalInestable;
 
 //Genera el contenido del tablero
 public class GeneradorTablero {
@@ -65,7 +65,7 @@ public class GeneradorTablero {
     }
 
     //COFRES
-    private void colocarCofre(Tablero tablero, int x, int y, int z, elementos.Elemento contenido) {
+    private void colocarCofre(Tablero tablero, int x, int y, int z, Ciudad1.elementos.Elemento contenido) {
         Casillero casillero = tablero.getCasillero(x, y, z);
         casillero.setTipo(TipoCasillero.COFRE);
         casillero.setCofre(new Cofre(contenido));

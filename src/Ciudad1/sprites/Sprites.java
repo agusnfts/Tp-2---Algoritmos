@@ -1,4 +1,4 @@
-package sprites;
+package Ciudad1.sprites;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -19,16 +19,16 @@ public class Sprites {
     public final BufferedImage amuletoMistico;
 
     public Sprites() {
-        suelo = cargarImagen("src/sprites/suelo.png");
-        pared = cargarImagen("src/sprites/pared.png");
-        cofre = cargarImagen("src/sprites/cofre.png");
-        escaleraSubir = cargarImagen("src/sprites/escalera_subir.png");
-        escaleraBajar = cargarImagen("src/sprites/escalera_bajar.png");
-        jugador = cargarImagen("src/sprites/jugador.png");
-        slotVacio = cargarImagen("src/sprites/slot_vacio.png");
-        antorcha = cargarImagen("src/sprites/antorcha.png");
-        mapaRasgado = cargarImagen("src/sprites/mapa_rasgado.png");
-        amuletoMistico = cargarImagen("src/sprites/amuleto_mistico.png");
+        suelo = cargarImagen("src/Ciudad1/sprites/suelo.png");
+        pared = cargarImagen("src/Ciudad1/sprites/pared.png");
+        cofre = cargarImagen("src/Ciudad1/sprites/cofre.png");
+        escaleraSubir = cargarImagen("src/Ciudad1/sprites/escalera_subir.png");
+        escaleraBajar = cargarImagen("src/Ciudad1/sprites/escalera_bajar.png");
+        jugador = cargarImagen("src/Ciudad1/sprites/jugador.png");
+        slotVacio = cargarImagen("src/Ciudad1/sprites/slot_vacio.png");
+        antorcha = cargarImagen("src/Ciudad1/sprites/antorcha.png");
+        mapaRasgado = cargarImagen("src/Ciudad1/sprites/mapa_rasgado.png");
+        amuletoMistico = cargarImagen("src/Ciudad1/sprites/amuleto_mistico.png");
     }
 
     private BufferedImage cargarImagen(String ruta) {
