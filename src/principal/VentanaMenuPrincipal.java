@@ -4,10 +4,21 @@ import javax.swing.*;
 import utiles.ValidacionesUtiles;
 
 import java.awt.*;
+
 public class VentanaMenuPrincipal extends JFrame {
 
     private ProgresoJuego progreso;
 
+    /**
+     * PRE: Ninguna
+     *
+     * POST:
+     * - Se crea la ventana principal del juego
+     * - Se configuran sus propiedades visuales
+     * - Se crean los botones para iniciar, cargar, borrar partidas y salir
+     * - Se asocian los eventos correspondientes a cada botón
+     */
+    
     public VentanaMenuPrincipal() {
 
         setTitle("Al-Quest - Menú");
@@ -50,9 +61,16 @@ public class VentanaMenuPrincipal extends JFrame {
         );
     }
 
-    // =========================
-    // NUEVA PARTIDA
-    // =========================
+    /**
+     * PRE: El usuario debe ingresar un nombre válido
+     *
+     * POST:
+     * - Se crea un nuevo objeto ProgresoJuego
+     * - Se asigna el nombre del jugador
+     * - Se guarda la nueva partida
+     * - Se abre el mapa del juego
+     * - Si el usuario cancela la operación no se realizan cambios
+     */
     private void iniciarNuevaPartida() {
 
         String nombre =
@@ -86,9 +104,15 @@ public class VentanaMenuPrincipal extends JFrame {
         abrirMapa();
     }
 
-    // =========================
-    // CARGAR PARTIDA
-    // =========================
+    /**
+     * PRE: Debe existir al menos una partida guardada
+     *
+     * POST:
+     * - Se muestra la lista de partidas disponibles
+     * - Se carga la partida seleccionada
+     * - Se abre el mapa asociado al progreso cargado
+     * - Si el usuario cancela la operación no se realizan cambios
+     */
     private void cargarPartida() {
 
         String[] partidas =
@@ -138,9 +162,15 @@ public class VentanaMenuPrincipal extends JFrame {
         abrirMapa();
     }
 
-    // =========================
-    // BORRAR PARTIDA
-    // =========================
+    /**
+     * PRE: Debe existir al menos una partida guardada
+     *
+     * POST:
+     * - Se muestra la lista de partidas disponibles
+     * - Se elimina la partida seleccionada
+     * - Se informa al usuario el resultado de la operación
+     * - Si el usuario cancela la operación no se realizan cambios
+     */
     private void borrarPartida() {
 
         String[] partidas =
@@ -187,9 +217,16 @@ public class VentanaMenuPrincipal extends JFrame {
         );
     }
 
-    // =========================
-    // ABRIR MAPA
-    // =========================
+    /**
+     * PRE:  progreso != null
+     *
+     * POST:
+     * - Se crea una nueva ventana para mostrar el mapa
+     * - Se inicializa un PanelMapa con el progreso actual
+     * - El panel queda asociado a la ventana creada
+     * - Se muestra la ventana del mapa
+     * - La ventana del menú principal se cierra
+     */
     private void abrirMapa() {
 
         ValidacionesUtiles.esDistintoDeNull(

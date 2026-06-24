@@ -1,10 +1,20 @@
 package principal;
 import java.awt.GridLayout;
 import javax.swing.*;
-
 import utiles.ValidacionesUtiles;
+
 public class MenuPrincipal extends JFrame {
 
+    /**
+     * PRE:
+     * - Ninguna
+     *
+     * POST:
+     * - Se crea la ventana principal del juego
+     * - Se configuran sus propiedades visuales
+     * - Se crean los botones para iniciar, cargar y borrar partidas
+     * - Se asocian las acciones correspondientes a cada botón
+     */
     public MenuPrincipal() {
 
         setTitle("Menu Principal");
@@ -156,6 +166,15 @@ public class MenuPrincipal extends JFrame {
         });
     }
 
+    /**
+     * PRE: progreso != null
+     *
+     * POST:
+     * - Se crea una ventana que contiene el mapa del juego
+     * - Se inicializa el PanelMapa con el progreso recibido
+     * - Se muestra la nueva ventana al usuario
+     * - Se cierra la ventana del menú principal
+     */
     private void abrirMapa(
             ProgresoJuego progreso
     ) {

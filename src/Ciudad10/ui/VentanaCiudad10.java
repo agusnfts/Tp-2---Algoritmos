@@ -24,6 +24,8 @@ public class VentanaCiudad10 extends JFrame {
     private PanelArbolRecurrencia panelArbol;
     private CondicionVictoria condicion;
     private ProgresoJuego progreso;
+    private JButton botonSalir;
+    private Runnable accionSalir;
 
     public VentanaCiudad10(ProgresoJuego progreso) {
     	this.progreso = progreso;
@@ -62,6 +64,9 @@ public class VentanaCiudad10 extends JFrame {
         botonAnalizar = new JButton("Analizar");
         centro.add(botonAnalizar);
 
+        botonSalir = new JButton("Salir al mapa");
+        centro.add(botonSalir);
+        
         resultado = new JTextArea();
         resultado.setEditable(false);
         JScrollPane scrollResultado = new JScrollPane(resultado);
@@ -75,6 +80,7 @@ public class VentanaCiudad10 extends JFrame {
 
         add(centro, BorderLayout.CENTER);
         botonAnalizar.addActionListener(e -> analizar());
+        botonSalir.addActionListener(e -> salirAlMapa());
     }
 
     /**
@@ -149,4 +155,25 @@ public class VentanaCiudad10 extends JFrame {
             dispose();
         }
     }
+    
+    /**
+     * PRE: accion != null.
+     * POST: establece la acción a ejecutar al salir al mapa.
+     */
+    public void setAccionSalir(Runnable accion) {
+        this.accionSalir = accion;
+    }
+
+    /**
+     * POST: ejecuta la acción de salida si fue definida y cierra la ventana.
+     */
+    private void salirAlMapa() {
+
+        if (accionSalir != null) {
+            accionSalir.run();
+        }
+
+        dispose();
+    }
+    
 }

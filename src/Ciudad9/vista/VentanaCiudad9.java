@@ -1,38 +1,23 @@
 package Ciudad9.vista;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
 import Ciudad9.modelo.Accion;
 import Ciudad9.modelo.Combate;
 import Ciudad9.modelo.Enemigo;
 import Ciudad9.modelo.TipoAccion;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import principal.ProgresoJuego;
-
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
-import Ciudad9.modelo.Accion;
-import Ciudad9.modelo.Combate;
-import Ciudad9.modelo.Enemigo;
-import Ciudad9.modelo.TipoAccion;
 
 public class VentanaCiudad9 extends JFrame {
 
     private Combate combate;
     private PanelCiudad9 panel;
     private ProgresoJuego progreso;
-
+    
     private JButton botonAtaque;
     private JButton botonDefensa;
     private JButton botonHabilidad;
@@ -212,7 +197,9 @@ public class VentanaCiudad9 extends JFrame {
                 combate.getEnemigos()
         );
     }
+    
+    
 
-    //main de testeo
+  
    
 }

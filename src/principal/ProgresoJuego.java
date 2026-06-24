@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import utiles.ValidacionesUtiles;
+
 public class ProgresoJuego implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -11,14 +12,29 @@ public class ProgresoJuego implements Serializable {
     private String nombreJugador;
     private boolean[] ciudades;
 
+    /**
+     * PRE: Ninguna
+     *
+     * POST:
+     * - Se crea un nuevo progreso de juego
+     * - Se inicializa el arreglo de ciudades
+     * - La Ciudad 1 queda desbloqueada
+     * - Las demás ciudades quedan bloqueadas
+     */
+    
     public ProgresoJuego() {
 
         ciudades = new boolean[11];
 
         ciudades[1] = true;
-        ciudades[2] = true;
     }
 
+    /**
+     * PRE: ciudad ∈ [1..10]
+     *
+     * POST: La ciudad indicada queda desbloqueada
+     */
+    
     public void desbloquear(int ciudad) {
 
         ValidacionesUtiles.validarRangoNumerico(
@@ -31,6 +47,15 @@ public class ProgresoJuego implements Serializable {
         ciudades[ciudad] = true;
     }
 
+    /**
+     * PRE: Ninguna
+     *
+     * POST:
+     * - Devuelve true si la ciudad está desbloqueada
+     * - Devuelve false si la ciudad está bloqueada o el número es inválido
+     * - No modifica el estado del objeto
+     */
+    
     public boolean estaDesbloqueada(int ciudad) {
 
         if (ciudad < 1
@@ -42,6 +67,15 @@ public class ProgresoJuego implements Serializable {
         return ciudades[ciudad];
     }
 
+    /**
+     * PRE:
+     * - nombreJugador != null
+     * - longitud(nombreJugador) >= 1
+     *
+     * POST:
+     * - Se actualiza el nombre del jugador
+     */
+    
     public void setNombreJugador(
             String nombreJugador
     ) {
@@ -60,10 +94,18 @@ public class ProgresoJuego implements Serializable {
         return nombreJugador;
     }
 
-    // ==========================
-    // GUARDAR
-    // ==========================
-
+    /**
+     * PRE:
+     * - nombreJugador != null
+     * - longitud(nombreJugador) >= 1
+     *
+     * POST:
+     * - Se crea la carpeta de partidas si no existe
+     * - Se serializa el objeto actual en un archivo .dat
+     * - El progreso queda almacenado persistentemente
+     * - Si ocurre un error se lanza RuntimeException
+     */
+    
     public void guardar() {
 
         ValidacionesUtiles.validarLongitudDeTexto(
@@ -106,10 +148,18 @@ public class ProgresoJuego implements Serializable {
         }
     }
 
-    // ==========================
-    // CARGAR
-    // ==========================
-
+    /**
+     * PRE:
+     * - nombre != null
+     * - longitud(nombre) >= 1
+     * - Debe existir una partida guardada con ese nombre
+     *
+     * POST:
+     * - Se carga y devuelve el progreso almacenado
+     * - No modifica archivos existentes
+     * - Si ocurre un error se lanza RuntimeException
+     */
+    
     public static ProgresoJuego cargar(
             String nombre
     ) {
@@ -150,9 +200,14 @@ public class ProgresoJuego implements Serializable {
         }
     }
 
-    // ==========================
-    // LISTAR PARTIDAS
-    // ==========================
+    /**
+     * PRE: Ninguna
+     *
+     * POST:
+     * - Devuelve un arreglo con los nombres de todas las partidas guardadas
+     * - Si no existen partidas devuelve un arreglo vacío
+     * - No modifica archivos ni el estado del sistema
+     */
 
     public static String[] listarPartidas() {
 
@@ -192,9 +247,16 @@ public class ProgresoJuego implements Serializable {
         return nombres;
     }
 
-    // ==========================
-    // BORRAR
-    // ==========================
+    /**
+     * PRE:
+     * - nombre != null
+     * - longitud(nombre) >= 1
+     *
+     * POST:
+     * - Si existe la partida indicada, el archivo correspondiente es eliminado
+     * - Si no existe, no se realiza ninguna acción
+     * - No modifica otras partidas almacenadas
+     */
 
     public static void borrar(
             String nombre
