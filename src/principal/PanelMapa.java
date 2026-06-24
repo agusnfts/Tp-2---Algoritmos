@@ -368,7 +368,7 @@ public class PanelMapa extends JPanel {
 
         // CIUDAD 9
         
-        if(x>=729 && x<=917 && y>= 406 && y<= 586) {
+        if(x>=746 && x<=939 && y>= 420 && y<= 584) {
         	
         	System.out.println(
                     "[MAPA] Ciudad 9"
@@ -379,16 +379,10 @@ public class PanelMapa extends JPanel {
                  return;
              }
 
-        	 VentanaCiudad10 ventana =
-        		        new VentanaCiudad10(
-        		                progreso
-        		        );
+        	 VentanaCiudad9 ventana = new VentanaCiudad9(progreso);
 
-        		ventana.setAccionSalir(
-        		        () -> cambiarPanel(PanelMapa.this)
-        		);
 
-        		ventana.setVisible(true);
+        	 ventana.setVisible(true);
         	
         }
         
