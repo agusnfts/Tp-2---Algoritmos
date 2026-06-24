@@ -1,186 +1,130 @@
 package Ciudad1.ui;
+
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
 import Ciudad1.bitmap.Bitmap;
-import Ciudad1.partida.*;
+import Ciudad1.partida.Partida;
+import javax.swing.JOptionPane;
+import java.awt.Color;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import Ciudad1.bitmap.Bitmap;
+import Ciudad1.partida.Partida;
 
-public class PanelCiudad1
-        extends JPanel
-        implements KeyListener {
+//Panel principal que maneja la entrada de teclado y muestra el juego.
+public class PanelCiudad1 extends JPanel implements KeyListener {
 
-
-	private JLabel imagen;
-
+    private JLabel imagen;
+    private JButton botonSalir;
     private Partida partida;
-    
-
     private RenderizadorBitmap renderizador;
+    private Runnable accionSalir;
 
-    public PanelCiudad1(
-            Partida partida
-    ) {
+    // PRE: partida != null
+    // POST: crea el panel principal de la Ciudad 1 y configura sus componentes.
+    public PanelCiudad1(Partida partida) {
 
         this.partida = partida;
+        this.renderizador = new RenderizadorBitmap();
 
-        this.renderizador =
-                new RenderizadorBitmap();
+        setBackground(Color.BLACK);
+        setFocusable(true);
 
-        this.imagen =
-                new JLabel();
-   
+        this.imagen = new JLabel();
+        imagen.setFocusable(false);
 
-        add(
-                imagen
-        );
+        this.botonSalir = new JButton("Salir al mapa");
+        botonSalir.setFocusable(false);
 
-        addKeyListener(
-                this
-        );
+        botonSalir.addActionListener(e -> {
+            if (accionSalir != null) {
+                accionSalir.run();
+            }
+        });
 
-        setFocusable(
-                true
-        );
+        add(imagen);
+        add(botonSalir);
 
-        requestFocusInWindow();
+        addKeyListener(this);
 
         actualizar();
     }
 
-    public void actualizar() {
-
-        Bitmap bitmap;
-
-        bitmap =
-                renderizador.renderizar(
-                        partida
-                );
-
-        imagen.setIcon(
-                new ImageIcon(
-                        bitmap.getImage()
-                )
-        );
-        revalidate();
-
-        requestFocus();
-        
-        repaint();
+    // PRE: accionSalir != null
+    // POST: establece la acción a ejecutar al pulsar el botón de salida.
+    public void setAccionSalir(Runnable accionSalir) {
+        this.accionSalir = accionSalir;
     }
 
+    // POST: actualiza la imagen mostrada con el estado actual de la partida.
+    public void actualizar() {
+
+        Bitmap bitmap = renderizador.renderizar(partida);
+
+        imagen.setIcon(new ImageIcon(bitmap.getImage()));
+
+        revalidate();
+        repaint();
+        requestFocusInWindow();
+    }
+
+    // PRE: evento != null
+    // POST: procesa la tecla presionada y actualiza la partida.
     @Override
-    public void keyPressed(
-            KeyEvent evento
-    ) {
+    public void keyPressed(KeyEvent evento) {
 
-        int tecla;
+        int tecla = evento.getKeyCode();
 
-        tecla =
-                evento.getKeyCode();
+        // Movimiento
+        if (tecla == KeyEvent.VK_W) {
+            partida.moverJugador(0, -1, 0);
 
-        // W
+        } else if (tecla == KeyEvent.VK_S) {
+            partida.moverJugador(0, 1, 0);
 
-        if (
-                tecla
-                ==
-                KeyEvent.VK_W
-        ) {
+        } else if (tecla == KeyEvent.VK_A) {
+            partida.moverJugador(-1, 0, 0);
 
-            partida.moverJugador(
-                    0,
-                    -1,
-                    0
-            );
+        } else if (tecla == KeyEvent.VK_D) {
+            partida.moverJugador(1, 0, 0);
+
         }
 
-        // S
-
-        if (
-                tecla
-                ==
-                KeyEvent.VK_S
-        ) {
-
-            partida.moverJugador(
-                    0,
-                    1,
-                    0
-            );
-        }
-
-        // A
-
-        if (
-                tecla
-                ==
-                KeyEvent.VK_A
-        ) {
-
-            partida.moverJugador(
-                    -1,
-                    0,
-                    0
-            );
-        }
-
-        // D
-
-        if (
-                tecla
-                ==
-                KeyEvent.VK_D
-        ) {
-
-            partida.moverJugador(
-                    1,
-                    0,
-                    0
-            );
-        }
-
-        // E
-
-        if (
-                tecla
-                ==
-                KeyEvent.VK_E
-        ) {
-
+        // Interaccion
+        else if (tecla == KeyEvent.VK_E) {
             partida.interactuar();
-        }
-        
-     // 1
 
-        if (tecla == KeyEvent.VK_1) {
+        }
+
+        // Usar elementos
+        else if (tecla == KeyEvent.VK_1) {
             partida.usarElemento(0);
-        }
 
-        if (tecla == KeyEvent.VK_2) {
+        } else if (tecla == KeyEvent.VK_2) {
             partida.usarElemento(1);
-        }
 
-        if (tecla == KeyEvent.VK_3) {
+        } else if (tecla == KeyEvent.VK_3) {
             partida.usarElemento(2);
         }
 
         actualizar();
     }
 
+    // POST: no realiza ninguna acción al liberar una tecla.
     @Override
-    public void keyReleased(
-            KeyEvent e
-    ) {
-
+    public void keyReleased(KeyEvent e) {
     }
 
+    // POST: no realiza ninguna acción al escribir una tecla.
     @Override
-    public void keyTyped(
-            KeyEvent e
-    ) {
-
+    public void keyTyped(KeyEvent e) {
     }
 }

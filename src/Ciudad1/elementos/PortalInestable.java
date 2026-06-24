@@ -3,27 +3,17 @@ package Ciudad1.elementos;
 import Ciudad1.Personaje.Jugador;
 
 /**
- * Trampa que teletransporta al jugador.
+ * Trampa que teletransporta al jugador al inicio.
  */
 public class PortalInestable extends Trampa {
 
     public PortalInestable() {
-
-        super(
-                "Portal Inestable",
-                "Una anomalía espacial."
-        );
+        this.nombre = "Portal Inestable";
+        this.descripcion = "TP al piso z=0, coordenadas (1,1,0)";
     }
 
     @Override
-    public void usar(
-            Jugador jugador
-    ) {
-
-        jugador.setPosicion(1,1,0);
-
-        System.out.println(
-                "Haz sido teletransportado al inicio."
-        );
+    public void usar(Jugador jugador) {
+        jugador.setPosicion(1, 1, 0);
     }
 }
