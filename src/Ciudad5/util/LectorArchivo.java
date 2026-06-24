@@ -9,6 +9,26 @@ import utiles.ValidacionesUtiles;
 
 public class LectorArchivo {
 
+	 /**
+     * PRE:
+     * - ruta != null
+     * - arbol != null
+     * - lista != null
+     * - ruta debe ser una ruta válida a un archivo de texto legible
+     *
+     * POST:
+     * - Se lee el archivo línea por línea
+     * - Cada palabra se convierte a minúsculas
+     * - Cada palabra se inserta en:
+     *      * el árbol binario de búsqueda (ArbolBusqueda)
+     *      * la estructura de búsqueda lineal (BusquedaLineal)
+     * - Se asocia cada palabra con su número de línea y posición
+     * - El archivo no se modifica
+     *
+     * EXCEPCIONES:
+     * - Lanza RuntimeException si ocurre un error de lectura del archivo
+     */
+	
     public static void cargarArchivo(
             String ruta,
             ArbolBusqueda arbol,

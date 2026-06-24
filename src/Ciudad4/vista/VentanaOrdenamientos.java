@@ -31,6 +31,11 @@ public class VentanaOrdenamientos extends JFrame {
     private boolean usoBubbleSort = false;
     private boolean usoQuickSort = false;
 
+    /**
+     * PRE: progreso != null.
+     * POST: crea la ventana principal de la Ciudad 4 e inicializa sus componentes.
+     */
+    
     public VentanaOrdenamientos(ProgresoJuego progreso) {
 
         ValidacionesUtiles.esDistintoDeNull(
@@ -53,6 +58,11 @@ public class VentanaOrdenamientos extends JFrame {
         inicializar();
     }
 
+    /**
+     * POST: inicializa y configura todos los componentes gráficos
+     *       y eventos de la ventana.
+     */
+    
     private void inicializar() {
 
         JPanel superior =
@@ -100,6 +110,14 @@ public class VentanaOrdenamientos extends JFrame {
         );
     }
 
+    /**
+     * PRE: el campo de texto debe contener una lista válida de números
+     *      enteros separados por comas.
+     * POST: obtiene los datos ingresados, ejecuta el algoritmo seleccionado,
+     *       verifica la condición de victoria e inicia la animación del
+     *       proceso de ordenamiento.
+     */
+    
     private void ordenar() {
 
         ValidacionesUtiles.validarLongitudDeTexto(
@@ -176,8 +194,9 @@ public class VentanaOrdenamientos extends JFrame {
     }
 
     /**
-     * Verifica si el jugador ya utilizó ambos algoritmos.
-     * Si lo hizo, se desbloquea la Ciudad 5.
+     * PRE: los indicadores de uso de algoritmos fueron actualizados.
+     * POST: si el jugador utilizó BubbleSort y QuickSort, desbloquea
+     *       la Ciudad 5 y guarda el progreso.
      */
     private void verificarVictoria() {
 
@@ -213,6 +232,12 @@ public class VentanaOrdenamientos extends JFrame {
             }
         }
     }
+    
+    /**
+     * PRE: pasos != null.
+     * POST: reproduce gráficamente cada estado almacenado en la cola
+     *       hasta finalizar la animación del algoritmo.
+     */
 
     private void animar(
             Queue<int[]> pasos

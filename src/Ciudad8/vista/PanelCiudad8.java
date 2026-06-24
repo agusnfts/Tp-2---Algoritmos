@@ -47,10 +47,24 @@ public class PanelCiudad8 extends JPanel {
 
     private Bitmap bmp;
 
+    private Runnable accionSalir;
+    
     private ProgresoJuego progreso;
 
     private JLabel lblImagen;
 
+    /**
+     * PRE:
+     * - progreso != null
+     *
+     * POST:
+     * - Se inicializa el panel de la Ciudad 8
+     * - Se crea el Bitmap utilizado para la representación gráfica
+     * - Se dibuja la pantalla inicial del juego
+     * - Se crean los botones de inicio y salida
+     * - Se configura la actualización periódica de la imagen mostrada
+     */
+    
     public PanelCiudad8(ProgresoJuego progreso) {
 
         ValidacionesUtiles.esDistintoDeNull(
@@ -99,17 +113,7 @@ public class PanelCiudad8 extends JPanel {
                 );
 
         btnSalir.addActionListener(
-                e -> {
-
-                    javax.swing.JFrame ventana =
-                            (javax.swing.JFrame)
-                            javax.swing.SwingUtilities
-                            .getWindowAncestor(this);
-
-                    if (ventana != null) {
-                        ventana.dispose();
-                    }
-                }
+                e -> salirAlMapa()
         );
 
         menuPanel.add(btnIniciar);
@@ -133,6 +137,16 @@ public class PanelCiudad8 extends JPanel {
         timer.start();
     }
 
+    /**
+     * PRE:
+     * - El Bitmap debe estar inicializado
+     *
+     * POST:
+     * - Se limpia la pantalla
+     * - Se muestra el título de la ciudad
+     * - Se muestra el nombre del desafío "Torres de Hanoi"
+     */
+    
     private void dibujarMenu() {
 
         bmp.rellenar(Color.BLACK);
@@ -163,7 +177,36 @@ public class PanelCiudad8 extends JPanel {
                 Color.BLACK
         );
     }
+    
+    /**
+     * PRE: accion != null
+     *
+     * POST: Se establece la acción a ejecutar al salir al mapa
+     */
+    public void setAccionSalir(Runnable accion) {
+        this.accionSalir = accion;
+    }
 
+    /**
+     * POST: ejecuta la acción de salida si fue definida.
+     */
+    private void salirAlMapa() {
+
+        if (accionSalir != null) {
+            accionSalir.run();
+        }
+    }
+
+    /**
+     * PRE: El panel debe estar correctamente inicializado
+     *
+     * POST:
+     * - Se crea una nueva ejecución del algoritmo de Hanoi
+     * - Se generan los movimientos necesarios para resolver el problema
+     * - Se actualiza la representación gráfica después de cada movimiento
+     * - Al finalizar se invoca el método finalizarCiudad()
+     */
+    
     private void iniciar() {
 
         new Thread(() -> {
@@ -212,6 +255,15 @@ public class PanelCiudad8 extends JPanel {
         }).start();
     }
 
+    /**
+     * PRE: discos > 0
+     *
+     * POST:
+     * - Se crean tres torres vacías
+     * - Todos los discos se ubican inicialmente en la primera torre
+     * - Se devuelve la estructura que representa el estado inicial del juego
+     */
+    
     private List<List<Integer>> crearTorres(
             int discos
     ) {
@@ -247,9 +299,12 @@ public class PanelCiudad8 extends JPanel {
     }
 
     /**
-     * pre: el algoritmo de Hanoi terminó.
-     * post: marca la ciudad como completada y desbloquea la siguiente.
-     * 
+     * PRE: El algoritmo de Hanoi ha finalizado correctamente
+     *
+     * POST:
+     * - Se informa al usuario que completó la ciudad
+     * - Se desbloquea la Ciudad 9
+     * - Se guarda el progreso actualizado
      */
     private void finalizarCiudad() {
 
@@ -257,7 +312,7 @@ public class PanelCiudad8 extends JPanel {
                 this,
                 "¡Felicitaciones!\n"
                         + "Completaste la Ciudad 8.\n"
-                        + "La Ciudad 10 ha sido desbloqueada."
+                        + "La Ciudad 9 ha sido desbloqueada."
         );
 
         if (progreso != null) {
@@ -268,6 +323,17 @@ public class PanelCiudad8 extends JPanel {
         }
     }
 
+    /**
+     * PRE:
+     * - torres != null
+     * - La lista debe contener las tres torres del juego
+     *
+     * POST:
+     * - Se redibuja completamente el estado actual de las torres
+     * - Se muestran los postes de Hanoi
+     * - Se representan gráficamente todos los discos en sus posiciones actuales
+     */
+    
     private void dibujarEstado(
             List<List<Integer>> torres
     ) {

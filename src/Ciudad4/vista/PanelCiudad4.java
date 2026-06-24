@@ -8,7 +8,6 @@ import javax.swing.JPanel;
 import Ciudad4.bitmap.Bitmap;
 import principal.ProgresoJuego;
 import utiles.ValidacionesUtiles;
-
 public class PanelCiudad4 extends JPanel {
 
     private Bitmap bmp;
@@ -17,6 +16,10 @@ public class PanelCiudad4 extends JPanel {
 
     private ProgresoJuego progreso;
 
+    /**
+     * PRE: progreso != null.
+     * POST: crea el panel de la Ciudad 4 e inicializa el área de visualización.
+     */
     public PanelCiudad4(ProgresoJuego progreso) {
 
         ValidacionesUtiles.esDistintoDeNull(
@@ -35,13 +38,18 @@ public class PanelCiudad4 extends JPanel {
         add(lblImagen, BorderLayout.CENTER);
     }
 
-    // Constructor por compatibilidad
+    /**
+     * POST: crea el panel utilizando una nueva instancia de ProgresoJuego.
+     *       Se mantiene por compatibilidad con código existente.
+     */
     public PanelCiudad4() {
         this(new ProgresoJuego());
     }
 
     /**
-     * Se llama cuando el algoritmo genera datos
+     * PRE: datos != null.
+     * POST: dibuja los datos como un gráfico de barras, actualiza la vista
+     *       y desbloquea la Ciudad 5 si existe un progreso asociado.
      */
     public void mostrarDatos(int[] datos) {
 
@@ -61,5 +69,3 @@ public class PanelCiudad4 extends JPanel {
         }
     }
 }
-
-

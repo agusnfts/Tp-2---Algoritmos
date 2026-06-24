@@ -17,6 +17,19 @@ public class PanelCiudad5 extends JPanel {
 
     private ProgresoJuego progreso;
 
+    /**
+     * PRE:
+     * - progreso != null
+     *
+     * POST:
+     * - Se inicializa el panel gráfico
+     * - Se configura el layout del panel
+     * - Se crea el Bitmap para dibujar la imagen
+     * - Se crea el JLabel con la imagen del Bitmap
+     * - Se agrega el JLabel al centro del panel
+     * - Se guarda la referencia al objeto ProgresoJuego
+     */
+    
     public PanelCiudad5(ProgresoJuego progreso) {
 
         ValidacionesUtiles.esDistintoDeNull(
@@ -36,7 +49,14 @@ public class PanelCiudad5 extends JPanel {
     }
 
     /**
-     * Muestra el resultado del algoritmo de búsqueda
+     * PRE:
+     * - texto != null
+     *
+     * POST:
+     * - Se muestra el texto en el Bitmap
+     * - Se actualiza el componente gráfico (repaint del JLabel)
+     * - Se desbloquea la ciudad 6 en el progreso del juego
+     * - Se guarda el estado del progreso
      */
     public void mostrarResultado(String texto) {
 
@@ -49,7 +69,6 @@ public class PanelCiudad5 extends JPanel {
 
         lblImagen.repaint();
 
-        // DESBLOQUEO CIUDAD 6
         if (progreso != null) {
             progreso.desbloquear(6);
             progreso.guardar();

@@ -7,6 +7,17 @@ public class Movimiento {
     private int origen;
     private int destino;
 
+    /**
+     * PRE:
+     * - origen ∈ [0..2]
+     * - destino ∈ [0..2]
+     *
+     * POST:
+     * - Se crea un objeto Movimiento
+     * - Se almacenan los valores de origen y destino
+     * - El movimiento queda listo para ser usado en la solución de Hanoi
+     */
+    
     public Movimiento(
             int origen,
             int destino

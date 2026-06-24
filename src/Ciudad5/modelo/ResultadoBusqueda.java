@@ -12,6 +12,22 @@ public class ResultadoBusqueda {
 
     private int operaciones;
 
+    /**
+     * PRE:
+     * - linea > 0
+     * - posicion > 0
+     * - tiempo >= 0
+     * - operaciones >= 0
+     *
+     * POST:
+     * - Se crea un objeto ResultadoBusqueda
+     * - Se almacenan los datos de la búsqueda:
+     *      * línea donde se encontró la palabra
+     *      * posición donde se encontró la palabra
+     *      * tiempo de ejecución de la búsqueda
+     *      * cantidad de operaciones realizadas
+     */
+    
     public ResultadoBusqueda(
             int linea,
             int posicion,

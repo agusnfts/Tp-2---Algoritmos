@@ -22,17 +22,13 @@ import Ciudad5.modelo.ResultadoBusqueda;
 public class VentanaBusquedas extends JFrame {
 
     private JTextField txtPalabra;
-
     private JButton btnCargarArchivo;
-
     private JButton btnBuscar;
-
     private JButton btnSalir;
 
     private PanelCiudad5 panel;
 
     private ArbolBusqueda arbol;
-
     private BusquedaLineal lista;
 
     private ProgresoJuego progreso;
@@ -40,158 +36,117 @@ public class VentanaBusquedas extends JFrame {
     private boolean archivoCargado = false;
     private int cantidadBusquedas = 0;
 
+    /**
+     * PRE:
+     * - progreso != null
+     *
+     * POST:
+     * - Se inicializa la ventana principal
+     * - Se crean las estructuras de búsqueda (ABB y lista lineal)
+     * - Se configura tamaño, título y comportamiento de cierre
+     * - Se inicializa la interfaz gráfica
+     */
     public VentanaBusquedas(ProgresoJuego progreso) {
 
-        ValidacionesUtiles.esDistintoDeNull(
-                progreso,
-                "progreso"
-        );
+        ValidacionesUtiles.esDistintoDeNull(progreso, "progreso");
 
         this.progreso = progreso;
 
         arbol = new ArbolBusqueda();
-
         lista = new BusquedaLineal();
 
         setTitle("Ciudad Busquedas");
-
         setSize(900, 600);
-
         setLocationRelativeTo(null);
-
-        setDefaultCloseOperation(
-                JFrame.DISPOSE_ON_CLOSE
-        );
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         inicializar();
     }
 
+    /**
+     * PRE:
+     * - No requiere condiciones externas
+     *
+     * POST:
+     * - Se construye la interfaz gráfica de la ventana
+     * - Se crean y organizan los componentes visuales
+     * - Se asocian los eventos a los botones
+     */
     private void inicializar() {
 
-        setLayout(
-                new BorderLayout()
-        );
+        setLayout(new BorderLayout());
 
-        JPanel superior =
-                new JPanel();
+        JPanel superior = new JPanel();
+        superior.setLayout(new GridLayout(2, 1));
 
-        superior.setLayout(
-                new GridLayout(2, 1)
-        );
+        JPanel fila1 = new JPanel();
 
-        JPanel fila1 =
-                new JPanel();
+        btnCargarArchivo = new JButton("Cargar TXT");
+        fila1.add(btnCargarArchivo);
 
-        btnCargarArchivo =
-                new JButton(
-                        "Cargar TXT"
-                );
+        superior.add(fila1);
 
-        fila1.add(
-                btnCargarArchivo
-        );
+        JPanel fila2 = new JPanel();
 
-        superior.add(
-                fila1
-        );
+        fila2.add(new JLabel("Palabra:"));
 
-        JPanel fila2 =
-                new JPanel();
+        txtPalabra = new JTextField(20);
+        fila2.add(txtPalabra);
 
-        fila2.add(
-                new JLabel(
-                        "Palabra:"
-                )
-        );
+        btnBuscar = new JButton("Buscar");
+        fila2.add(btnBuscar);
 
-        txtPalabra =
-                new JTextField(
-                        20
-                );
+        btnSalir = new JButton("Salir");
+        fila2.add(btnSalir);
 
-        fila2.add(
-                txtPalabra
-        );
+        superior.add(fila2);
 
-        btnBuscar =
-                new JButton(
-                        "Buscar"
-                );
+        add(superior, BorderLayout.NORTH);
 
-        fila2.add(
-                btnBuscar
-        );
-
-        btnSalir =
-                new JButton(
-                        "Salir"
-                );
-
-        fila2.add(
-                btnSalir
-        );
-
-        superior.add(
-                fila2
-        );
-
-        add(
-                superior,
-                BorderLayout.NORTH
-        );
-
-        panel =
-                new PanelCiudad5(progreso);
-
-        add(
-                panel,
-                BorderLayout.CENTER
-        );
+        panel = new PanelCiudad5(progreso);
+        add(panel, BorderLayout.CENTER);
 
         eventos();
     }
 
+    /**
+     * PRE:
+     * - Componentes inicializados
+     *
+     * POST:
+     * - Se asignan los eventos a los botones
+     */
     private void eventos() {
 
-        btnCargarArchivo.addActionListener(
-                e -> cargarArchivo()
-        );
-
-        btnBuscar.addActionListener(
-                e -> buscar()
-        );
-
-        btnSalir.addActionListener(
-                e -> dispose()
-        );
+        btnCargarArchivo.addActionListener(e -> cargarArchivo());
+        btnBuscar.addActionListener(e -> buscar());
+        btnSalir.addActionListener(e -> dispose());
     }
 
+    /**
+     * PRE:
+     * - Usuario selecciona un archivo válido
+     *
+     * POST:
+     * - Se carga el archivo en memoria
+     * - Se reinician las estructuras (ABB y lista lineal)
+     * - Se insertan todas las palabras en ambas estructuras
+     * - Se marca archivoCargado = true
+     */
     private void cargarArchivo() {
 
-        JFileChooser chooser =
-                new JFileChooser();
+        JFileChooser chooser = new JFileChooser();
 
-        int resultado =
-                chooser.showOpenDialog(
-                        this
-                );
+        int resultado = chooser.showOpenDialog(this);
 
-        if (resultado ==
-                JFileChooser.APPROVE_OPTION) {
+        if (resultado == JFileChooser.APPROVE_OPTION) {
 
-            File archivo =
-                    chooser.getSelectedFile();
+            File archivo = chooser.getSelectedFile();
 
-            ValidacionesUtiles.esDistintoDeNull(
-                    archivo,
-                    "archivo"
-            );
+            ValidacionesUtiles.esDistintoDeNull(archivo, "archivo");
 
-            arbol =
-                    new ArbolBusqueda();
-
-            lista =
-                    new BusquedaLineal();
+            arbol = new ArbolBusqueda();
+            lista = new BusquedaLineal();
 
             LectorArchivo.cargarArchivo(
                     archivo.getAbsolutePath(),
@@ -201,169 +156,116 @@ public class VentanaBusquedas extends JFrame {
 
             archivoCargado = true;
 
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Archivo cargado correctamente"
-            );
+            JOptionPane.showMessageDialog(this, "Archivo cargado correctamente");
         }
     }
 
+    /**
+     * PRE:
+     * - palabra ingresada != null y longitud >= 1
+     * - archivo previamente cargado
+     *
+     * POST:
+     * - Realiza búsqueda en ABB y en lista lineal
+     * - Obtiene resultados de ambas estructuras
+     * - Muestra comparación de rendimiento en pantalla
+     * - Incrementa contador de búsquedas
+     * - Verifica condición de victoria
+     */
     private void buscar() {
 
-        String palabra =
-                txtPalabra
-                        .getText()
-                        .trim()
-                        .toLowerCase();
+        String palabra = txtPalabra.getText().trim().toLowerCase();
 
-        ValidacionesUtiles.validarLongitudDeTexto(
-                palabra,
-                1,
-                null,
-                "palabra"
-        );
+        ValidacionesUtiles.validarLongitudDeTexto(palabra, 1, null, "palabra");
 
-        ResultadoBusqueda resultadoLineal =
-                lista.buscar(
-                        palabra
-                );
+        ResultadoBusqueda resultadoLineal = lista.buscar(palabra);
+        ResultadoBusqueda resultadoArbol = arbol.buscar(palabra);
 
-        ResultadoBusqueda resultadoArbol =
-                arbol.buscar(
-                        palabra
-                );
-
-        mostrarResultados(
-                palabra,
-                resultadoLineal,
-                resultadoArbol
-        );
+        mostrarResultados(palabra, resultadoLineal, resultadoArbol);
 
         cantidadBusquedas++;
 
         verificarVictoria();
     }
 
+    /**
+     * PRE:
+     * - palabra != null
+     *
+     * POST:
+     * - Genera un texto con los resultados de ambas búsquedas
+     * - Muestra tiempos, posiciones y operaciones
+     * - Compara rendimiento entre ABB y búsqueda lineal
+     * - Envía el resultado al panel gráfico
+     */
     private void mostrarResultados(
             String palabra,
             ResultadoBusqueda lineal,
             ResultadoBusqueda arbolRes
     ) {
 
-        ValidacionesUtiles.esDistintoDeNull(
-                palabra,
-                "palabra"
-        );
+        ValidacionesUtiles.esDistintoDeNull(palabra, "palabra");
 
         String texto = "";
 
-        texto +=
-                "PALABRA BUSCADA: "
-                        + palabra
-                        + "\n\n";
+        texto += "PALABRA BUSCADA: " + palabra + "\n\n";
 
-        texto +=
-                "===== BUSQUEDA LINEAL =====\n";
+        texto += "===== BUSQUEDA LINEAL =====\n";
 
         if (lineal != null) {
 
-            texto +=
-                    "Linea: "
-                            + lineal.getLinea()
-                            + "\n";
-
-            texto +=
-                    "Posicion: "
-                            + lineal.getPosicion()
-                            + "\n";
-
-            texto +=
-                    "Tiempo: "
-                            + lineal.getTiempo()
-                            + " ns\n";
-
-            texto +=
-                    "Operaciones: "
-                            + lineal.getOperaciones()
-                            + "\n\n";
+            texto += "Linea: " + lineal.getLinea() + "\n";
+            texto += "Posicion: " + lineal.getPosicion() + "\n";
+            texto += "Tiempo: " + lineal.getTiempo() + " ns\n";
+            texto += "Operaciones: " + lineal.getOperaciones() + "\n\n";
 
         } else {
-
-            texto +=
-                    "Palabra no encontrada\n\n";
+            texto += "Palabra no encontrada\n\n";
         }
 
-        texto +=
-                "===== ARBOL BINARIO =====\n";
+        texto += "===== ARBOL BINARIO =====\n";
 
         if (arbolRes != null) {
 
-            texto +=
-                    "Linea: "
-                            + arbolRes.getLinea()
-                            + "\n";
-
-            texto +=
-                    "Posicion: "
-                            + arbolRes.getPosicion()
-                            + "\n";
-
-            texto +=
-                    "Tiempo: "
-                            + arbolRes.getTiempo()
-                            + " ns\n";
-
-            texto +=
-                    "Operaciones: "
-                            + arbolRes.getOperaciones()
-                            + "\n\n";
+            texto += "Linea: " + arbolRes.getLinea() + "\n";
+            texto += "Posicion: " + arbolRes.getPosicion() + "\n";
+            texto += "Tiempo: " + arbolRes.getTiempo() + " ns\n";
+            texto += "Operaciones: " + arbolRes.getOperaciones() + "\n\n";
 
         } else {
-
-            texto +=
-                    "Palabra no encontrada\n\n";
+            texto += "Palabra no encontrada\n\n";
         }
 
-        if (lineal != null
-                && arbolRes != null) {
+        if (lineal != null && arbolRes != null) {
 
-            texto +=
-                    "===== COMPARACION =====\n";
+            texto += "===== COMPARACION =====\n";
 
-            if (arbolRes.getTiempo()
-                    < lineal.getTiempo()) {
-
-                texto +=
-                        "El ABB fue mas rapido\n";
-
+            if (arbolRes.getTiempo() < lineal.getTiempo()) {
+                texto += "El ABB fue mas rapido\n";
             } else {
-
-                texto +=
-                        "La busqueda lineal fue mas rapida\n";
+                texto += "La busqueda lineal fue mas rapida\n";
             }
 
-            if (arbolRes.getOperaciones()
-                    < lineal.getOperaciones()) {
-
-                texto +=
-                        "El ABB realizo menos operaciones\n";
-
+            if (arbolRes.getOperaciones() < lineal.getOperaciones()) {
+                texto += "El ABB realizo menos operaciones\n";
             } else {
-
-                texto +=
-                        "La busqueda lineal realizo menos operaciones\n";
+                texto += "La busqueda lineal realizo menos operaciones\n";
             }
         }
 
-        panel.mostrarResultado(
-                texto
-        );
+        panel.mostrarResultado(texto);
     }
 
     /**
-     * Desbloquea la Ciudad 6 cuando el jugador:
-     * - carga un archivo
-     * - realiza al menos 3 búsquedas
+     * PRE:
+     * - cantidadBusquedas >= 0
+     * - archivoCargado definido
+     *
+     * POST:
+     * - Si archivo fue cargado y se realizaron al menos 3 búsquedas:
+     *      * se desbloquea la Ciudad 6
+     *      * se guarda el progreso
+     *      * se muestra mensaje de victoria (una sola vez)
      */
     private void verificarVictoria() {
 
@@ -372,25 +274,20 @@ public class VentanaBusquedas extends JFrame {
                 "cantidadBusquedas"
         );
 
-        if (archivoCargado
-                && cantidadBusquedas >= 3) {
+        if (archivoCargado && cantidadBusquedas >= 3) {
 
-            if (progreso != null
-                    && !progreso.estaDesbloqueada(6)) {
+            if (progreso != null && !progreso.estaDesbloqueada(6)) {
 
-                System.out.println(
-                        "[CIUDAD 5] COMPLETADA"
-                );
+                System.out.println("[CIUDAD 5] COMPLETADA");
 
                 progreso.desbloquear(6);
-
                 progreso.guardar();
 
                 JOptionPane.showMessageDialog(
                         this,
-                        "¡Felicitaciones!\n"
-                                + "Completaste la Ciudad 5.\n"
-                                + "La Ciudad 6 ha sido desbloqueada."
+                        "¡Felicitaciones!\n" +
+                        "Completaste la Ciudad 5.\n" +
+                        "La Ciudad 6 ha sido desbloqueada."
                 );
             }
         }

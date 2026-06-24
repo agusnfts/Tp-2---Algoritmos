@@ -8,6 +8,11 @@ public class ArbolBusqueda {
 
     private int operaciones;
 
+    /**
+     * PRE: palabra != null, linea > 0 y posicion > 0.
+     * POST: inserta la palabra en el árbol binario de búsqueda junto
+     *       con la línea y posición indicadas.
+     */
     public void insertar(
             String palabra,
             int linea,
@@ -37,6 +42,12 @@ public class ArbolBusqueda {
         );
     }
 
+    /**
+     * PRE: palabra != null.
+     * POST: inserta recursivamente la palabra en la posición
+     *       correspondiente del árbol y devuelve la raíz actualizada
+     *       del subárbol.
+     */
     private NodoABB insertarRec(
             NodoABB actual,
             String palabra,
@@ -83,6 +94,13 @@ public class ArbolBusqueda {
         return actual;
     }
 
+    /**
+     * PRE: palabra != null.
+     * POST: busca la palabra en el árbol. Si la encuentra,
+     *       devuelve un ResultadoBusqueda con la línea,
+     *       posición, tiempo empleado y cantidad de operaciones.
+     *       Si no la encuentra, devuelve null.
+     */
     public ResultadoBusqueda buscar(
             String palabra
     ) {
@@ -117,6 +135,12 @@ public class ArbolBusqueda {
         );
     }
 
+    /**
+     * PRE: palabra != null.
+     * POST: busca recursivamente la palabra dentro del árbol,
+     *       incrementando el contador de operaciones y devolviendo
+     *       el nodo encontrado o null si no existe.
+     */
     private NodoABB buscarRec(
             NodoABB actual,
             String palabra
