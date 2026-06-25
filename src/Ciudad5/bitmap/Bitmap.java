@@ -5,12 +5,29 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+import utiles.ValidacionesUtiles;
+
 public class Bitmap {
 
     private BufferedImage imagen;
     private Graphics2D g;
 
+    /**
+     * PRE: ancho > 0 y alto > 0.
+     * POST: crea un bitmap de las dimensiones indicadas e inicializa
+     *       la superficie gráfica en color blanco.
+     */
     public Bitmap(int ancho, int alto) {
+
+        ValidacionesUtiles.validarMayorACero(
+                ancho,
+                "ancho"
+        );
+
+        ValidacionesUtiles.validarMayorACero(
+                alto,
+                "alto"
+        );
 
         imagen = new BufferedImage(
                 ancho,
@@ -23,11 +40,28 @@ public class Bitmap {
         limpiar();
     }
 
+    /**
+     * POST: devuelve la imagen asociada al bitmap.
+     */
     public BufferedImage getImage() {
         return imagen;
     }
 
+    /**
+     * PRE: graphics e imagen deben estar inicializados.
+     * POST: limpia completamente la imagen rellenándola de color blanco.
+     */
     public void limpiar() {
+
+        ValidacionesUtiles.esDistintoDeNull(
+                g,
+                "graphics"
+        );
+
+        ValidacionesUtiles.esDistintoDeNull(
+                imagen,
+                "imagen"
+        );
 
         g.setColor(Color.WHITE);
 
@@ -39,7 +73,17 @@ public class Bitmap {
         );
     }
 
+    /**
+     * PRE: texto != null.
+     * POST: limpia la imagen y muestra el texto recibido,
+     *       respetando los saltos de línea.
+     */
     public void mostrarTexto(String texto) {
+
+        ValidacionesUtiles.esDistintoDeNull(
+                texto,
+                "texto"
+        );
 
         limpiar();
 
@@ -58,7 +102,7 @@ public class Bitmap {
         String[] lineas =
                 texto.split("\n");
 
-        for(String linea : lineas) {
+        for (String linea : lineas) {
 
             g.drawString(
                     linea,
@@ -70,3 +114,5 @@ public class Bitmap {
         }
     }
 }
+
+

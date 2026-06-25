@@ -38,6 +38,8 @@ public class PanelCiudad6 extends JPanel {
 	private boolean ganada;
 	private JButton botonSiguiente;
 	private Runnable accionSiguiente;
+	private JButton botonSalir;
+	private Runnable accionSalir;
 
 	/**
 	 * pre: tamanioTabla > 1. bucketsRequeridos > 0. minPorBucket > 0.
@@ -66,6 +68,8 @@ public class PanelCiudad6 extends JPanel {
 		etiquetaProgreso = new JLabel("Buckets con >= " + minPorBucket + ": 0 / " + bucketsRequeridos);
 		botonSiguiente = new JButton("Pasar a la siguiente ciudad");
 		botonSiguiente.setVisible(false);
+		botonSalir = new JButton("Salir al mapa");
+		controles.add(botonSalir);
 		controles.add(new JLabel("Palabra:"));
 		controles.add(campoPalabra);
 		controles.add(botonInsertar);
@@ -84,6 +88,7 @@ public class PanelCiudad6 extends JPanel {
 		botonInsertar.addActionListener(e -> ejecutar(true));
 		botonBuscar.addActionListener(e -> ejecutar(false));
 		botonSiguiente.addActionListener(e -> pasarASiguienteCiudad());
+		botonSalir.addActionListener(e -> salirAlMapa());
 	}
 
 	/**
@@ -154,6 +159,23 @@ public class PanelCiudad6 extends JPanel {
 		if (accionSiguiente != null) {
 			accionSiguiente.run();
 		}
+	}
+	
+	/**
+	 * PRE: accion != null.
+	 * POST: establece la acción a ejecutar al salir al mapa.
+	 */
+	public void setAccionSalir(Runnable accion) {
+	    this.accionSalir = accion;
+	}
+
+	/**
+	 * POST: ejecuta la acción de salir al mapa, si fue definida.
+	 */
+	private void salirAlMapa() {
+	    if (accionSalir != null) {
+	        accionSalir.run();
+	    }
 	}
 
 	/**

@@ -11,7 +11,6 @@ public class Casillero {
     private Cofre cofre;
 
     //POST: crea un casillero vacio
-
     public Casillero() {
         this.tipo = TipoCasillero.VACIO;
         this.cofre = null;

@@ -65,18 +65,17 @@ public class Partida {
                 jugador.getPosZ()
         );
 
-        if (casillero.getTipo() != TipoCasillero.COFRE) {
-            setMensaje("No hay cofre aquí");
-            return;
-        }
+
 
         Cofre cofre = casillero.getCofre();
         
+        //Cofre vacío desde el principio.
         if (cofre == null) {
             setMensaje("Este cofre está vacío");
             return;
         }
-
+        
+        //Si se vuelve a revisar un cofre que previamente contenia un objeto o trampa.
         if (cofre.estaAbierto()) {
             setMensaje("Este cofre ya fue abierto");
             return;
@@ -84,7 +83,7 @@ public class Partida {
 
         Elemento contenido = cofre.getContenido();
 
-        //Cofre vacio desde el principio
+        //Cofre vacio desde el principio.
         if (contenido == null) {
             cofre.abrir();
             setMensaje("El cofre estaba vacío");
@@ -183,6 +182,7 @@ public class Partida {
         return false;
     }
 
+    //POST: interactúa con el casillero actual del jugador, ejecutando la acción correspondiente
     public void interactuar() {
         if (partidaTerminada) return;
 
@@ -201,6 +201,8 @@ public class Partida {
         }
     }
 
+    //PRE: índice correspondiente a un elemento de la mochila
+    //POST: utiliza el elemento indicado
     public void usarElemento(int index) {
     	 if (partidaTerminada) {
     	        return;
@@ -214,36 +216,45 @@ public class Partida {
         elemento.usar(jugador);
     }
 
+    //POST: devuelve el generador utilizado para crear el tablero
     public GeneradorTablero getGenerador() {
         return generador;
     }
     
+    //POST: devuelve el jugador de la partida
     public Jugador getJugador() {
         return jugador;
     }
 
+    //POST: devuelve el tablero actual
     public Tablero getTablero() {
         return tablero;
     }
     
-
+    //POST: devuelve la cantidad de objetos importantes recolectados
     public int getElementosRecolectados() {
         return elementosRecolectados;
     }
 
+    //POST: devuelve el último mensaje generado por la partida
     public String getMensaje() {
         return (mensaje == null) ? "" : mensaje;
     }
 
+    //POST: actualiza el mensaje mostrado al jugador
     public void setMensaje(String mensaje) {
         this.mensaje = mensaje;
     }
 
+    //POST: define la acción a ejecutar al ganar la partida
     public void setAccionVictoria(Runnable accionVictoria) {
         this.accionVictoria = accionVictoria;
     }
 
-    // VICTORIA
+    /**
+     * POST: verifica si se cumplieron las condiciones de victoria.
+     * En caso afirmativo, desbloquea la Ciudad 2 y finaliza la partida.
+     */
     private boolean verificarVictoria() {
 
         if (elementosRecolectados >= 3 && !victoria) {

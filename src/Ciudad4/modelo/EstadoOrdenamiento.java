@@ -2,6 +2,8 @@ package Ciudad4.modelo;
 
 import java.io.Serializable;
 
+import utiles.ValidacionesUtiles;
+
 /**
  * Representa el estado de una ejecución de ordenamiento.
  * Almacena los datos y el nombre del algoritmo utilizado.
@@ -19,18 +21,17 @@ public class EstadoOrdenamiento implements Serializable {
      * post: se crea un EstadoOrdenamiento que contiene
      *       los datos y el nombre del algoritmo indicados.
      */
-    
     public EstadoOrdenamiento(int[] datos, String algoritmo) {
 
-        if (datos == null) {
-            throw new IllegalArgumentException(
-                    "datos no puede ser null");
-        }
+        ValidacionesUtiles.esDistintoDeNull(
+                datos,
+                "datos"
+        );
 
-        if (algoritmo == null) {
-            throw new IllegalArgumentException(
-                    "algoritmo no puede ser null");
-        }
+        ValidacionesUtiles.esDistintoDeNull(
+                algoritmo,
+                "algoritmo"
+        );
 
         this.datos = datos;
         this.algoritmo = algoritmo;
@@ -44,3 +45,5 @@ public class EstadoOrdenamiento implements Serializable {
         return algoritmo;
     }
 }
+
+

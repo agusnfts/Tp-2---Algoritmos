@@ -4,12 +4,27 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+import utiles.ValidacionesUtiles;
 public class Bitmap {
 
     private BufferedImage imagen;
     private Graphics2D g;
 
+    /**
+     * PRE: ancho > 0 y alto > 0.
+     * POST: crea un bitmap de las dimensiones indicadas y lo inicializa en blanco.
+     */
     public Bitmap(int ancho, int alto) {
+
+        ValidacionesUtiles.validarMayorACero(
+                ancho,
+                "ancho"
+        );
+
+        ValidacionesUtiles.validarMayorACero(
+                alto,
+                "alto"
+        );
 
         imagen = new BufferedImage(
                 ancho,
@@ -22,11 +37,28 @@ public class Bitmap {
         limpiar();
     }
 
+    /**
+     * POST: devuelve la imagen asociada al bitmap.
+     */
     public BufferedImage getImage() {
         return imagen;
     }
 
+    /**
+     * PRE: graphics e imagen deben estar inicializados.
+     * POST: limpia completamente el bitmap rellenándolo de color blanco.
+     */
     public void limpiar() {
+
+        ValidacionesUtiles.esDistintoDeNull(
+                g,
+                "graphics"
+        );
+
+        ValidacionesUtiles.esDistintoDeNull(
+                imagen,
+                "imagen"
+        );
 
         g.setColor(Color.WHITE);
 
@@ -38,25 +70,34 @@ public class Bitmap {
         );
     }
 
+    /**
+     * PRE: datos != null y datos.length > 0.
+     * POST: dibuja un gráfico de barras representando los valores contenidos
+     *       en el arreglo y muestra el valor numérico de cada barra.
+     */
     public void dibujarBarras(
             int[] datos
     ) {
 
+        ValidacionesUtiles.esDistintoDeNull(
+                datos,
+                "datos"
+        );
+
+        ValidacionesUtiles.validarMayorACero(
+                datos.length,
+                "cantidad de datos"
+        );
+
         limpiar();
-
-        if(datos == null
-                || datos.length == 0) {
-
-            return;
-        }
 
         int anchoBarra =
                 imagen.getWidth()
                 / datos.length;
 
-        for(int i = 0;
-            i < datos.length;
-            i++) {
+        for (int i = 0;
+             i < datos.length;
+             i++) {
 
             int altura =
                     datos[i] * 5;
@@ -82,8 +123,4 @@ public class Bitmap {
             );
         }
     }
-    
-
 }
-
-

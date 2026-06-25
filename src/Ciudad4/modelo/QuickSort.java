@@ -1,25 +1,26 @@
 package Ciudad4.modelo;
-
-import java.util.Queue;
 import java.util.LinkedList;
+import java.util.Queue;
+
+import utiles.ValidacionesUtiles;
 
 public class QuickSort {
 
     private static Queue<int[]> pasos;
 
     /**
-     * pre: vector != null.
-     * post: ordena el vector de menor a mayor utilizando QuickSort.
+     * PRE: vector != null.
+     * POST: ordena el vector de menor a mayor utilizando QuickSort.
      *       Devuelve una cola con los estados intermedios generados
      *       durante el proceso de ordenamiento.
      *       El vector recibido queda ordenado.
      */
     public static Queue<int[]> ordenar(int[] vector) {
 
-        if (vector == null) {
-            throw new IllegalArgumentException(
-                    "El vector no puede ser null");
-        }
+        ValidacionesUtiles.esDistintoDeNull(
+                vector,
+                "vector"
+        );
 
         pasos = new LinkedList<>();
 
@@ -30,6 +31,11 @@ public class QuickSort {
         return pasos;
     }
 
+    /**
+     * PRE: v != null y 0 <= inicio <= fin < v.length.
+     * POST: ordena recursivamente el segmento del vector comprendido
+     *       entre las posiciones inicio y fin utilizando QuickSort.
+     */
     private static void quickSort(int[] v, int inicio, int fin) {
 
         if (inicio < fin) {
@@ -41,6 +47,13 @@ public class QuickSort {
         }
     }
 
+    /**
+     * PRE: v != null y 0 <= inicio <= fin < v.length.
+     * POST: reordena el segmento del vector tomando como pivote
+     *       el elemento ubicado en la posición fin.
+     *       Devuelve la posición final del pivote y registra
+     *       en la cola los estados intermedios generados.
+     */
     private static int particion(int[] v, int inicio, int fin) {
 
         int pivote = v[fin];

@@ -12,9 +12,9 @@ import Ciudad1.elementos.PortalInestable;
 public class GeneradorTablero {
 	
 	private int variantePiso2;
-	private int amuletoX;
-	private int amuletoY;
 
+	//PRE: tablero != null
+	//POST: genera aleatoriamente las variantes de los tres pisos,colocando paredes, cofres y escaleras.
 	public void generar(Tablero tablero) {
 
 
@@ -36,19 +36,18 @@ public class GeneradorTablero {
 	    
 	}
 	
+	//POST: coloca el Amuleto Místico en un cofre del piso 2
 	private void colocarAmuleto(Tablero tablero, int x, int y) {
-
-	    amuletoX = x;
-	    amuletoY = y;
-
 	    colocarCofre(tablero, x, y, 2, new AmuletoMistico());
 	}
 	
+	//POST: devuelve la variante elegida para el piso 2
 	public int getVariantePiso2() {
 	    return variantePiso2;
 	}
 
-    //PAREDES EXTERNAS
+	//PRE: z corresponde a un piso existente
+	//POST: construye el borde exterior de paredes del piso indicado
     private void construirParedesExternas(Tablero tablero, int z) {
         for (int i = 0; i < 15; i++) {
             setSeguro(tablero, i, 0, z, TipoCasillero.PARED);
@@ -58,13 +57,14 @@ public class GeneradorTablero {
         }
     }
 
-    //ESCALERAS
+    //PRE: ambas posiciones existen en el tablero
+    //POST: coloca una escalera de subida y su correspondiente bajada
     private void colocarEscalera(Tablero tablero, int x, int y, int zBajo, int zAlto) {
         tablero.getCasillero(x, y, zBajo).setTipo(TipoCasillero.ESCALERA_SUBE);
         tablero.getCasillero(x, y, zAlto).setTipo(TipoCasillero.ESCALERA_BAJA);
     }
 
-    //COFRES
+    //POST: convierte el casillero indicado en un cofre con el contenido recibido
     private void colocarCofre(Tablero tablero, int x, int y, int z, Ciudad1.elementos.Elemento contenido) {
         Casillero casillero = tablero.getCasillero(x, y, z);
         casillero.setTipo(TipoCasillero.COFRE);
@@ -269,14 +269,9 @@ public class GeneradorTablero {
         lineaParedV(tablero, 8, 4, 10, 2);
     }
     
-    public int getAmuletoX() {
-        return amuletoX;
-    }
 
-    public int getAmuletoY() {
-        return amuletoY;
-    }
-
+    //PRE: posición válida
+    //POST: asigna el tipo indicado al casillero siempre que no contenga una escalera o un cofre  
     private void setSeguro(Tablero tablero, int x, int y, int z, TipoCasillero tipo) {
         if (!tablero.posicionValida(x, y, z)) return;
         Casillero casillero = tablero.getCasillero(x, y, z);
