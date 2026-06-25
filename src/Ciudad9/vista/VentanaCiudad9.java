@@ -17,7 +17,7 @@ public class VentanaCiudad9 extends JFrame {
     private Combate combate;
     private PanelCiudad9 panel;
     private ProgresoJuego progreso;
-
+    
     private JButton botonAtaque;
     private JButton botonDefensa;
     private JButton botonHabilidad;
@@ -197,7 +197,9 @@ public class VentanaCiudad9 extends JFrame {
                 combate.getEnemigos()
         );
     }
+    
+    
 
-    //main de testeo
+  
    
 }

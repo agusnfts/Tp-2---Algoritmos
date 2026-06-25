@@ -1,136 +1,262 @@
 package principal;
 import javax.swing.*;
+
+import utiles.ValidacionesUtiles;
+
 import java.awt.*;
 
 public class VentanaMenuPrincipal extends JFrame {
 
     private ProgresoJuego progreso;
 
+    /**
+     * PRE: Ninguna
+     *
+     * POST:
+     * - Se crea la ventana principal del juego
+     * - Se configuran sus propiedades visuales
+     * - Se crean los botones para iniciar, cargar, borrar partidas y salir
+     * - Se asocian los eventos correspondientes a cada botón
+     */
+    
     public VentanaMenuPrincipal() {
 
         setTitle("Al-Quest - Menú");
         setSize(500, 400);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLayout(new GridLayout(4, 1, 10, 10)); // 👈 ahora 4 filas
+        setLayout(new GridLayout(4, 1, 10, 10));
 
-        JButton btnIniciar = new JButton("Iniciar Partida");
-        JButton btnCargar = new JButton("Cargar Partida");
-        JButton btnBorrar = new JButton("Borrar Partida");
-        JButton btnSalir = new JButton("Salir");
+        JButton btnIniciar =
+                new JButton("Iniciar Partida");
+
+        JButton btnCargar =
+                new JButton("Cargar Partida");
+
+        JButton btnBorrar =
+                new JButton("Borrar Partida");
+
+        JButton btnSalir =
+                new JButton("Salir");
 
         add(btnIniciar);
         add(btnCargar);
         add(btnBorrar);
         add(btnSalir);
 
-        btnIniciar.addActionListener(e -> iniciarNuevaPartida());
-        btnCargar.addActionListener(e -> cargarPartida());
-        btnBorrar.addActionListener(e -> borrarPartida());
-        btnSalir.addActionListener(e -> System.exit(0));
+        btnIniciar.addActionListener(
+                e -> iniciarNuevaPartida()
+        );
+
+        btnCargar.addActionListener(
+                e -> cargarPartida()
+        );
+
+        btnBorrar.addActionListener(
+                e -> borrarPartida()
+        );
+
+        btnSalir.addActionListener(
+                e -> System.exit(0)
+        );
     }
 
-    // =========================
-    // NUEVA PARTIDA
-    // =========================
+    /**
+     * PRE: El usuario debe ingresar un nombre válido
+     *
+     * POST:
+     * - Se crea un nuevo objeto ProgresoJuego
+     * - Se asigna el nombre del jugador
+     * - Se guarda la nueva partida
+     * - Se abre el mapa del juego
+     * - Si el usuario cancela la operación no se realizan cambios
+     */
     private void iniciarNuevaPartida() {
 
-        String nombre = JOptionPane.showInputDialog(this, "Nombre del jugador:");
+        String nombre =
+                JOptionPane.showInputDialog(
+                        this,
+                        "Nombre del jugador:"
+                );
 
-        if (nombre == null || nombre.trim().isEmpty()) {
+        if (nombre == null) {
             return;
         }
 
-        progreso = new ProgresoJuego();
-        progreso.setNombreJugador(nombre);
+        nombre = nombre.trim();
+
+        ValidacionesUtiles.validarLongitudDeTexto(
+                nombre,
+                1,
+                null,
+                "nombre del jugador"
+        );
+
+        progreso =
+                new ProgresoJuego();
+
+        progreso.setNombreJugador(
+                nombre
+        );
+
         progreso.guardar();
 
         abrirMapa();
     }
 
-    // =========================
-    // CARGAR PARTIDA
-    // =========================
+    /**
+     * PRE: Debe existir al menos una partida guardada
+     *
+     * POST:
+     * - Se muestra la lista de partidas disponibles
+     * - Se carga la partida seleccionada
+     * - Se abre el mapa asociado al progreso cargado
+     * - Si el usuario cancela la operación no se realizan cambios
+     */
     private void cargarPartida() {
 
-        String[] partidas = ProgresoJuego.listarPartidas();
+        String[] partidas =
+                ProgresoJuego.listarPartidas();
 
         if (partidas.length == 0) {
-            JOptionPane.showMessageDialog(this, "No hay partidas guardadas");
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "No hay partidas guardadas"
+            );
+
             return;
         }
 
-        String seleccion = (String) JOptionPane.showInputDialog(
-                this,
-                "Elegí una partida:",
-                "Cargar partida",
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                partidas,
-                partidas[0]
+        String seleccion =
+                (String) JOptionPane.showInputDialog(
+                        this,
+                        "Elegí una partida:",
+                        "Cargar partida",
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        partidas,
+                        partidas[0]
+                );
+
+        if (seleccion == null) {
+            return;
+        }
+
+        String nombre =
+                seleccion.replace(
+                        ".dat",
+                        ""
+                );
+
+        progreso =
+                ProgresoJuego.cargar(
+                        nombre
+                );
+
+        ValidacionesUtiles.esDistintoDeNull(
+                progreso,
+                "progreso"
         );
-
-        if (seleccion == null) return;
-
-        String nombre = seleccion.replace(".dat", "");
-
-        progreso = ProgresoJuego.cargar(nombre);
-
-        if (progreso == null) {
-            JOptionPane.showMessageDialog(this, "Error al cargar partida");
-            return;
-        }
 
         abrirMapa();
     }
 
-    // =========================
-    // ❌ BORRAR PARTIDA
-    // =========================
+    /**
+     * PRE: Debe existir al menos una partida guardada
+     *
+     * POST:
+     * - Se muestra la lista de partidas disponibles
+     * - Se elimina la partida seleccionada
+     * - Se informa al usuario el resultado de la operación
+     * - Si el usuario cancela la operación no se realizan cambios
+     */
     private void borrarPartida() {
 
-        String[] partidas = ProgresoJuego.listarPartidas();
+        String[] partidas =
+                ProgresoJuego.listarPartidas();
 
         if (partidas.length == 0) {
-            JOptionPane.showMessageDialog(this, "No hay partidas guardadas");
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "No hay partidas guardadas"
+            );
+
             return;
         }
 
-        String seleccion = (String) JOptionPane.showInputDialog(
-                this,
-                "Elegí partida a borrar:",
-                "Borrar partida",
-                JOptionPane.WARNING_MESSAGE,
-                null,
-                partidas,
-                partidas[0]
+        String seleccion =
+                (String) JOptionPane.showInputDialog(
+                        this,
+                        "Elegí partida a borrar:",
+                        "Borrar partida",
+                        JOptionPane.WARNING_MESSAGE,
+                        null,
+                        partidas,
+                        partidas[0]
+                );
+
+        if (seleccion == null) {
+            return;
+        }
+
+        String nombre =
+                seleccion.replace(
+                        ".dat",
+                        ""
+                );
+
+        ProgresoJuego.borrar(
+                nombre
         );
 
-        if (seleccion == null) return;
-
-        String nombre = seleccion.replace(".dat", "");
-
-        ProgresoJuego.borrar(nombre);
-
-        JOptionPane.showMessageDialog(this, "Partida borrada correctamente");
+        JOptionPane.showMessageDialog(
+                this,
+                "Partida borrada correctamente"
+        );
     }
 
-    // =========================
-    // ABRIR MAPA
-    // =========================
+    /**
+     * PRE:  progreso != null
+     *
+     * POST:
+     * - Se crea una nueva ventana para mostrar el mapa
+     * - Se inicializa un PanelMapa con el progreso actual
+     * - El panel queda asociado a la ventana creada
+     * - Se muestra la ventana del mapa
+     * - La ventana del menú principal se cierra
+     */
     private void abrirMapa() {
 
-        JFrame frame = new JFrame("Mapa");
+        ValidacionesUtiles.esDistintoDeNull(
+                progreso,
+                "progreso"
+        );
+
+        JFrame frame =
+                new JFrame("Mapa");
 
         frame.setSize(1000, 700);
+
         frame.setLocationRelativeTo(null);
-        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        PanelMapa mapa = new PanelMapa(progreso);
+        frame.setDefaultCloseOperation(
+                EXIT_ON_CLOSE
+        );
 
-        mapa.setFrame(frame);
+        PanelMapa mapa =
+                new PanelMapa(
+                        progreso
+                );
 
-        frame.setContentPane(mapa);
+        mapa.setFrame(
+                frame
+        );
+
+        frame.setContentPane(
+                mapa
+        );
 
         frame.setVisible(true);
 
