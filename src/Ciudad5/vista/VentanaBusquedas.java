@@ -104,6 +104,9 @@ public class VentanaBusquedas extends JFrame {
         add(superior, BorderLayout.NORTH);
 
         panel = new PanelCiudad5(progreso);
+        
+        panel.mostrarInstrucciones();
+        
         add(panel, BorderLayout.CENTER);
 
         eventos();
@@ -263,7 +266,7 @@ public class VentanaBusquedas extends JFrame {
      *
      * POST:
      * - Si archivo fue cargado y se realizaron al menos 3 búsquedas:
-     *      * se desbloquea la Ciudad 6
+     *      * se desbloquea la Ciudad 6 si cumplis los objetivos
      *      * se guarda el progreso
      *      * se muestra mensaje de victoria (una sola vez)
      */
@@ -278,18 +281,94 @@ public class VentanaBusquedas extends JFrame {
 
             if (progreso != null && !progreso.estaDesbloqueada(6)) {
 
-                System.out.println("[CIUDAD 5] COMPLETADA");
-
-                progreso.desbloquear(6);
-                progreso.guardar();
-
-                JOptionPane.showMessageDialog(
-                        this,
-                        "¡Felicitaciones!\n" +
-                        "Completaste la Ciudad 5.\n" +
-                        "La Ciudad 6 ha sido desbloqueada."
-                );
+            	hacerPreguntas();
             }
         }
     }
+    
+    /**
+     * PRE:
+     * - progreso != null.
+     * - La Ciudad 5 aún no debe estar desbloqueada.
+     * - El usuario completó los objetivos previos de la ciudad
+     *   (cargar un archivo y realizar al menos tres búsquedas).
+     *
+     * POST:
+     * - Se muestran dos preguntas de opción múltiple sobre
+     *   búsqueda lineal y árboles binarios de búsqueda.
+     * - Si ambas respuestas son correctas:
+     *      * se desbloquea la Ciudad 6,
+     *      * se guarda el progreso,
+     *      * se muestra un mensaje de felicitación.
+     * - Si alguna respuesta es incorrecta:
+     *      * la Ciudad 6 permanece bloqueada,
+     *      * se muestra un mensaje indicando que debe volver a intentarlo.
+     */
+    
+    
+    private void hacerPreguntas() {
+
+        String[] opciones1 = {
+                "O(log n)",
+                "O(n)",
+                "O(n²)"
+        };
+
+        int respuesta1 =
+                JOptionPane.showOptionDialog(
+                        this,
+                        "¿Cuál es la complejidad de una búsqueda lineal?",
+                        "Pregunta 1",
+                        JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        opciones1,
+                        opciones1[0]
+                );
+
+        String[] opciones2 = {
+                "Se recorren todos los elementos",
+                "Usa una estructura jerárquica de nodos",
+                "Ordena automáticamente los datos"
+        };
+
+        int respuesta2 =
+                JOptionPane.showOptionDialog(
+                        this,
+                        "¿Qué característica tiene un Árbol Binario de Búsqueda?",
+                        "Pregunta 2",
+                        JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        opciones2,
+                        opciones2[0]
+                );
+
+        boolean correcta1 = (respuesta1 == 1);
+        boolean correcta2 = (respuesta2 == 1);
+
+        if (correcta1 && correcta2) {
+
+            progreso.desbloquear(6);
+            progreso.guardar();
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "¡Felicitaciones!\n"
+                    + "Respondiste correctamente.\n"
+                    + "La Ciudad 6 ha sido desbloqueada."
+            );
+
+        } else {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Alguna respuesta fue incorrecta.\n"
+                    + "Debes volver a intentarlo.",
+                    "Error",
+                    JOptionPane.WARNING_MESSAGE
+            );
+        }
+    }
+    
 }
