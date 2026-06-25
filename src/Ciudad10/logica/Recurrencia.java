@@ -1,7 +1,8 @@
 package Ciudad10.logica;
 
 /**
- * Modelo simple que representa una recurrencia T(n) = aT(n/b) + n^k
+ * Representa una recurrencia de la forma:
+ * T(n) = aT(n/b) + n^k
  */
 public class Recurrencia {
 
@@ -9,6 +10,10 @@ public class Recurrencia {
     private int b;
     private int k;
 
+    /**
+     * PRE: a > 0, b > 1.
+     * POST: crea una recurrencia con los parámetros indicados.
+     */
     public Recurrencia(int a, int b, int k) {
         this.a = a;
         this.b = b;

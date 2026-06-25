@@ -120,11 +120,11 @@ public class PanelCiudad1 extends JPanel implements KeyListener {
 
     // POST: no realiza ninguna acción al liberar una tecla.
     @Override
-    public void keyReleased(KeyEvent e) {
+    public void keyReleased(KeyEvent event) {
     }
 
     // POST: no realiza ninguna acción al escribir una tecla.
     @Override
-    public void keyTyped(KeyEvent e) {
+    public void keyTyped(KeyEvent event) {
     }
 }
