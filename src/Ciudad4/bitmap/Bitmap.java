@@ -1,6 +1,7 @@
 package Ciudad4.bitmap;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
@@ -123,4 +124,46 @@ public class Bitmap {
             );
         }
     }
+    
+    /**
+     * PRE: texto != null.
+     * POST: limpia la imagen y muestra el texto recibido,
+     *       respetando los saltos de línea.
+     */
+    public void mostrarTexto(String texto) {
+
+        ValidacionesUtiles.esDistintoDeNull(
+                texto,
+                "texto"
+        );
+
+        limpiar();
+
+        g.setColor(Color.BLACK);
+
+        g.setFont(
+                new Font(
+                        "Arial",
+                        Font.PLAIN,
+                        18
+                )
+        );
+
+        int y = 30;
+
+        String[] lineas =
+                texto.split("\n");
+
+        for (String linea : lineas) {
+
+            g.drawString(
+                    linea,
+                    20,
+                    y
+            );
+
+            y += 25;
+        }
+    }
+    
 }
