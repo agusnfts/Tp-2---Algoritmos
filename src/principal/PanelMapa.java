@@ -176,6 +176,25 @@ public class PanelMapa extends JPanel {
         this.frame = frame;
     }
 
+    
+
+    /**
+     * PRE: ninguna
+     *
+     * POST: muestra un mensaje indicando que la ciudad está bloqueada.
+     */
+    private void mostrarCiudadBloqueada() {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Esta ciudad aún está bloqueada.\n"
+                + "Completa las anteriores para desbloquearla.",
+                "Ciudad bloqueada",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+    } 
+    
+    
     /**
      * PRE: x e y representan coordenadas válidas del mapa
      *
@@ -185,7 +204,6 @@ public class PanelMapa extends JPanel {
      * - Si la ciudad está bloqueada, no se realiza ninguna acción
      * - Puede producir cambios de panel o apertura de nuevas ventanas
      */
-
     
     private void verificarCiudad(
             int x,
@@ -218,6 +236,9 @@ public class PanelMapa extends JPanel {
             );
 
             if (!progreso.estaDesbloqueada(2)) {
+            	
+            	mostrarCiudadBloqueada();
+            	
                 return;
             }
 
@@ -246,6 +267,9 @@ public class PanelMapa extends JPanel {
             );
 
             if (!progreso.estaDesbloqueada(3)) {
+            	
+            	mostrarCiudadBloqueada();
+            	
                 return;
             }
 
@@ -265,6 +289,9 @@ public class PanelMapa extends JPanel {
             );
 
             if (!progreso.estaDesbloqueada(4)) {
+            	
+            	mostrarCiudadBloqueada();
+            	
                 return;
             }
 
@@ -285,6 +312,9 @@ public class PanelMapa extends JPanel {
             );
 
             if (!progreso.estaDesbloqueada(5)) {
+            	
+            	mostrarCiudadBloqueada();
+            	
                 return;
             }
 
@@ -305,6 +335,9 @@ public class PanelMapa extends JPanel {
             );
 
             if (!progreso.estaDesbloqueada(6)) {
+            	
+            	mostrarCiudadBloqueada();
+            	
                 return;
             }
 
@@ -330,6 +363,9 @@ public class PanelMapa extends JPanel {
             );
 
             if (!progreso.estaDesbloqueada(7)) {
+            	
+            	mostrarCiudadBloqueada();
+            	
                 return;
             }
 
@@ -349,6 +385,9 @@ public class PanelMapa extends JPanel {
             );
 
             if (!progreso.estaDesbloqueada(8)) {
+            	
+            	mostrarCiudadBloqueada();
+            	
                 return;
             }
 
@@ -376,6 +415,9 @@ public class PanelMapa extends JPanel {
         	
         	
         	 if (!progreso.estaDesbloqueada(9)) {
+        		 
+        		 mostrarCiudadBloqueada();
+        		 
                  return;
              }
 
@@ -396,6 +438,9 @@ public class PanelMapa extends JPanel {
             );
 
             if (!progreso.estaDesbloqueada(10)) {
+            	
+            	mostrarCiudadBloqueada();
+            	
                 return;
             }
 
