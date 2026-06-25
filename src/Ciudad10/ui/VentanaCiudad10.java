@@ -24,7 +24,14 @@ public class VentanaCiudad10 extends JFrame {
     private PanelArbolRecurrencia panelArbol;
     private CondicionVictoria condicion;
     private ProgresoJuego progreso;
+    private JButton botonSalir;
+    private JSlider sliderPasos;
+    private Runnable accionSalir;
 
+    /**
+     * PRE: progreso != null.
+     * POST: crea la interfaz grafica de la Ciudad 10.
+     */
     public VentanaCiudad10(ProgresoJuego progreso) {
     	this.progreso = progreso;
         this.condicion = new CondicionVictoria();
@@ -39,47 +46,71 @@ public class VentanaCiudad10 extends JFrame {
         titulo.setFont(new Font("Arial", Font.BOLD, 24));
         add(titulo, BorderLayout.NORTH);
 
-        JPanel centro = new JPanel();
-        centro.setLayout(new BoxLayout(centro, BoxLayout.Y_AXIS));
+        JPanel centro = 
+        		new JPanel();
+        centro.setLayout(
+        		new BoxLayout(centro, BoxLayout.Y_AXIS)
+        		);
 
         JTextArea instrucciones = new JTextArea("""
-                Forma esperada:
-                T(n)=aT(n/b)+n
-                T(n)=aT(n/b)+n^k
-                Donde:
-                a > 0
-                b > 1
-
-                Escriba su recurrencia debajo en la casilla
-                Descubre los 3 casos para ganar
-                """);
+        		Forma: T(n)=aT(n/b)+n o T(n)=aT(n/b)+n^k
+        		a > 0, b > 1
+        		Descubre los 3 casos para ganar
+        		""");
         instrucciones.setEditable(false);
         centro.add(instrucciones);
+        
+        instrucciones.setMaximumSize(
+                new Dimension(Integer.MAX_VALUE, 60)
+        );
+
+        instrucciones.setPreferredSize(
+                new Dimension(650, 60)
+        );
 
         campoRecurrencia = new JTextField();
+        campoRecurrencia.setMaximumSize(
+                new Dimension(400, 50)
+        );
         centro.add(campoRecurrencia);
 
         botonAnalizar = new JButton("Analizar");
         centro.add(botonAnalizar);
 
+        botonSalir = new JButton("Salir al mapa");
+        centro.add(botonSalir);
+        
         resultado = new JTextArea();
         resultado.setEditable(false);
         JScrollPane scrollResultado = new JScrollPane(resultado);
-        scrollResultado.setPreferredSize(new Dimension(650, 250));
+        scrollResultado.setPreferredSize(new Dimension(650, 120));
         centro.add(scrollResultado);
 
         panelArbol = new PanelArbolRecurrencia();
         JScrollPane scrollArbol = new JScrollPane(panelArbol);
         scrollArbol.setPreferredSize(new Dimension(650, 250));
         centro.add(scrollArbol);
+        
+        sliderPasos = new JSlider();
+        sliderPasos.setMinimum(0);
+        sliderPasos.setMaximum(0);
+        centro.add(sliderPasos);
+        
+     // Permite visualizar progresivamente la expansión del arbol.
+        sliderPasos.addChangeListener(e -> {
+            int paso = sliderPasos.getValue();
+            panelArbol.mostrarHastaNivel(paso);
+        });
 
         add(centro, BorderLayout.CENTER);
         botonAnalizar.addActionListener(e -> analizar());
+        botonSalir.addActionListener(e -> salirAlMapa());
     }
 
     /**
-     * Procesa la recurrencia ingresada por el usuario
-     * Valida, analiza con el teorema maestro, actualiza progreso y dibuja el arbol.
+     * PRE: el usuario ingresó una recurrencia.
+     * POST: analiza la recurrencia, actualiza el progreso,
+     * muestra el resultado obtenido y dibuja el arbol de expansión.
      */
     private void analizar() {
         AnalizadorMaestro analizador = new AnalizadorMaestro();
@@ -104,13 +135,18 @@ public class VentanaCiudad10 extends JFrame {
 
         ExpansorRecurrencia expansor = new ExpansorRecurrencia();
         List<NodoExpansion> lista = expansor.expandir(r, 4);
+        
+     //Permite recorrer los niveles generados.
+        sliderPasos.setMaximum(lista.size() - 1);
+        sliderPasos.setValue(lista.size() - 1);
+        
 
         StringBuilder texto = new StringBuilder();
         texto.append("Recurrencia válida\n");
         texto.append("a = ").append(r.getA())
              .append(", b = ").append(r.getB())
              .append(", k = ").append(r.getK())
-             .append("\n\n");
+             .append("\n");
         texto.append(analizador.analizar(r));
         texto.append("\n\n=== Expansión ===\n");
         texto.append("Patrón detectado:\n");
@@ -118,12 +154,6 @@ public class VentanaCiudad10 extends JFrame {
              .append("^i problemas de tamaño n/").append(r.getB()).append("^i\n\n");
         texto.append("=== Progreso ===\n").append(condicion.estado()).append("\n");
 
-        for (NodoExpansion nodo : lista) {
-            texto.append("Nivel ").append(nodo.getNivel())
-                 .append(" -> ").append(nodo.getCantidadProblemas())
-                 .append(" problema(s) -> tamaño ").append(nodo.getTamanio())
-                 .append("\n");
-        }
 
         resultado.setText(texto.toString());
 
@@ -132,7 +162,7 @@ public class VentanaCiudad10 extends JFrame {
         revalidate();
         panelArbol.repaint();
 
-        //Se activa al encontrar los 3 casos, y devuelve al mapa(mapa WIP)
+        //Se activa al encontrar los 3 casos, y devuelve al mapa
         if (condicion.ciudadCompletada()) {
 
             JOptionPane.showMessageDialog(
@@ -149,4 +179,25 @@ public class VentanaCiudad10 extends JFrame {
             dispose();
         }
     }
+    
+    /**
+     * PRE: accion != null.
+     * POST: establece la acción a ejecutar al salir al mapa.
+     */
+    public void setAccionSalir(Runnable accion) {
+        this.accionSalir = accion;
+    }
+
+    /**
+     * POST: ejecuta la acción de salida si fue definida y cierra la ventana.
+     */
+    private void salirAlMapa() {
+
+        if (accionSalir != null) {
+            accionSalir.run();
+        }
+
+        dispose();
+    }
+    
 }
