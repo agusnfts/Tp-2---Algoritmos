@@ -234,31 +234,7 @@ public class VentanaMenuPrincipal extends JFrame {
                 "progreso"
         );
 
-        JFrame frame =
-                new JFrame("Mapa");
-
-        frame.setSize(1000, 700);
-
-        frame.setLocationRelativeTo(null);
-
-        frame.setDefaultCloseOperation(
-                EXIT_ON_CLOSE
-        );
-
-        PanelMapa mapa =
-                new PanelMapa(
-                        progreso
-                );
-
-        mapa.setFrame(
-                frame
-        );
-
-        frame.setContentPane(
-                mapa
-        );
-
-        frame.setVisible(true);
+        new VentanaPrincipal(progreso);
 
         this.dispose();
     }
